@@ -6,15 +6,28 @@
 *.ko
 *.obj
 *.elf
+*.crf
 
 # Linker output
 *.ilk
 *.map
 *.exp
+*.lst
+*.i
+*._ip
+*.axf
+*.__i
+*.TMP
+*.map
 
 # Precompiled Headers
 *.gch
 *.pch
+*.lnp
+*.htm
+*.html
+*.dep
+*.asm
 
 # Libraries
 *.lib
@@ -35,6 +48,7 @@
 *.i*86
 *.x86_64
 *.hex
+*.bin
 
 # Debug files
 *.dSYM/
@@ -50,3 +64,5 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+*.uvopt
+*.Administrator
