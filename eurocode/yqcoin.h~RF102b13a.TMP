@@ -1,0 +1,97 @@
+
+#ifndef __TQ2416_YQCOIN_H__
+#define __TQ2416_YQCOIN_H__
+
+
+
+#include "def.h"
+
+#define COINCNUM 4     //目前 可以 计数的 国家币种  的总数量 
+#define RATIONCOINNUM 9   //每个国家币种最多9种
+//extern U8 coine[COINCNUM][9];  // 币种决定 
+extern int alertname[RATIONCOINNUM];// 币种决定 
+
+extern U32 coin_num[RATIONCOINNUM];    //各币种 计数常量
+void coincount(void);	// get average value and print the value,then compare who is who 
+extern  U16 ccstep;
+extern  U32 coinnumber;   //count the coin number all proceed
+
+//extern unsigned int temp_coinnum;   //for compare the coin number, check 
+#define NUMTIME 5  //通道与通道间的 报错时间
+extern volatile U32 num_average;    // 
+
+//#define ADTIMETWO   1400  //在这段时间里 只有两个AD发生变化，则踢除此币  800
+//#define ADTIMEALL 1600     //如果在这段时间里，只有一个发生变化，清除变化 1000
+
+extern  U32 ch0_counttemp;  // 前一次通道0 通过的硬币计数 
+extern  U32 ch1_counttemp;  // 前一次通道1 通过的硬币计数 
+extern  U32 ch2_counttemp;  // 前一次通道2 通过的硬币计数 
+extern  U32 coinlearnnumber;
+extern  U16 selflearnnum;   //当前  学习 币种 名称 
+void coinlearn(void);   //自学习的程序
+void my_coinlearn(void);   //自学习的程序
+
+extern  U16 coin_maxvalue0;
+extern  U16 coin_minvalue0;
+extern  U16 coin_maxvalue1;
+extern  U16 coin_minvalue1;
+extern  U16 coin_maxvalue2;
+extern  U16 coin_minvalue2;
+
+
+extern U32 ze_now;
+extern U32 zs_now;
+extern U32 fg_now;
+extern  U8 coine[COINCNUM][RATIONCOINNUM];
+
+extern  U16 preset_coin;   //当前预置的币种 
+extern  U32 zs_precount;   //当前预置计数 总数
+extern  U32 ze_precount;   //当前预置计数 总额
+extern  U32 fg_precount;   //当前预置计数 异币
+void precoincount(void);     //   预置 计数
+
+#define DT_STORE 	0x01	//0x80	// manbi   ch02 duishe   EINT1/GPF1
+#define DT_PAN  	0x02  	//caoxing   ch01 zhuanpan   EINT0/GPF0  
+#define DT_PUSH  	0x04	//0x04	// yabitiao  ch07 EINT11/GPG3
+#define DT_PANDOOR  0x80	//0x08	// zhuanpan men  ch05  EINT3/GPF3
+#define DT_DOOR	 	0x40	//64	// men     ch03   EINT2/GPF2
+#define DT_FORGE  	0x20	//32	// weibi   ch04  EINT4/GPF4
+#define DT_COIN 	0x08		//0x80 // coin  cho5  
+void detect_read(void);   
+
+/*****************
+报错宏定义    函数
+*****************/
+
+#define SWITCHERROR 11      //门没有关上
+#define STORAGEERROR 12
+#define DUIERROR 13     // 币斗满 
+#define PANBLOCKEDERROR 14     //转盘赌币
+#define KICKCOINERROR 15
+#define NEGATIVEERROR 16
+#define PRESSMLOCKED  17      //压币带堵币
+#define ADSTDEEROR    20       //表示传感器下有币
+#define RTCREEROR    21       //表示READ time wrong
+#define READOUTDATA    22       // 读出  数据  内存满
+#define COINOVERSTOP 18  	// 1 MCU接到 有清分斗满币 停止	
+
+
+#define ALERT5 0   // //向地址ADDR_TTS 发送"请调基准值"
+#define ALERT1 1  //向地址ADDR_TTS 发送"未检测到门或压币条"
+#define ALERT2 3  //向地址ADDR_TTS 发送"转盘堵币"
+#define ALERT4 4   // //向地址ADDR_TTS 发送"压币带堵币"
+#define ALERT3 5   // 踢币异常
+#define ALERT6 6  //向地址ADDR_TTS 发送"币斗满"
+#define ALERT7 7   // //向地址ADDR_TTS 发送"确认需长按1秒生效"
+#define ALERT8 8   // //向地址ADDR_TTS 发送"请导出数据，内存已满"
+#define ALERT9 9   // //向地址ADDR_TTS 发送"清分斗满币 请取出"
+
+extern  U16 prepic_prenum;      // 用于记录 报错前的界面 
+void alertfuc(U16 alertflag); //报错
+
+
+
+
+
+
+#endif
