@@ -66,3 +66,4 @@ Mkfile.old
 dkms.conf
 *.uvopt
 *.Administrator
+*.iex

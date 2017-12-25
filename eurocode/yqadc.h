@@ -16,6 +16,7 @@ typedef struct _AD_Value_S
 	S16 AD0;
 	S16 AD1;
 	S16 AD2;
+	S16 ad_index;
 } AD_Value;
 
 typedef struct
@@ -39,6 +40,7 @@ typedef struct
 	S16 ad1_step;
 	S16 ad2_step;
 	S16 cmp_use_index;
+	S16 ad_index;
 	U16 AD_min_index[3];
 	U16 full_kick;
 	U16 full_stack_num;
@@ -71,13 +73,13 @@ typedef struct
 
 #define ADSAMPNUM0  16    //every ad channel sample number for getting average value 2  8 
 
-#define  WAVEUP0  32   //1  //8确认波形下降 次数  4
-#define  WAVEMAX0  16 //1  //8 15   //确认波形峰值  次数 50 40   65     20
-#define  WAVE0fall 16 //2 //15  //波形落回到参考值以下的计数20 
-#define  WAVEUPT0  16  //3 //4//8   // 确认双波峰  方法一 确认波形上升  次数   10 4      求导法  3
+#define  WAVE_DOWN_TO_STD_N  32   //1  //8确认波形下降 次数  4
+#define  WAVE_GO_UP_N  32 //1  //8 15   //确认波形峰值  次数 50 40   65     20
+#define  WAVE_UP_TO_STD_N 32 //2 //15  //波形落回到参考值以下的计数20 
+#define  WAVE_DOWN_TWO_N  32  //3 //4//8   // 确认双波峰  方法一 确认波形上升  次数   10 4      求导法  3
 
-#define WAVE_DOWN_VALUE 30
-#define WAVE_UP_VALUE 30
+#define WAVE_DOWN_VALUE 50
+#define WAVE_UP_VALUE 50
 #define WAVE_COIN_TWO_DOWN_VALUE 30
 
 

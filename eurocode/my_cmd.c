@@ -1518,10 +1518,10 @@ void print_ng_data (S16 index)
 		return;
 	print_cmp_data (index);                                                                                                                     
 	cy_println("-------------------print %6d ng data-------------------------------", ng_value_index);                                               
-	cy_println ("  index     coin_value0            coin_value1            coin_value2");                                                                    
+	cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                    
 	for (i = 0; i < ng_value_index; i++)                                                                                                      
 	{                                                                                                                                          
-		cy_println ("%d   %4d        %4d                   %4d                   %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);                   
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].ad_index, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);                   
 	}                                                                                                                                        
 	cy_println("----------------------------------------------------------------------");                                                                        
 }
@@ -1531,11 +1531,11 @@ void print_good_data (S16 index)
 	int	i;  
 	
 	print_cmp_data (index);                                                                                                                                      
-	cy_println("-------------------print %6d good data-----------------------------", good_value_index);                                      
-	cy_println ("  index     coin_value0            coin_value1            coin_value2");                                                                   
+	cy_println("-------------------print %6d good data-----------------------------", good_value_index);                                                 
+	cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                    
 	for (i = 0; i < good_value_index; i++)                                                                                                      
 	{                                                                                                                                        
-		cy_println ("%d   %4d        %4d                   %4d                   %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);                      
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].ad_index, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);                      
 	}                                                                                                                                        
 	cy_println("---------------------------------------------------------------------");                                                                        
 }

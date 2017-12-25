@@ -220,7 +220,7 @@ void disp_allcount(void)     //pre counting ,detail list
 		dgus_tf2word(ADDR_XDZS,disp_buf.total_good);				//	  list number	
 		dgus_tf2word(ADDR_XDFG,disp_buf.total_ng);			//	  list forge
 		dgus_tf2word(ADDR_CPZE, disp_buf.total_money);	//pre worker money 
-		disp_allcount_to_pc ();
+		//disp_allcount_to_pc ();
 	}
 }
 
@@ -841,7 +841,12 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			detect_read();    //传回传感器状态
 		}else if (value == 0x06){//波形采样
 			comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);	 
-			sys_env.workstep =103;
+			sys_env.workstep =103;       
+			if (sys_env.print_wave_to_pc == 1){
+				sys_env.print_wave_to_pc = 0; 
+			}else{
+				sys_env.print_wave_to_pc = 1; 
+			}				
 		}			
 		break;
 	case ADDR_KICK1_M:  //地址ADDR_KICK1_M bujian zhixing 

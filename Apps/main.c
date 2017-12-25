@@ -257,8 +257,9 @@ void TaskStart(void *pdata)
 			case 0:{ 
 				ALL_STOP();//停掉所有的输出
 				sys_env.workstep = 1;
-				refresh_data ();
-				cy_println ("50,stop;");//停机
+				//refresh_data ();
+				disp_allcount ();
+				//cy_println ("50,stop;");//停机
 				/*
 						if (processed_coin_info.total_coin > 0){
 							LOG ("\n----------------------------------------------------------------------");
@@ -289,8 +290,8 @@ void TaskStart(void *pdata)
 			}
 			case 6: {    
 				setStdValue	();//设置鉴伪基准值
-				//if( adstd_offset() == 1){//  检测基准值，并进行补偿
-				if (1) {//  检测基准值，并进行补偿
+				if( adstd_offset() == 1){//  检测基准值，并进行补偿
+				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
@@ -338,11 +339,17 @@ void TaskStart(void *pdata)
 						sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 					}else if (sys_env.stop_flag == 3){
 						STORAGE_MOTOR_STOPRUN();	//  转盘电机
-						sys_env.stop_time = STOP_TIME;//无币停机时间10秒
+						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间10秒
 					}else if (sys_env.stop_flag == 4){
 	//					time_20ms_old = time_20ms;
 						comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
 						sys_env.workstep =0;	
+					}
+				}
+				if (sys_env.print_wave_to_pc == 1){
+					if (sys_env.AD_buf_sending == 1){
+						send_sample_data (sys_env.Detect_AD_buf_p, sys_env.AD_data_len);
+						sys_env.AD_buf_sending = 0;
 					}
 				}
 				break;

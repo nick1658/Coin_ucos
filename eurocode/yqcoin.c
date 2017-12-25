@@ -33,33 +33,29 @@ U16 coine[COINCNUM][COIN_TYPE_NUM]=     // 由币种决定
 
 void prepare_coin_cmp_value (void)
 {		
-	if (ad1_min > 0){
-		coin_env.cmp_use_index = 1;
-	}else if ( ad0_min > 0){
+	if (ad0_min > 0){
 		coin_env.cmp_use_index = 0;
+	}else if ( ad1_min > 0){
+		coin_env.cmp_use_index = 1;
 	}else if (ad2_min > 0){
 		coin_env.cmp_use_index = 2;
 	}else{
 		coin_env.cmp_use_index = 0;
 	}	
+	coin_env.ad_index = coin_env.AD_min_index[coin_env.cmp_use_index];
 #ifdef SAMPLE_METHOD_0
-	coin_value0 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD0;
-	coin_value1 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD1 - coin_value0;
-	coin_value2 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD2 - Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD1;
+	coin_value0 = Detect_AD_Value_buf_p[coin_env.ad_index].AD0;
+	coin_value1 = Detect_AD_Value_buf_p[coin_env.ad_index].AD1 - coin_value0;
+	coin_value2 = Detect_AD_Value_buf_p[coin_env.ad_index].AD2 - Detect_AD_Value_buf_p[coin_env.ad_index].AD1;
 #endif
 #ifdef SAMPLE_METHOD_1
-	coin_value0 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD0;
-	coin_value1 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD1;
-	coin_value2 = Detect_AD_Value_buf_p[coin_env.AD_min_index[coin_env.cmp_use_index]].AD2;
+	coin_value0 = Detect_AD_Value_buf_p[coin_env.ad_index].AD0;
+	coin_value1 = Detect_AD_Value_buf_p[coin_env.ad_index].AD1;
+	coin_value2 = Detect_AD_Value_buf_p[coin_env.ad_index].AD2;
 #endif
-	if (sys_env.AD_buf_sending == 0){
-		sys_env.AD_buf_sending = 1;
-		sys_env.Detect_AD_buf_p = Detect_AD_Value_buf_p;
-		sys_env.AD_buf_index++;
-		sys_env.AD_buf_index %= AD_BUF_GROUP_LEN;
-		Detect_AD_Value_buf_p = Detect_AD_Value_buf[sys_env.AD_buf_index];
-	}
-	memset (Detect_AD_Value_buf_p, 0, sizeof (Detect_AD_Value_buf[0]));
+	coin_env.AD_min_index[0] = 0;
+	coin_env.AD_min_index[1] = 0;
+	coin_env.AD_min_index[2] = 0;
 }
 
 S16 is_good_coin (void)
@@ -76,6 +72,7 @@ S16 is_good_coin (void)
 				GOOD_value_buf[good_value_index].AD1 = coin_value1;
 				GOOD_value_buf[good_value_index].AD2 = coin_value2;
 				GOOD_value_buf[good_value_index].use_index = coin_env.cmp_use_index;
+				GOOD_value_buf[good_value_index].ad_index = coin_env.ad_index;
 				good_value_index++;
 				if (good_value_index >= GOOD_BUF_LENGTH)
 					good_value_index = 0;
@@ -88,6 +85,7 @@ S16 is_good_coin (void)
 		NG_value_buf[ng_value_index].AD1 = coin_value1;
 		NG_value_buf[ng_value_index].AD2 = coin_value2;
 		NG_value_buf[ng_value_index].use_index = coin_env.cmp_use_index;
+		NG_value_buf[ng_value_index].ad_index = coin_env.ad_index;
 		ng_value_index++;
 		if (ng_value_index >= NG_BUF_LENGTH)
 			ng_value_index = 0;
@@ -99,159 +97,102 @@ U32 coin_num[COIN_TYPE_NUM];    //各币种 计数常量
 
 void cy_precoincount(void)
 {
-	switch(ccstep)
+	S16 good_coin = -1;
+	if ( (ch0_counttemp != ch0_count) )	//mean there is a coin come
 	{
-		case 0:
-		{			
-			if ( (ch0_counttemp != ch0_count) )	//mean there is a coin come
-			{
-				ch0_counttemp = ch0_count;
-				//ch1_counttemp = ch1_count;
-				//ch2_counttemp = ch2_count;
-				
-				processed_coin_info.coinnumber++;
-				
-				prepare_coin_cmp_value ();
-				ccstep = 8; 
+		ch0_counttemp = ch0_count;
+		//ch1_counttemp = ch1_count;
+		//ch2_counttemp = ch2_count;
+		
+		processed_coin_info.coinnumber++;
+		
+		prepare_coin_cmp_value ();				
+		good_coin = is_good_coin ();
+		if (sys_env.stop_flag != 1){//如果不在反转状态
+			sys_env.stop_flag = 0;
+			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
+		}
+		if ((good_coin < 0) ||  ((para_set_value.data.coin_full_rej_pos == 1) && 
+								 ((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
+								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
+			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
+				coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1;
+				coin_env.kick_Q_index++;
+				coin_env.kick_Q_index %= KICK_Q_LEN;
+				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_NG_FLAG;//
+			}else{//剔除工位1队列追尾错误
+				SEND_ERROR(KICK1COINERROR);
+				dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__);
 			}
-			break;
-		}	
-		case 8:
-		{	 			
-			S16 good_coin;
-			good_coin = is_good_coin ();
-			if (sys_env.stop_flag != 1){//如果不在反转状态
-				sys_env.stop_flag = 0;
-				sys_env.stop_time = STOP_TIME;//无币停机时间10秒
-			}
-			if ((good_coin < 0) ||  ((para_set_value.data.coin_full_rej_pos == 1) && 
-									 ((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
-									  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
-				if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
-					coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1;
-					coin_env.kick_Q_index++;
-					coin_env.kick_Q_index %= KICK_Q_LEN;
-					coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_NG_FLAG;//
-				}else{//剔除工位1队列追尾错误
-					SEND_ERROR(KICK1COINERROR);
-					dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__);
-				}
-			}else {//真币
-				if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
-					coin_num[good_coin]++;
-					processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
-					processed_coin_info.total_good++;
-					coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
-				}else if((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
-						  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)){//不接受此类硬币或者预置数已到
-					coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_FULL_FLAG;//用真币剔除工位剔除
-				}else{//预置计数
-					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) += 1;
-					coin_num[good_coin]++;
-					processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
-					processed_coin_info.total_good++;
-					coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//
-					if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
-						*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 1; //此类硬币预置数到，做个标记
-						*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;
-						coin_env.full_coin_stack[coin_env.full_stack_num] = good_coin;
-						coin_env.full_stack_num++;
-						if (coin_env.full_stack_num >= para_set_value.data.pre_count_stop_n){
-							runstep = 20;   //开始停机
-						}
+		}else {//真币
+			if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
+				coin_num[good_coin]++;
+				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
+				processed_coin_info.total_good++;
+				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
+			}else if((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
+					  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)){//不接受此类硬币或者预置数已到
+				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_FULL_FLAG;//用真币剔除工位剔除
+			}else{//预置计数
+				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) += 1;
+				coin_num[good_coin]++;
+				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
+				processed_coin_info.total_good++;
+				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//
+				if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
+					*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 1; //此类硬币预置数到，做个标记
+					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;
+					coin_env.full_coin_stack[coin_env.full_stack_num] = good_coin;
+					coin_env.full_stack_num++;
+					if (coin_env.full_stack_num >= para_set_value.data.pre_count_stop_n){
+						runstep = 20;   //开始停机
 					}
 				}
-				coin_env.coin_Q_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
-				coin_env.coin_Q_remain %= COIN_Q_LEN;
-				
-//				if(coin_env.coin_Q[coin_env.coin_Q_remain] != FREE_Q_FLAG){ // 计数队列追尾错误/*这里先不用，因为第二个传感器可能没装*/
-//					SEND_ERROR(DETECTERROR);
-//					cy_println ("detect 2 error alertflag = %d %s, %d", DETECTERROR,  __FILE__, __LINE__);
-//				}
 			}
-			processed_coin_info.total_coin++;
-			ccstep = 0;
-			sys_env.coin_over = 1;
-			break;
-		}		
+			coin_env.coin_Q_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
+			coin_env.coin_Q_remain %= COIN_Q_LEN;
+		}
+		processed_coin_info.total_coin++;
+		sys_env.coin_over = 1;
 	}
-}
+}		
+
+
 
 
 // 根据AD值 计数并取 AD 最大值最小值
 U32 coinlearnnumber = 0;   //count the coin number all proceed
 void cy_coinlearn(void)
-{
-	switch(ccstep)
-	{
-		case 0:{			
-			if ( (ch0_counttemp != ch0_count) && (ch1_counttemp != ch1_count) && (ch2_counttemp != ch2_count)){	//mean there is a coin come
-				ch0_counttemp = ch0_count;
-				ch1_counttemp = ch1_count;
-				ch2_counttemp = ch2_count;
-				processed_coin_info.coinnumber++;
-				coinlearnnumber++;
-				ccstep = 1;				
-			}
-			break;
+{			
+	if ( (ch0_counttemp != ch0_count)){	//mean there is a coin come
+		ch0_counttemp = ch0_count;
+		//ch1_counttemp = ch1_count;
+		//ch2_counttemp = ch2_count;
+		processed_coin_info.coinnumber++;
+		coinlearnnumber++;
+		ccstep = 1;						
+		prepare_coin_cmp_value ();	
+		ccstep = 8; 	
+		if( ( coin_value0 > coin_maxvalue0)){     //0
+			coin_maxvalue0 = coin_value0;
+		}
+		if( ( coin_value0 < coin_minvalue0)){
+			coin_minvalue0 = coin_value0;
+		}
+		if( ( coin_value1 > coin_maxvalue1)) {  //  1
+			coin_maxvalue1 = coin_value1;
+		}
+		if( ( coin_value1 < coin_minvalue1)){
+			coin_minvalue1 = coin_value1;
 		}	
-		case 1:{						
-			prepare_coin_cmp_value ();	
-			coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
-			coin_env.coin_Q_remain++;
-			coin_env.coin_Q_remain %= COIN_Q_LEN;
-		  
-//			if(coin_env.coin_Q[coin_env.coin_Q_remain] != FREE_Q_FLAG){ // 计数队列追尾错误 /*这里先不用，因为第二个传感器可能没装*/
-//				SEND_ERROR(DETECTERROR);
-//				cy_println ("detect 2 error alertflag = %d %s, %d", DETECTERROR,  __FILE__, __LINE__);
-//			}
-			ccstep = 8; 	
-			break;
+		if( ( coin_value2 > coin_maxvalue2)) {  //  2
+			coin_maxvalue2 = coin_value2;
 		}
-		case 8:{//找出最大值和最小值
-			if( ( coin_value0 > coin_maxvalue0)){     //0
-				coin_maxvalue0 = coin_value0;
-			}
-			if( ( coin_value0 < coin_minvalue0)){
-				coin_minvalue0 = coin_value0;
-			}
-			if( ( coin_value1 > coin_maxvalue1)) {  //  1
-				coin_maxvalue1 = coin_value1;
-			}
-			if( ( coin_value1 < coin_minvalue1)){
-				coin_minvalue1 = coin_value1;
-			}	
-			if( ( coin_value2 > coin_maxvalue2)) {  //  2
-				coin_maxvalue2 = coin_value2;
-			}
-			if( ( coin_value2 < coin_minvalue2)){
-				coin_minvalue2 = coin_value2;
-			}
-			ccstep = 0; 
-			sys_env.coin_over = 1;	
-			break;
+		if( ( coin_value2 < coin_minvalue2)){
+			coin_minvalue2 = coin_value2;
 		}
-		case 11:{
-			dgus_tf1word(ADDR_A0MA,coin_maxvalue0);	//	 real time ,pre AD0  max
-			dgus_tf1word(ADDR_A0MI,coin_minvalue0);	//	 real time ,pre AD0  min
-			ccstep = 12; 
-			break;	
-		}
- 		case 12:{
-			dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max	
-			dgus_tf1word(ADDR_A1MI,coin_minvalue1);	//	 real time ,pre AD1  min
-			ccstep = 13; 
-			break;	
-		}
-		case 13:{
-			dgus_tf1word(ADDR_A2MA,coin_maxvalue2);	//	 real time ,pre AD2  max
-			dgus_tf1word(ADDR_A2MI,coin_minvalue2);	//	 real time ,pre AD2  min
-			ccstep = 0; 
-			break;			
-		}	
-											
+		sys_env.coin_over = 1;	
 	}
-	return;
 }
 /*************************
 **************************/
