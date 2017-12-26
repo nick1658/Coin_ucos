@@ -219,11 +219,14 @@ void Task1(void *pdata)
 	(void)pdata;
 	while (1) {
 		LED2_NOT;
-		OSTimeDly(1000); // LED3 1000ms闪烁
+		OSTimeDly(500); // LED3 1000ms闪烁
 		//cy_print(" OSIdleCtrRun: %ld  OSIdleCtrMax: %ld  \n", OSIdleCtrRun, OSIdleCtrMax);  
 		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);  
 		dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
 		//cy_println ("***********************task 1***********************");
+		if((sys_env.workstep == 10) && (sys_env.print_wave_to_pc == 0)){
+			disp_allcount_to_pc ();
+		}
 	}
 }
 
@@ -255,9 +258,9 @@ void TaskStart(void *pdata)
 			case 0:{ 
 				ALL_STOP();//停掉所有的输出
 				sys_env.workstep = 1;
-				//refresh_data ();
+				refresh_data ();
 				disp_allcount ();
-				//cy_println ("50,stop;");//停机
+				cy_println ("50,stop;");//停机
 				/*
 						if (processed_coin_info.total_coin > 0){
 							LOG ("\n----------------------------------------------------------------------");
@@ -292,6 +295,7 @@ void TaskStart(void *pdata)
 				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
+					cy_println ("50,start;");//开机
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
 						for (i = 0; i < COIN_TYPE_NUM; i++){
 							dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr, 0);   //图标  绿
@@ -314,7 +318,6 @@ void TaskStart(void *pdata)
 				}else{
 					SEND_ERROR(ADSTDEEROR);   //传感器下有币
 					dbg("the voltage is wrong \r\n");
-					//cmd ();
 				}
 				break;
 			}
@@ -339,7 +342,6 @@ void TaskStart(void *pdata)
 						STORAGE_MOTOR_STOPRUN();	//  转盘电机
 						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间10秒
 					}else if (sys_env.stop_flag == 4){
-	//					time_20ms_old = time_20ms;
 						comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
 						sys_env.workstep =0;	
 					}
@@ -388,7 +390,6 @@ void TaskStart(void *pdata)
 				ALL_STOP();
 				alertfuc(alertflag);
 				sys_env.workstep = 0; 
-				//cy_print("sys_env.workstep is %d-->%s %d\n",sys_env.workstep, __FILE__, __LINE__);
 				break;
 			}
 			case 100:{////基准调试

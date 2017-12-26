@@ -235,6 +235,7 @@ void disp_allcount_to_pc (void)
 	cy_print("%d,%d;",19, disp_buf.total_good);
 	cy_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
 	cy_print("%d,%d;",21, disp_buf.total_ng);
+	cy_println();
 }
 
 ///////////////////////////////////////////////////////////////

@@ -1437,7 +1437,6 @@ void print_system_env_info (void)
 	cy_println("----------------------------------------------------");  
 	cy_println ("motor_idle_t       = %d", para_set_value.data.motor_idle_t);            
 	cy_println("----------------------------------------------------");
-	cmd ();
 }    
 
 void print_coin_env_info (void)
