@@ -98,13 +98,11 @@ extern  U16 ad2_min;     //贮存每枚硬币过去后的 最大值
 extern volatile U16 blockflag;      //堵币标志变量
 extern volatile U32 adtime;
 
-extern U32 ch0_count;  //通道1 通过的硬币计数 
-extern U32 ch1_count;  //通道1 通过的硬币计数 
-extern U32 ch2_count;  //通道2 通过的硬币计数 
+extern U32 ch0_count;  //通道0 通过的硬币计数 
 
 extern U32 ch0_coin_come;  //通道 来硬币 标记
 extern U32 coin_cross_time;
-//extern U32 ch1_come;  //通道 来硬币 标记
+extern U32 ch0_pre_count;  //通道0 有硬币经过 标记 
 		
 extern  S16 std_ad0;
 extern  S16 std_ad1;

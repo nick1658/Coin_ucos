@@ -9,9 +9,6 @@ S16 coin_value0 =0;
 S16 coin_value1 =0;
 S16 coin_value2 =0;
 
- U32 ch0_counttemp =0;  // 前一次通道0 通过的硬币计数 
- U32 ch1_counttemp =0;  // 前一次通道1 通过的硬币计数 
- U32 ch2_counttemp =0;  // 前一次通道2 通过的硬币计数 
 
  S16 coin_maxvalue0 = AD0STDSET;
  S16 coin_minvalue0 = AD0STDSET;
@@ -98,14 +95,9 @@ U32 coin_num[COIN_TYPE_NUM];    //各币种 计数常量
 void cy_precoincount(void)
 {
 	S16 good_coin = -1;
-	if ( (ch0_counttemp != ch0_count) )	//mean there is a coin come
-	{
-		ch0_counttemp = ch0_count;
-		//ch1_counttemp = ch1_count;
-		//ch2_counttemp = ch2_count;
-		
-		processed_coin_info.coinnumber++;
-		
+	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
+		ch0_pre_count = ch0_count;		
+		processed_coin_info.coinnumber++;	
 		prepare_coin_cmp_value ();				
 		good_coin = is_good_coin ();
 		if (sys_env.stop_flag != 1){//如果不在反转状态
@@ -164,15 +156,11 @@ void cy_precoincount(void)
 U32 coinlearnnumber = 0;   //count the coin number all proceed
 void cy_coinlearn(void)
 {			
-	if ( (ch0_counttemp != ch0_count)){	//mean there is a coin come
-		ch0_counttemp = ch0_count;
-		//ch1_counttemp = ch1_count;
-		//ch2_counttemp = ch2_count;
+	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
+		ch0_pre_count = ch0_count;
 		processed_coin_info.coinnumber++;
-		coinlearnnumber++;
-		ccstep = 1;						
-		prepare_coin_cmp_value ();	
-		ccstep = 8; 	
+		coinlearnnumber++;					
+		prepare_coin_cmp_value ();		
 		if( ( coin_value0 > coin_maxvalue0)){     //0
 			coin_maxvalue0 = coin_value0;
 		}

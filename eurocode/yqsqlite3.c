@@ -340,8 +340,6 @@ void ini_picaddr(void) //币种切换时的 初始化地址函数
 	read_para();		 //开机 读入当前 当前累计总额  当前总量 当前异币
 	// 各币种 数量	开机初始化为零
 	ch0_count = 0;	   //每个通道的硬币数  初始化
-	ch1_count = 0;
-	ch2_count = 0;
 			
 	coin_env.ad0_step = 0;		// 各函数 步骤号初始化
 	coin_env.ad1_step = 0;

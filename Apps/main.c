@@ -46,8 +46,6 @@ void coin_init (void)
 //	db_id = 0;   //历史数据 表格已经显示 数
 	
 	ch0_count = 0;
-	ch1_count = 0;
-	ch2_count = 0;
 	
 	ch0_coin_come = 0;;
 	

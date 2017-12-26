@@ -81,7 +81,6 @@ volatile U32 adtime = 0;    //定时中断里 计时
  U16 ad1_ad_value= 0;	//ad value sample  ADSAMPNUM times 
  U16 ad1_mintemp = 0;// = AD1STDVALUE;		//作为 与ad1_ad_value 值进行比较的值，为了取得波形最高值
  U16 ad1_maxtemp = 0;   //波形恢复  参考比较值
- U32 ch1_count =0;  //通道1 通过的硬币计数 
  U16 ad1_min = 0;     //贮存每枚硬币过去后的 最大值
  U32 ch1_coin_come =0;  //通道0 来硬币 标记
 
@@ -89,7 +88,6 @@ volatile U32 adtime = 0;    //定时中断里 计时
  U16 ad2_ad_value = 0;	//ad value sample  ADSAMPNUM times 
  U16 ad2_mintemp = 0;		//作为 与ad2_ad_value 值进行比较的值，为了取得波形最高值
  U16 wave2up_flagone =0;    //波形上升 参考比较值
- U32 ch2_count =0;  //通道2 通过的硬币计数 
  U32 ch2_coin_come =0;  //通道0 来硬币 标记
  U16 ad2_min = 0;     //贮存每枚硬币过去后的 最大值
  U32 ch1_count1temp =0;  //通道1 来硬币 标记  
@@ -201,7 +199,6 @@ void cy_ad0_valueget(void)
 		case 0: 
 		{
 			ch0_count = 0;
-			ch0_counttemp = ch0_count;
 			ch0_pre_count = ch0_count;
 			
 			ch0_coin_come = 0;
@@ -355,8 +352,6 @@ void cy_ad1_valueget(void)
 	{
 		case 0: 
 		{
-			ch1_count = 0;
-			ch1_counttemp = ch1_count;
 			ch1_coin_come = ch0_coin_come;
 			ad1_ad_value = AD1STDSET;
 			ad1_mintemp = AD1STDSET;
@@ -405,7 +400,6 @@ void cy_ad1_valueget(void)
 				coin_env.ad1_step = 3;
   				ad1_min = ad1_mintemp;
 				ad1_mintemp = AD1STDSET;
-				break;
 			}
  			break;
 		}
@@ -420,9 +414,6 @@ void cy_ad2_valueget(void)
 		/*初始赋值*/
 		case 0: 
 		{	
-			ch2_count = 0;
-			ch2_counttemp = ch2_count;
-			
 			ch2_coin_come = ch0_coin_come;
 			
 			ad2_ad_value = AD2STDSET;//900
@@ -456,7 +447,7 @@ void cy_ad2_valueget(void)
 		{			
 			if(( ch2_coin_come != ch0_coin_come)){
 				coin_env.ad2_step	 = 5;
-				ad2_mintemp =ad2_ad_value; 
+				ad2_mintemp = ad2_ad_value; 
 				ch2_coin_come = ch0_coin_come;
 				break;
 			}
@@ -474,12 +465,9 @@ void cy_ad2_valueget(void)
 				coin_env.ad2_step	 = 3;
 				ad2_min =  ad2_mintemp;
 				ad2_mintemp = AD2STDSET;//900
-				ch0_pre_count = ch0_count;
-				break;
 			}
 			break;
 		}
-
 	}
 	return;
 }

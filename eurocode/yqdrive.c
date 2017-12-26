@@ -24,8 +24,6 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 	disp_allcount();
 	coin_env.full_stack_num = 0;
 	ch0_count =0;
-	ch1_count =0;
-	ch2_count =0;
 	coin_env.ad0_step = 0;		
 	coin_env.ad1_step = 0;
 	coin_env.ad2_step = 0;
