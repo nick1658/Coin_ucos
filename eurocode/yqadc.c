@@ -671,9 +671,19 @@ U16 adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 										  std2_offset);
 		coin_cmp_value[is].compare_min2 = (pre_value.country[coinchoose].coin[is].data.min2 + pre_value.country[coinchoose].coin[is].data.offsetmin2 + 
 										  std2_offset);
+		
+		if (coin_cmp_value[is].compare_max0 < 10){
+			coin_cmp_value[is].compare_max0 = 10;
+		}
+		if (coin_cmp_value[is].compare_max1 < 10){
+			coin_cmp_value[is].compare_max1 = 10;
+		}
+		if (coin_cmp_value[is].compare_max2 < 10){
+			coin_cmp_value[is].compare_max2 = 10;
+		}
 	
 	#endif
-	}
+	}		
 	adcsininget(std_ad0,std_ad1,std_ad2);//AD 波形进入 的阀值
 
 	return 1;
