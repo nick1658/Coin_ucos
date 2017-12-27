@@ -137,13 +137,6 @@ void coin_init (void)
 	//end init RTC************************************************************
 
 	LED1_ON;
-	/*开机预热，如果时间不够，可适当延长*/
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	  
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
-//	delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
 	
  	sys_env.workstep = 0; //停机状态
 	print_system_env_info ();//串口打印编译信息和系统环境变量，便于调试。
@@ -151,6 +144,9 @@ void coin_init (void)
 	adstd_offset ();//设置补偿值，后面每次启动之前都会补偿一次，因为鉴伪基准值会随温度在一定范围内变化
 	
 	comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	  // 跳转到主界面
+	//sys_env.system_delay = ELECTRICTIME;
+	/*开机预热，如果时间不够，可适当延长*/
+	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	 
 }
 
 void main_task(void)

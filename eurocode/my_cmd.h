@@ -99,6 +99,7 @@ typedef struct
 	U32 AD_buf_index;
 	U32 AD_buf_sending;
 	AD_Value *Detect_AD_buf_p;
+	U32 system_delay;
 }s_system_env;
 
 extern s_system_env sys_env;

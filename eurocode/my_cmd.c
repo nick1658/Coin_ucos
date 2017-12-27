@@ -824,10 +824,12 @@ int32_t get_coin_index (int32_t _coin_name)
 
 void coin_start (void)
 {			
-	prepic_num =JSJM;
-	comscreen(Disp_Indexpic[JSYX],Number_IndexpicB);	 // back to the  picture before alert
-	sys_env.workstep = 3;
-	dbg("begin working\r\n");
+	if (sys_env.system_delay == 0){
+		prepic_num =JSJM;
+		comscreen(Disp_Indexpic[JSYX],Number_IndexpicB);	 // back to the  picture before alert
+		sys_env.workstep = 3;
+		dbg("begin working\r\n");
+	}
 }
 
 void coin_stop (void)

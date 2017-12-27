@@ -100,7 +100,7 @@ void Timer3_Stop(void);
 void Timer4_Stop(void);
 
 void adc_init(void);    //初始化ADC 
-#define ELECTRICTIME   140    //开机 延时 这些时间再给 单片机发
+#define ELECTRICTIME   1500    //开机 延时 这些时间再给 单片机发
 void delay_ms(unsigned int t);
 
 

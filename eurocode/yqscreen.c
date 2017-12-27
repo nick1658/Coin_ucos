@@ -497,7 +497,6 @@ void counter_clear (void) //
 	ng_value_index = 0;
 	disp_allcount();
 	disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//when counting pre ze zs foege data variable 
-	sys_env.workstep = 0;	// 等待 触摸
 }
 
 volatile U16 prepic_num =0 ;   // 保存之前的图片
@@ -522,20 +521,22 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		break;
 	////////////////A5 5A 06 83 00 3C 01 00 0x:1.2//////////////////////////
 	case ADDR_LRUN:  //地址ADDR_LRUN 0X3C  按键返回值判断 特征学习 start			
-		if( (value == 0x01)){//A5 5A 06 83 00 3C 01 00 01	特征学习 start				
-			prepic_num = TZJM;
-			coin_maxvalue0 = 0;
-			coin_minvalue0 = 1023;
-			coin_maxvalue1 = 0;
-			coin_minvalue1 = 1023;
-			coin_maxvalue2 = 0;
-			coin_minvalue2 = 1023;
-			coinlearnnumber = 0;
-			disp_preselflearn(coin_maxvalue0,coin_minvalue0,coin_maxvalue1,coin_minvalue1,coin_maxvalue2,coin_minvalue2) ;				   //显示当前  通道   各个值		
-			comscreen(Disp_Indexpic[TZYX],Number_IndexpicB);  // back to the  picture before alert
+		if( (value == 0x01)){//A5 5A 06 83 00 3C 01 00 01	特征学习 start	
+			if (sys_env.system_delay == 0){		
+				prepic_num = TZJM;
+				coin_maxvalue0 = 0;
+				coin_minvalue0 = 1023;
+				coin_maxvalue1 = 0;
+				coin_minvalue1 = 1023;
+				coin_maxvalue2 = 0;
+				coin_minvalue2 = 1023;
+				coinlearnnumber = 0;
+				disp_preselflearn(coin_maxvalue0,coin_minvalue0,coin_maxvalue1,coin_minvalue1,coin_maxvalue2,coin_minvalue2) ;				   //显示当前  通道   各个值		
+				comscreen(Disp_Indexpic[TZYX],Number_IndexpicB);  // back to the  picture before alert
 
-			sys_env.workstep =13;	
-			cy_print("start learning %s %d\n", __FILE__, __LINE__);
+				sys_env.workstep =13;	
+				cy_print("start learning %s %d\n", __FILE__, __LINE__);
+			}	
 		}else if( (value == 0x02)){	
 			 //A5 5A 06 83 00 3C 01 00 02	特征学习 stop					
 			disp_preselflearn(coin_maxvalue0,coin_minvalue0,coin_maxvalue1,coin_minvalue1,coin_maxvalue2,coin_minvalue2); //pre coin admax admin when self learning 
@@ -896,6 +897,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
 		}
 		write_para (); //写入预置值  
+		counter_clear ();
 		break;
 	/////////////////////////////////////////////
 	//如果是1 共公参数置0 自学习值 重新赋值  鉴别范围 重新赋值

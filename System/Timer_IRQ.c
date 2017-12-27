@@ -26,6 +26,7 @@ void Timer4_IRQ(void)
 	if (sys_env.tty_online_ms > 1){sys_env.tty_online_ms--;}
 	
 	if (sys_env.stop_time > 0){sys_env.stop_time--;}
+	if (sys_env.system_delay > 0){sys_env.system_delay--;}
 	if(tscount >0){tscount--;}
 	if( blockflag> 0){blockflag--;}				
 	if(adtime >0){adtime--;}

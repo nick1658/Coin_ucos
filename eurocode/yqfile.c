@@ -18,8 +18,8 @@ void print_func(void)     // 打印
 {
 	uart1_init();
 	Uart1_Printf("\r\n");
-	Uart1_Printf("\r\n");
-	Uart1_Printf("\r\n");
+	//Uart1_Printf("\r\n");
+	//Uart1_Printf("\r\n");
 
 	if(coinchoose == CN0){    //中文
 		while(1){     // read time 
@@ -38,14 +38,14 @@ void print_func(void)     // 打印
 			//Uart1_Printf("   1分     %4d     %d.%d%d\r\n",coin_num[8],((coine[coinchoose][8]*coin_num[8])/100),(((coine[coinchoose][8]*coin_num[8])%100)/10),(((coine[coinchoose][8]*coin_num[8])%100)%10));
 			//Uart1_Printf("   2分     %4d     %d.%d%d\r\n",coin_num[7],((coine[coinchoose][7]*coin_num[7])/100),(((coine[coinchoose][7]*coin_num[7])%100)/10),(((coine[coinchoose][7]*coin_num[7])%100)%10));
 			//Uart1_Printf("   5分     %4d     %d.%d%d\r\n",coin_num[6],((coine[coinchoose][6]*coin_num[6])/100),(((coine[coinchoose][6]*coin_num[6])%100)/10),(((coine[coinchoose][6]*coin_num[6])%100)%10));
-			Uart1_Printf("   1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao),
-					((coine[coinchoose][3]*(disp_buf.m_1jiao))/100),
-					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)/10),
-					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)%10));
 			Uart1_Printf(" 大1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao_big),
 					((coine[coinchoose][3]*(disp_buf.m_1jiao_big))/100),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)/10),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)%10));
+			Uart1_Printf("   1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao),
+					((coine[coinchoose][3]*(disp_buf.m_1jiao))/100),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)/10),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)%10));
 			Uart1_Printf("   5角     %4d     %d.%d%d\r\n",(disp_buf.m_5jiao),
 					((coine[coinchoose][1]*(disp_buf.m_5jiao))/100),
 					(((coine[coinchoose][1]*(disp_buf.m_5jiao))%100)/10),
@@ -62,8 +62,8 @@ void print_func(void)     // 打印
 			Uart1_Printf("   总数:     %d 枚\r\n",processed_coin_info.total_good);
 			Uart1_Printf("   本次清分:\r\n");
 		}else{//包装模式
+			Uart1_Printf(" 大1角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[3].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[3].data.p_coinval * 5);
 			Uart1_Printf("   1角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[4].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[4].data.p_coinval * 5);
-			Uart1_Printf(" 大1角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[3].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[4].data.p_coinval * 5);
 			Uart1_Printf("   5角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[1].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[1].data.p_coinval * 25);
 			Uart1_Printf("   1元     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[0].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[0].data.p_coinval * 50);
 			Uart1_Printf("   币种  数量(卷)  金额(元)\r\n");
@@ -188,9 +188,9 @@ void print_func(void)     // 打印
 
 	//Uart1_Printf("\r\n");
 	//Uart1_Printf("\r\n");
-	Uart1_Printf("\r\n");
-	Uart1_Printf("\r\n");
-	Uart1_Printf("\r\n");
+	//Uart1_Printf("\r\n");
+	//Uart1_Printf("\r\n");
+	//Uart1_Printf("\r\n");
 	Uart1_Printf("\r\n");
 	Uart1_Printf("\r\n");
 	Uart1_Printf("\r\n");
