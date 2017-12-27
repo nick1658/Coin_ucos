@@ -174,15 +174,11 @@ typedef struct
 	S16 offsetmax2;
 	S16 offsetmin2;
 	U32 * p_pre_count_set;
-	U32 * p_pre_count_current;
+	U32 * p_pre_count_cur;
 	U32 * p_pre_count_full_flag;
 	U32 * p_coinval;
 	U32 coin_type;
 	U16 hmi_pre_count_set_addr;
-	U16 hmi_pre_count_cur_addr;
-	U16 hmi_pre_count_reach_alarm_addr;
-	//U16 hmi_pre_count_cur_addr;
-	U16 hmi_state_ico_addr;
 	U16 money;
 }s_coin_cmp_value;
 

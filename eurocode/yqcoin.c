@@ -90,7 +90,6 @@ S16 is_good_coin (void)
 	return -1;
 }
 
-U32 coin_num[COIN_TYPE_NUM];    //各币种 计数常量
 
 void cy_precoincount(void)
 {
@@ -118,7 +117,7 @@ void cy_precoincount(void)
 			}
 		}else {//真币
 			if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
-				coin_num[good_coin]++;
+				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
 				processed_coin_info.total_good++;
 				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
@@ -126,12 +125,11 @@ void cy_precoincount(void)
 					  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)){//不接受此类硬币或者预置数已到
 				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_FULL_FLAG;//用真币剔除工位剔除
 			}else{//预置计数
-				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) += 1;
-				coin_num[good_coin]++;
+				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
 				processed_coin_info.total_good++;
 				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//
-				if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_current) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
+				if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
 					*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 1; //此类硬币预置数到，做个标记
 					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;
 					coin_env.full_coin_stack[coin_env.full_stack_num] = good_coin;
@@ -192,7 +190,8 @@ void detect_read(void)
 		dgus_tf1word(ADDR_DETCET1,0);	//未被遮挡	
 }
 
-const char *coin_tips [] = {"一元", "五角", "五角", "一角", "一角", "一角", "五分", "两分", "一分"};
+#define TIPS_SIZE 9
+const char *coin_tips [] = {"一元", "五角", "五角", "大一角", "一角", "一角", "五分", "两分", "一分", "纪念币10元", "纪念币5元"};
 
  U16 prepic_prenum =0;      // 用于记录 报错前的界面 
 void alertfuc(U16 errorflag) //报错
@@ -225,15 +224,15 @@ void alertfuc(U16 errorflag) //报错
 		case COUNT_FINISHED:
 			switch (coin_env.full_stack_num){
 				case 1:
-					if (coin_env.full_coin_stack[0] < 8){
+					if (coin_env.full_coin_stack[0] < TIPS_SIZE){
 						sprintf (str_buf, "请更换%s的纸筒。", coin_tips[coin_env.full_coin_stack[0]]);
 					}else{
 						sprintf (str_buf, "数组越界: %d", coin_env.full_coin_stack[0]);
 					}
 					break;
 				case 2:
-					if ((coin_env.full_coin_stack[0] < 8) && 
-						(coin_env.full_coin_stack[1] < 8)){
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+						(coin_env.full_coin_stack[1] < TIPS_SIZE)){
 						sprintf (str_buf, "请更换%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]], 
 																	coin_tips[coin_env.full_coin_stack[1]]);
 					}else{
@@ -241,14 +240,27 @@ void alertfuc(U16 errorflag) //报错
 					}
 					break;
 				case 3:
-					if ((coin_env.full_coin_stack[0] < 8) && 
-						(coin_env.full_coin_stack[1] < 8) &&
-						(coin_env.full_coin_stack[2] < 8)){
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+						(coin_env.full_coin_stack[1] < TIPS_SIZE) &&
+						(coin_env.full_coin_stack[2] < TIPS_SIZE)){
 						sprintf (str_buf, "请更换%s、%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]], 
 																		coin_tips[coin_env.full_coin_stack[1]], 
 																		coin_tips[coin_env.full_coin_stack[2]]);
 					}else{
 						sprintf (str_buf, "数组越界: %d, %d, %d", coin_env.full_coin_stack[0], coin_env.full_coin_stack[1], coin_env.full_coin_stack[2]);
+					}
+					break;
+				case 4:
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+						(coin_env.full_coin_stack[1] < TIPS_SIZE) &&
+						(coin_env.full_coin_stack[2] < TIPS_SIZE) &&
+						(coin_env.full_coin_stack[3] < TIPS_SIZE)){
+						sprintf (str_buf, "请更换%s、%s、%s和%s的纸筒。", coin_tips[coin_env.full_coin_stack[0]], 
+																		coin_tips[coin_env.full_coin_stack[1]], 
+																		coin_tips[coin_env.full_coin_stack[2]], 
+																		coin_tips[coin_env.full_coin_stack[3]]);
+					}else{
+						sprintf (str_buf, "数组越界: %d, %d, %d, %d", coin_env.full_coin_stack[0], coin_env.full_coin_stack[1], coin_env.full_coin_stack[2], coin_env.full_coin_stack[3]);
 					}
 					break;
 				default:sprintf (str_buf, "ERROR: 1001");break;

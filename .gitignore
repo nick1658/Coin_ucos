@@ -67,3 +67,5 @@ dkms.conf
 *.uvopt
 *.Administrator
 *.iex
+*.asm
+*.Administrator

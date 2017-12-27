@@ -173,19 +173,6 @@ void disp_data(int addr1,int addr2,int addr3)     //pre picture ,specify address
 
 /////////////////////////////////////////////////////////////
 
-struct disp_count_buf{
-	U32 m_1yuan;
-	U32 m_5jiao;
-	U32 m_1jiao;
-	U32 m_5fen;
-	U32 m_2fen;
-	U32 m_1fen;
-	U32 m_10yuan;
-	U32 m_5yuan;
-	U32 total_good;
-	U32 total_ng;
-	U32 total_money;
-};
 
 struct disp_count_buf disp_buf;
 
@@ -196,14 +183,15 @@ void disp_allcount(void)     //pre counting ,detail list
 #endif
 	if( coinchoose == CN0){
         OS_ENTER_CRITICAL();
-		disp_buf.m_1yuan = coin_num[0];
-		disp_buf.m_5jiao = (coin_num[1] + coin_num[2]);
-		disp_buf.m_1jiao = (coin_num[3] + coin_num[4] + coin_num[5]);
-		disp_buf.m_5fen =  coin_num[6];
-		disp_buf.m_2fen =  coin_num[7];
-		disp_buf.m_1fen =  coin_num[8];
-		disp_buf.m_10yuan =  coin_num[9];
-		disp_buf.m_5yuan =  coin_num[10];
+		disp_buf.m_1yuan = *(pre_value.country[COUNTRY_ID].coin[0].data.p_pre_count_cur);
+		disp_buf.m_5jiao = (*(pre_value.country[COUNTRY_ID].coin[1].data.p_pre_count_cur));
+		disp_buf.m_1jiao_big = (*(pre_value.country[COUNTRY_ID].coin[3].data.p_pre_count_cur));
+		disp_buf.m_1jiao = (*(pre_value.country[COUNTRY_ID].coin[4].data.p_pre_count_cur));
+		disp_buf.m_5fen =  *(pre_value.country[COUNTRY_ID].coin[6].data.p_pre_count_cur);
+		disp_buf.m_2fen =  *(pre_value.country[COUNTRY_ID].coin[7].data.p_pre_count_cur);
+		disp_buf.m_1fen =  *(pre_value.country[COUNTRY_ID].coin[8].data.p_pre_count_cur);
+		disp_buf.m_10yuan =  *(pre_value.country[COUNTRY_ID].coin[9].data.p_pre_count_cur);
+		disp_buf.m_5yuan =  *(pre_value.country[COUNTRY_ID].coin[10].data.p_pre_count_cur);
 		disp_buf.total_good = processed_coin_info.total_good;
 		disp_buf.total_ng = processed_coin_info.total_ng;
 		disp_buf.total_money = processed_coin_info.total_money;
@@ -212,6 +200,7 @@ void disp_allcount(void)     //pre counting ,detail list
 		dgus_tf2word(ADDR_XD10, disp_buf.m_1yuan);		//list 1
 		dgus_tf2word(ADDR_XD5, disp_buf.m_5jiao);					//	 list 0.5		
 		dgus_tf2word(ADDR_XD1, disp_buf.m_1jiao);	//	 list 0.1	
+		dgus_tf2word(ADDR_XDB1, disp_buf.m_1jiao_big);	//	 list 0.1
 		dgus_tf2word(ADDR_XD05, disp_buf.m_5fen);			//	  list 0.05
 		dgus_tf2word(ADDR_XD02, disp_buf.m_2fen);			//	  list 0.02	
 		dgus_tf2word(ADDR_XD01, disp_buf.m_1fen);			//	  list 0.01
@@ -235,6 +224,7 @@ void disp_allcount_to_pc (void)
 	cy_print("%d,%d;",19, disp_buf.total_good);
 	cy_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
 	cy_print("%d,%d;",21, disp_buf.total_ng);
+	cy_print("%d,%d;",30, disp_buf.m_1jiao_big);
 	cy_println();
 }
 
@@ -254,7 +244,7 @@ void disp_preselflearn(int max0,int min0,int max1,int min1,int max2,int min2)   
 	dgus_tf1word(ADDR_A2MI,min2);	//	 real time ,pre AD2  min
 }
 /////////////////////////////////
-struct precoin_num precoin_set[COIN_TYPE_NUM];   //用于   预置计数	 
+struct precoin_num count_coin_temp[COIN_TYPE_NUM];   //用于   预置计数	 
 
 
 
@@ -493,12 +483,9 @@ void counter_clear (void) //
 {
 	int i;
 	for (i = 0; i < COIN_TYPE_NUM; i++){
-		dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr, 0);   //图标  绿
 		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0; //
-		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_current = 0; //
+		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0; //
 		*pre_value.country[COUNTRY_ID].coin[i].data.p_coinval = 0;
-		coin_num[i] = 0;
-		dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_cur_addr, 0);	//更新计数值 
 		coin_env.full_stack_num = 0;
 	}
 	processed_coin_info.total_money =0;
@@ -518,7 +505,7 @@ volatile S32 db_id = 0;   //历史数据 表格已经显示 数
 /*A5 5A 06 83 地址L,H + 长度字数据 + 数据*/
 void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 {
-	U16 addr, value, i, j;
+	U16 addr, value, i;
 	char str_buf[256];
 	addr = (touchnum[4] << 8) | (touchnum[5]);
 	value = (touchnum[7] << 8) | (touchnum[8]);
@@ -552,7 +539,6 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		}else if( (value == 0x02)){	
 			 //A5 5A 06 83 00 3C 01 00 02	特征学习 stop					
 			disp_preselflearn(coin_maxvalue0,coin_minvalue0,coin_maxvalue1,coin_minvalue1,coin_maxvalue2,coin_minvalue2); //pre coin admax admin when self learning 
-			dgus_tf1word(ADDR_GSTB,GSKB);	//initial addr on zixuexijiemian ganshe tubiao
 			STORAGE_MOTOR_STOPRUN();   //斗送入电机
 			comscreen(Disp_Indexpic[TZBC],Number_IndexpicB);  // back to the  picture before alert
 			sys_env.workstep = 0;	
@@ -562,7 +548,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	////////////////////////////////////////////////
 	case ADDR_PGH1:  //地址ADDR_PGH1 0X07 
 		para_set_value.data.coin_full_rej_pos = (int)touchnum[8];
-		dgus_tf1word(ADDR_PGH,para_set_value.data.coin_full_rej_pos);	//make sure  the return one
+		dgus_tf1word(ADDR_PGH1,para_set_value.data.coin_full_rej_pos);	//make sure  the return one
 		Writekick_value();
 		sys_env.workstep = 0;	// 等待 触摸
 		break;
@@ -634,7 +620,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				yqsql_exec(DBINSERT);
 				disp_KJAmount(); // initial addr on zhu jiemian ze zs forge
 				for(ci = 0;ci<9;ci++)
-					coin_num[ci] = 0;
+					*(pre_value.country[COUNTRY_ID].coin[ci].data.p_pre_count_cur) = 0;
  				processed_coin_info.total_money =0;
 				processed_coin_info.total_good = 0;
 				processed_coin_info.total_ng = 0;
@@ -772,6 +758,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	case ADDR_YZS0:
 	case ADDR_YZS1:
 	case ADDR_YZS3:
+	case ADDR_YZS4:
 	case ADDR_YZS6:
 	case ADDR_YZS7:
 	case ADDR_YZS8:
@@ -780,20 +767,13 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 ///////////////////////////////////////////////////////
 		for (i = 0; i < COIN_TYPE_NUM; i++){
 			if (addr == pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr){
-				for (j = 0; j < COIN_TYPE_NUM; j++){
-					if (pre_value.country[COUNTRY_ID].coin[i].data.coin_type == pre_value.country[COUNTRY_ID].coin[j].data.coin_type){
-						para_set_value.data.precoin_set_num[j] = (int)(touchnum[7]*256 )+(int)touchnum[8];
-						*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_set = para_set_value.data.precoin_set_num[j];//para_set_value.data.precoin_set_num[PRECOIN10];
-						*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_current = 0;//当前计数值 清零
-						coin_num[j] = 0;
-						*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_full_flag = 0;
-					}
-				}
+				para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type] = (int)(touchnum[7]*256 )+(int)touchnum[8];
+				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set = para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type];
+				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0;//当前计数值 清零
+				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0;
 				write_para (); //写入预置值    
 				
-				dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);	
-				//dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr,0);   //图标  灰
-				sys_env.workstep = 0;	//停止所有动作等待触摸
+				dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
 				break;
 			}
 		}
@@ -802,13 +782,10 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		if( (value == 0x05)){
 			int i;
 			for (i = 0; i < COIN_TYPE_NUM; i++){
-				dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr, 0);   //图标  绿
 				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0; //
-				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_current = 0; //
-				dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_cur_addr, 0);	//更新计数值 
+				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0; //
 				coin_env.full_stack_num = 0;
 			}
-			sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
 		}
 		break;
 //////////////////////////////////////////////////////////////////
@@ -907,23 +884,17 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	case ADDR_MODE:
 		para_set_value.data.system_mode = value;
 		for (i = 0; i < COIN_TYPE_NUM; i++){
-			for (j = 0; j < COIN_TYPE_NUM; j++){
-				if (pre_value.country[COUNTRY_ID].coin[i].data.coin_type == pre_value.country[COUNTRY_ID].coin[j].data.coin_type){
-					if (value == 0x00){
-						addr = para_set_value.data.precoin_set_num[i];
-					}else{
-						addr = 9999;
-					}
-					*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_set = addr;//para_set_value.data.precoin_set_num[PRECOIN10];
-					*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_current = 0;//当前计数值 清零
-					coin_num[j] = 0;
-					*pre_value.country[COUNTRY_ID].coin[j].data.p_pre_count_full_flag = 0;
-				}
-			}  
-			dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);	
-			//dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr,0);   //图标  灰
+			if (value == 0x00){
+				addr = para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type];//预置计数设置值初始化
+			}else{
+				addr = 9999;
+			}
+			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set = addr;
+			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0;//当前计数值 清零
+			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0;
+  
+			dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
 		}
-		sys_env.workstep = 0;	//停止所有动作等待触摸
 		write_para (); //写入预置值  
 		break;
 	/////////////////////////////////////////////

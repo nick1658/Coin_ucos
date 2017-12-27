@@ -867,19 +867,10 @@ void refresh_data (void)
 	cy_print("%d,%d;", 10, para_set_value.data.precoin_set_num[8]);
 	cy_print("%d,%d;", 11, para_set_value.data.precoin_set_num[9]);
 	cy_print("%d,%d;", 12, para_set_value.data.precoin_set_num[10]);
-	cy_print("%d,%d;", 13, coin_num[0]);
-	cy_print("%d,%d;", 14, coin_num[1]+coin_num[2]);
-	cy_print("%d,%d;", 15, coin_num[3]+coin_num[4]+coin_num[5]);
-	cy_print("%d,%d;", 16, coin_num[6]);
-	cy_print("%d,%d;",17, coin_num[7]);
-	cy_print("%d,%d;",18, coin_num[8]);
-	cy_print("%d,%d;",19, processed_coin_info.total_coin);
-	cy_print("%d,%d.%d%d;",20, (processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-	cy_print("%d,%d;",21, processed_coin_info.total_ng);
 	cy_print("%d,%d;",22, para_set_value.data.motor_idle_t);
 	cy_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
 	cy_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
-	cy_println();
+	disp_allcount_to_pc ();
 }
 
 void set_para_1  (int32_t arg[])
@@ -1626,21 +1617,13 @@ void print_pre_count_current (void)
 	cy_println("--------------------print pre_count_current value--------------------", coinchoose);    
 	for (i = 0; i < 9; i++)
 	{
-		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_current));          
+		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_cur));          
 	}		
 	cy_println("---------------------------------------------------------------------");   
 }
 void print_speed (void)
 {
 	cy_print ("\n----------------------------------------------------------------------\n");
-	cy_print("   币种  数量(枚)  金额(元)\n");
-	cy_print("   1分     %4d     %d.%d%d\n",coin_num[8],((coine[coinchoose][8]*coin_num[8])/100),(((coine[coinchoose][8]*coin_num[8])%100)/10),(((coine[coinchoose][8]*coin_num[8])%100)%10));
-	cy_print("   2分     %4d     %d.%d%d\n",coin_num[7],((coine[coinchoose][7]*coin_num[7])/100),(((coine[coinchoose][7]*coin_num[7])%100)/10),(((coine[coinchoose][7]*coin_num[7])%100)%10));
-	cy_print("   5分     %4d     %d.%d%d\n",coin_num[6],((coine[coinchoose][6]*coin_num[6])/100),(((coine[coinchoose][6]*coin_num[6])%100)/10),(((coine[coinchoose][6]*coin_num[6])%100)%10));
-	cy_print("   1角     %4d     %d.%d%d\n",(coin_num[3]+coin_num[4]+coin_num[5]),((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))/100),(((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))%100)/10),(((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))%100)%10));
-	cy_print("   5角     %4d     %d.%d%d\n",(coin_num[1]+coin_num[2]),((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))/100),(((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))%100)/10),(((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))%100)%10));
-	cy_print("   1元     %4d     %d.%d%d\n",coin_num[0],((coine[coinchoose][0]*coin_num[0])/100),(((coine[coinchoose][0]*coin_num[0])%100)/10),(((coine[coinchoose][0]*coin_num[0])%100)%10));
-	cy_println();
 	cy_print("   详细信息:  \n");
 	cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
 	cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));

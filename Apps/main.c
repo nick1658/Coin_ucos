@@ -261,25 +261,6 @@ void TaskStart(void *pdata)
 				refresh_data ();
 				disp_allcount ();
 				cy_println ("50,stop;");//停机
-				/*
-						if (processed_coin_info.total_coin > 0){
-							LOG ("\n----------------------------------------------------------------------");
-							//LOG ("[Start At %4d-%02d-%02d %02d:%02d:%02d] ", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Min, Time.Sec);
-							LOG("   type    quantity   money");
-							LOG("   1 fen      %4d     %d.%d%d",coin_num[8],((coine[coinchoose][8]*coin_num[8])/100),(((coine[coinchoose][8]*coin_num[8])%100)/10),(((coine[coinchoose][8]*coin_num[8])%100)%10));
-							LOG("   2 fen      %4d     %d.%d%d",coin_num[7],((coine[coinchoose][7]*coin_num[7])/100),(((coine[coinchoose][7]*coin_num[7])%100)/10),(((coine[coinchoose][7]*coin_num[7])%100)%10));
-							LOG("   5 fen      %4d     %d.%d%d",coin_num[6],((coine[coinchoose][6]*coin_num[6])/100),(((coine[coinchoose][6]*coin_num[6])%100)/10),(((coine[coinchoose][6]*coin_num[6])%100)%10));
-							LOG("   1 jiao     %4d     %d.%d%d",(coin_num[3]+coin_num[4]+coin_num[5]),((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))/100),(((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))%100)/10),(((coine[coinchoose][3]*(coin_num[3]+coin_num[4]+coin_num[5]))%100)%10));
-							LOG("   5 jiao     %4d     %d.%d%d",(coin_num[1]+coin_num[2]),((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))/100),(((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))%100)/10),(((coine[coinchoose][1]*(coin_num[1]+coin_num[2]))%100)%10));
-							LOG("   1 yuan     %4d     %d.%d%d",coin_num[0],((coine[coinchoose][0]*coin_num[0])/100),(((coine[coinchoose][0]*coin_num[0])%100)/10),(((coine[coinchoose][0]*coin_num[0])%100)%10));
-							LOG("");
-							LOG("   Detail:  ");
-							LOG("   NG:     %d ",processed_coin_info.total_ng);
-							LOG("   Money:     %d.%d%d",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-							LOG("   Total:     %d + %d = %d",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
-	//						LOG("   本次清分耗时: %d Sec 速度: %d / Min", ((time_20ms - (STOP_TIME * 3) - 100) / 50),
-	//													((processed_coin_info.total_coin * 3000) / (time_20ms_old - STOP_TIME * 3 - 50)));
-						}*/
 				break;
 			}
 			case 1://待机状态
@@ -298,11 +279,8 @@ void TaskStart(void *pdata)
 					cy_println ("50,start;");//开机
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
 						for (i = 0; i < COIN_TYPE_NUM; i++){
-							dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_state_ico_addr, 0);   //图标  绿
 							*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0; //
-							*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_current = 0; //
-							coin_num[i] = 0;
-							dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_cur_addr, 0);	//更新计数值 
+							*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0; //
 							coin_env.full_stack_num = 0;
 						}
 						processed_coin_info.total_money =0;
