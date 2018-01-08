@@ -37,7 +37,7 @@ S16 coin_log (char *fmt, ...)
 	}else{
 		//cy_println ("SD Card not exist!");
 	}
-	dbg ("%s", log_str);	
+	cy_print ("%s", log_str);	
 	
 	va_end(ap);
 	return 0;

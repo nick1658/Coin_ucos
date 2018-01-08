@@ -244,7 +244,7 @@ void TaskStart(void *pdata)
 	OSStatInit(); //开启统计任务 
 	coin_init ();
 	
-	cy_println ("<Please press ENTER to activate this console>");
+	cy_println ("[Please press ENTER to activate this console]");
 
 	OSTaskCreate(Task1, (void *)0, &Task1Stk[TASK1_STK_SIZE - 1], Task1Prio);
 	OSTaskCreate(Task2, (void *)0, &Task2Stk[TASK2_STK_SIZE - 1], Task2Prio);
@@ -261,13 +261,13 @@ void TaskStart(void *pdata)
 				disp_allcount ();
 				pc_println ("50,stop;");//停机
 				if (sys_env.sys_runing_time_total > 0){
-					LOG ("\n----------------------------------------------------------------------\n");
-					LOG("   详细信息:  \n");
-					LOG("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
-					LOG("   异币:     %d 枚\n",processed_coin_info.total_ng);
-					LOG("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-					LOG("   本次清分耗时: %d Sec 速度: %d / Min\n", (sys_env.sys_runing_time_total / 1000), 
-											((processed_coin_info.total_coin - 1) * 60000) / (sys_env.sys_runing_time_total));	
+					cy_print ("\n----------------------------------------------------------------------\n");
+					cy_print("   详细信息:  \n");
+					cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
+					cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
+					cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+					cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), 
+											((processed_coin_info.total_coin) * 60) / (sys_env.sys_runing_time_total / 10000));	
 				}
 				break;
 			}

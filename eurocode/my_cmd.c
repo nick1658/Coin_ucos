@@ -1436,7 +1436,7 @@ void print_system_env_info (void)
 	cy_println ("coin_full_rej_pos      = %d", para_set_value.data.coin_full_rej_pos);    
 	//cy_println ("adj_offset_position    = %d", para_set_value.data.adj_offset_position);        
 	cy_println("----------------------------------------------------");  
-	cy_println ("motor_idle_t       = %d", para_set_value.data.motor_idle_t);            
+	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t);            
 	cy_println("----------------------------------------------------");
 }    
 
@@ -1633,13 +1633,15 @@ void print_pre_count_current (void)
 }
 void print_speed (void)
 {
-	cy_print ("\n----------------------------------------------------------------------\n");
-	cy_print("   详细信息:  \n");
-	cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
-	cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-	cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
-//	cy_print("   本次清分耗时: %d Sec 速度: %d / Min\n", ((time_20ms - STOP_TIME - 50) / 50),
-//													((processed_coin_info.total_coin * 3000) / (time_20ms_old - STOP_TIME - 50)));
+	if (sys_env.sys_runing_time_total > 0){
+		cy_print ("\n----------------------------------------------------------------------\n");
+		cy_print("   详细信息:  \n");
+		cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
+		cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
+		cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+		cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), 
+					((processed_coin_info.total_coin) * 60) / (sys_env.sys_runing_time_total / 10000));	
+	}
 }
 
 void do_print(int32_t argc, void *cmd_arg)
