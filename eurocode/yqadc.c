@@ -192,8 +192,6 @@ U32 coin_cross_time = 0;
 	
 void cy_ad0_valueget(void)
 {
-	//S16 std0_offset, std1_offset, std2_offset;
-	//U16 is;
 	switch(coin_env.ad0_step)
 	{ 
 		case 0: 
@@ -205,6 +203,7 @@ void cy_ad0_valueget(void)
 			
 			wave0down_flagone = 0;
 			wave0up_flagone = 0;
+			wave0up_flag = 0;
 			wave0down_flagtwo = 0;	
 			
 			detect_sample_data_buf_index = 0;

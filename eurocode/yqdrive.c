@@ -39,6 +39,7 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 	sys_env.stop_flag = 0;
 	STORAGE_DIR_P();//正转
 	runstep =0; //正常工作步骤号	
+	sys_env.sys_runing_time = 0;
 	//cy_println("finish init coin_env");		
 }
 

@@ -156,7 +156,10 @@ void main_task(void)
 	if (running_state >= 1000){
 		running_state = 0;
 		LED1_NOT;
-	}		
+	}
+	if (sys_env.sys_runing_time){
+		sys_env.sys_runing_time++;
+	}
 	
 	switch (sys_env.workstep)
 	{
@@ -241,7 +244,7 @@ void TaskStart(void *pdata)
 	OSStatInit(); //开启统计任务 
 	coin_init ();
 	
-	cy_println ("***********************UCOS for S3C2416***********************");
+	cy_println ("<Please press ENTER to activate this console>");
 
 	OSTaskCreate(Task1, (void *)0, &Task1Stk[TASK1_STK_SIZE - 1], Task1Prio);
 	OSTaskCreate(Task2, (void *)0, &Task2Stk[TASK2_STK_SIZE - 1], Task2Prio);
@@ -256,7 +259,16 @@ void TaskStart(void *pdata)
 				sys_env.workstep = 1;
 				refresh_data ();
 				disp_allcount ();
-				cy_println ("50,stop;");//停机
+				pc_println ("50,stop;");//停机
+				if (sys_env.sys_runing_time_total > 0){
+					LOG ("\n----------------------------------------------------------------------\n");
+					LOG("   详细信息:  \n");
+					LOG("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
+					LOG("   异币:     %d 枚\n",processed_coin_info.total_ng);
+					LOG("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+					LOG("   本次清分耗时: %d Sec 速度: %d / Min\n", (sys_env.sys_runing_time_total / 1000), 
+											((processed_coin_info.total_coin - 1) * 60000) / (sys_env.sys_runing_time_total));	
+				}
 				break;
 			}
 			case 1://待机状态
@@ -272,7 +284,7 @@ void TaskStart(void *pdata)
 				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
-					cy_println ("50,start;");//开机
+					pc_println ("50,start;");//开机
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
 						for (i = 0; i < COIN_TYPE_NUM; i++){
 							*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0; //
@@ -314,10 +326,10 @@ void TaskStart(void *pdata)
 						sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 					}else if (sys_env.stop_flag == 3){
 						STORAGE_MOTOR_STOPRUN();	//  转盘电机
-						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间10秒
+						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间2秒
 					}else if (sys_env.stop_flag == 4){
 						comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
-						sys_env.workstep =0;	
+						sys_env.workstep =0;					
 					}
 				}
 				if (sys_env.print_wave_to_pc == 1){

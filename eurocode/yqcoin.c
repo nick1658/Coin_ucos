@@ -144,6 +144,13 @@ void cy_precoincount(void)
 		}
 		processed_coin_info.total_coin++;
 		sys_env.coin_over = 1;
+		if (sys_env.sys_runing_time == 0){
+			sys_env.sys_runing_time_total = 0;
+			sys_env.sys_runing_time = 1;
+		}else{
+			sys_env.sys_runing_time_total += (sys_env.sys_runing_time - 1);
+			sys_env.sys_runing_time = 1;
+		}
 	}
 }		
 

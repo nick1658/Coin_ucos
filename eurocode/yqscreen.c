@@ -215,17 +215,17 @@ void disp_allcount(void)     //pre counting ,detail list
 
 void disp_allcount_to_pc (void)
 {
-	cy_print("%d,%d;", 13, disp_buf.m_1yuan);
-	cy_print("%d,%d;", 14, disp_buf.m_5jiao);
-	cy_print("%d,%d;", 15, disp_buf.m_1jiao);
-	cy_print("%d,%d;", 16, disp_buf.m_5fen);
-	cy_print("%d,%d;",17, disp_buf.m_2fen);
-	cy_print("%d,%d;",18, disp_buf.m_1fen);
-	cy_print("%d,%d;",19, disp_buf.total_good);
-	cy_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
-	cy_print("%d,%d;",21, disp_buf.total_ng);
-	cy_print("%d,%d;",30, disp_buf.m_1jiao_big);
-	cy_println();
+	pc_print("%d,%d;", 13, disp_buf.m_1yuan);
+	pc_print("%d,%d;", 14, disp_buf.m_5jiao);
+	pc_print("%d,%d;", 15, disp_buf.m_1jiao);
+	pc_print("%d,%d;", 16, disp_buf.m_5fen);
+	pc_print("%d,%d;",17, disp_buf.m_2fen);
+	pc_print("%d,%d;",18, disp_buf.m_1fen);
+	pc_print("%d,%d;",19, disp_buf.total_good);
+	pc_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
+	pc_print("%d,%d;",21, disp_buf.total_ng);
+	pc_print("%d,%d;",30, disp_buf.m_1jiao_big);
+	pc_println();
 }
 
 ///////////////////////////////////////////////////////////////

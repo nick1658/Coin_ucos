@@ -45,6 +45,7 @@ void system_env_init (void)
 	sys_env.country_index = coinchoose;
 	sys_env.save_ng_data = 1;
 	sys_env.save_good_data = 1;
+	sys_env.uart0_cmd_flag = 0xA5;//console 未激活
 }
 
 /** 
@@ -604,7 +605,14 @@ void update_finish (void)
 }
 /*提供给串口中断服务程序，保存串口接收到的单个字符*/   
 void fill_rec_buf(char data)                                                           
-{ 
+{
+	if (sys_env.uart0_cmd_flag == 0xA5){
+		if (0x0D != data){
+			return;
+		}else{
+			sys_env.uart0_cmd_flag = 0;
+		}
+	}
 	if (sys_env.tty_mode == 0x55){ //程序下载
 		sys_env.tty_online_ms = TTY_ONLINE_TIME;
 		iap_code_buf[rec_count++] = data;
@@ -857,21 +865,21 @@ void coin_print (void)
 
 void refresh_data (void)
 {
-	cy_print("%d,%d;", 1, para_set_value.data.kick_start_delay_t1);
-	cy_print("%d,%d;", 2, para_set_value.data.kick_keep_t1);
-	cy_print("%d,%d;", 3, para_set_value.data.kick_start_delay_t2);
-	cy_print("%d,%d;", 4, para_set_value.data.kick_keep_t1);
-	cy_print("%d,%d;", 5, para_set_value.data.precoin_set_num[0]);
-	cy_print("%d,%d;", 6, para_set_value.data.precoin_set_num[2]);
-	cy_print("%d,%d;", 7, para_set_value.data.precoin_set_num[5]);
-	cy_print("%d,%d;", 8, para_set_value.data.precoin_set_num[6]);
-	cy_print("%d,%d;", 9, para_set_value.data.precoin_set_num[7]);
-	cy_print("%d,%d;", 10, para_set_value.data.precoin_set_num[8]);
-	cy_print("%d,%d;", 11, para_set_value.data.precoin_set_num[9]);
-	cy_print("%d,%d;", 12, para_set_value.data.precoin_set_num[10]);
-	cy_print("%d,%d;",22, para_set_value.data.motor_idle_t);
-	cy_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
-	cy_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
+	pc_print("%d,%d;", 1, para_set_value.data.kick_start_delay_t1);
+	pc_print("%d,%d;", 2, para_set_value.data.kick_keep_t1);
+	pc_print("%d,%d;", 3, para_set_value.data.kick_start_delay_t2);
+	pc_print("%d,%d;", 4, para_set_value.data.kick_keep_t1);
+	pc_print("%d,%d;", 5, para_set_value.data.precoin_set_num[0]);
+	pc_print("%d,%d;", 6, para_set_value.data.precoin_set_num[2]);
+	pc_print("%d,%d;", 7, para_set_value.data.precoin_set_num[5]);
+	pc_print("%d,%d;", 8, para_set_value.data.precoin_set_num[6]);
+	pc_print("%d,%d;", 9, para_set_value.data.precoin_set_num[7]);
+	pc_print("%d,%d;", 10, para_set_value.data.precoin_set_num[8]);
+	pc_print("%d,%d;", 11, para_set_value.data.precoin_set_num[9]);
+	pc_print("%d,%d;", 12, para_set_value.data.precoin_set_num[10]);
+	pc_print("%d,%d;",22, para_set_value.data.motor_idle_t);
+	pc_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
+	pc_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
 	disp_allcount_to_pc ();
 }
 

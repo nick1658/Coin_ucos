@@ -52,6 +52,16 @@ extern "C" {
 #define dbg(format, arg...) 
 #endif
 
+
+//#define PC_PRINT	
+#ifdef PC_PRINT
+#define pc_print(format, arg...) Uart0_Printf("" format "", ## arg)
+#define pc_println(format, arg...) Uart0_Printf("" format "\n", ## arg)
+#else
+#define pc_print(format, arg...) 
+#define pc_println(format, arg...) 
+#endif
+
 	
 #define __USE_COIN_LOG__
 #ifdef __USE_COIN_LOG__
@@ -68,6 +78,7 @@ extern "C" {
 #define cy_println(format, arg...) Uart0_Printf("" format "\n", ## arg)
 #define cmd(format, arg...) Uart0_Printf("Nick-Cmd:" format "", ## arg)
 #else
+#define cy_print(format, arg...) 
 #define cy_println(format, arg...) 
 #define cmd(format, arg...) 
 #endif
