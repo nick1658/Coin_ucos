@@ -134,6 +134,7 @@ void counter_clear (void); //
 #define ADDR_LEVEL500 	0x207   // 5元硬币的清分等级设置
 
 #define ADDR_CPU_USAGE 0x300
+#define ADDR_PASSWORD 0x302
 
 //报错 函数  
 #define ALERT_MSG(TIPS,MSG) { \

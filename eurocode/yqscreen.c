@@ -870,6 +870,12 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			dgus_tf1word(ADDR_STORAGE_MOTOR,1);
 		}		
 		break;
+	case ADDR_PASSWORD:
+		if (value == sys_env.password){
+			value = 0;
+			comscreen(Disp_Indexpic[25],Number_IndexpicB);	 // back to the  picture before alert
+		}
+		break;
 	case ADDR_DEBUG:  //后台管理隐藏按键
 		if( (value == 0x02)){
 			sys_env.hmi_debug_flag = 1;

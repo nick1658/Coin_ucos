@@ -46,6 +46,7 @@ void system_env_init (void)
 	sys_env.save_ng_data = 1;
 	sys_env.save_good_data = 1;
 	sys_env.uart0_cmd_flag = 0xA5;//console 未激活
+	sys_env.password = 15736;
 }
 
 /** 
@@ -1651,35 +1652,23 @@ void do_print(int32_t argc, void *cmd_arg)
 	switch (argc)
 	{
 		case 1:     
-			if (arg[argc - 1] == string_to_dec((uint8 *)("ng")))
-			{      
+			if (arg[argc - 1] == string_to_dec((uint8 *)("ng"))){      
 				print_ng_data (sys_env.coin_index);
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("gd"))) // 进行特征值采样
-			{        
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("gd"))){ // 进行特征值采样
 				print_good_data (sys_env.coin_index);
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("env-s"))) // 进行特征值采样
-			{        
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("env-s"))){ // 进行特征值采样
 				print_system_env_info(); 
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("speed"))){
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("speed"))){
 				print_speed ();
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("env-c"))) // 进行特征值采样
-			{        
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("env-c"))){ // 进行特征值采样
 				print_coin_env_info(); 
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-set"))) // 进行特征值采样
-			{        
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-set"))){ // 进行特征值采样
 				print_pre_count_set_value (); 
-			}
-			else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-current"))) // 进行特征值采样
-			{        
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-current"))){ // 进行特征值采样
 				print_pre_count_current (); 
-			}
-			else
-			{
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("password"))){ // 进行特征值采样
+				cy_println ("%d", sys_env.password);
+			}else{
 				cy_println ("Error %d arg", argc);
 			}
 			break;            

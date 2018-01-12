@@ -102,6 +102,7 @@ typedef struct
 	U32 system_delay;
 	U32 sys_runing_time;
 	U32 sys_runing_time_total;
+	U32 password;
 }s_system_env;
 
 extern s_system_env sys_env;
