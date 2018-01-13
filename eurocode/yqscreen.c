@@ -887,6 +887,13 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			dgus_tf1word(ADDR_DEBUG,0);
 			sys_env.hmi_debug_flag = 0;		
 		}	
+		break;	
+	case ADDR_RESET:  //
+		if (value == 0x0123){
+			comscreen(Disp_Indexpic[0],Number_IndexpicB);
+			cy_println ("Software Reset...");
+			run_command ("reset");	
+		}
 		break;
 	case ADDR_MODE:
 		para_set_value.data.system_mode = value;

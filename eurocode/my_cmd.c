@@ -1,4 +1,4 @@
-#include "def.h"
+
 #include "S3C2416.h"
 
 cmd_analyze_struct cmd_analyze; 
@@ -46,7 +46,7 @@ void system_env_init (void)
 	sys_env.save_ng_data = 1;
 	sys_env.save_good_data = 1;
 	sys_env.uart0_cmd_flag = 0xA5;//console 未激活
-	sys_env.password = 15736;
+	sys_env.password = 1573;
 }
 
 /** 
@@ -577,32 +577,34 @@ u16 CRC16(char * _data_buf,int len)
 	return (uchCRCHi<<8|uchCRCLo);
 } 
 
-void update_finish (void)
+void update_finish (e_update_flag flag)
 {
 	u16 crc = 0;
-	if (sys_env.tty_mode == 0x55){
-		if (rec_count > 1)
-		{	
-			crc = CRC16 (iap_code_buf, rec_count - 2);//CRC 校验
-			if (crc == ((iap_code_buf[rec_count - 2] << 8) | iap_code_buf[rec_count - 1])){//最后两个字节是校验码
-				cy_println("OK");//校验通过
-				cmd();
-				run_command ("write flash");
-			}else{
-				comscreen(Disp_Indexpic[27],Number_IndexpicB);	//触摸屏跳转到提示固件丢失界面
-				cy_println("ERROR");//校验失败请求重发
+	switch (flag)
+	{
+		case UART_UPDATE:
+			if (rec_count > 1){	
+				crc = CRC16 (iap_code_buf, rec_count - 2);//CRC 校验
+				if (crc == ((iap_code_buf[rec_count - 2] << 8) | iap_code_buf[rec_count - 1])){//最后两个字节是校验码
+					cy_println("OK");//校验通过
+					cmd();
+					run_command ("write flash");
+				}else{
+					cy_println("ERROR");//校验失败请求重发
+					cmd();
+					comscreen(Disp_Indexpic[27],Number_IndexpicB);	//触摸屏跳转到提示固件丢失界面
+				}
+				rec_count = 0;
+				sys_env.tty_mode = 0;
+				memset (cmd_analyze.rec_buf, 0, sizeof(cmd_analyze.rec_buf));
 			}
-			rec_count = 0;
-			sys_env.tty_mode = 0;
-			memset (cmd_analyze.rec_buf, 0, sizeof(cmd_analyze.rec_buf));
-			comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
-		}
-	}else if(sys_env.tty_mode == 0xaa){
-		rec_count = 0;
-		sys_env.tty_mode = 0;
-		get_hex_data (cmd_analyze.rec_buf);
-		memset (cmd_analyze.rec_buf, 0, sizeof(cmd_analyze.rec_buf));
+		break;
+		case NET_UPDATE:
+			run_command ("write flash");
+			break;
+		default:break;
 	}
+	sys_env.update_flag = NULL_UPDATE;
 }
 /*提供给串口中断服务程序，保存串口接收到的单个字符*/   
 void fill_rec_buf(char data)                                                           
@@ -1896,8 +1898,9 @@ void write_para_1 (int32_t arg[])
 		rec_count = 0; 
 		memset (iap_code_buf, 0, sizeof(iap_code_buf));
 	}else if (arg[0] == string_to_dec((uint8 *)("start"))){
-		comscreen(Disp_Indexpic[22],Number_IndexpicB);	 // back to the  picture before alert
+		comscreen(Disp_Indexpic[22],Number_IndexpicB);	 
 		sys_env.tty_mode = 0x55;
+		sys_env.update_flag = UART_UPDATE;
 		rec_count = 0;
 	}else if (arg[0] == string_to_dec((uint8 *)("flash"))){
 		int *magic_num = (int*)(&iap_code_buf[0x3c]);
@@ -1907,6 +1910,7 @@ void write_para_1 (int32_t arg[])
 				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 completed");   
 			else
 				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 failed"); 
+			comscreen(Disp_Indexpic[23],Number_IndexpicB);	//触摸屏跳转到更新完成界面 
 		}else{
 			cy_println ("The app was not valid!!!"); 
 		}

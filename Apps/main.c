@@ -16,6 +16,21 @@ __align(4) U32 code_flag __attribute__((at(0x32104000), zero_init));
 
 int check_ad1_ad2_value (void);
 
+
+
+extern void TftpTrm250ms(void); //250MS调用一次
+extern u32_t sys_now(void);
+void LwIP_Periodic_Handle(uint32_t localtime)
+{
+	static uint32_t pre_time = 0;
+  /* TCP periodic process every 250 ms */
+	if (localtime - pre_time >= 250/*TCP_TMR_INTERVAL*/){
+		pre_time =  localtime;
+		//tcp_tmr();
+		TftpTrm250ms();
+	}
+}
+
 //主函数
 
 void coin_init (void)
@@ -192,12 +207,36 @@ void main_task(void)
 	}
 }
 
+
+
+
+//NET处理 任务 
+//#define NET_MSG_SIZE 32
+//OS_EVENT * net_msg;			//串口消息队列
+//void * netMsgGrp[NET_MSG_SIZE];			//消息队列存储地址,最大支持32个消息
+void Task3(void *pdata)
+{
+//	u8 err;	
+	(void)pdata;
+	while (1) {
+		if (sys_env.update_flag != NET_UPDATEING){
+			OSTimeDly(20); 
+		}
+
+		if (DM9000_GetReceiveStatus()){
+			ethernetif_input(&DM9000_netif);
+		}
+		LwIP_Periodic_Handle(sys_now ());
+		// Handle timeouts
+		sys_check_timeouts();
+	}
+}
 void Task2(void *pdata)
 {
 	(void)pdata;
 	while (1) {
 		//LED1_NOT;
-		OSTimeDly(20); // LED4 1500ms闪烁
+		OSTimeDly(20); // 
 		if( touch_flag ==1){
 			touchresult();//判断触摸 状态的函数
 			touch_flag =0;
@@ -208,7 +247,12 @@ void Task2(void *pdata)
 		}
 		if (sys_env.tty_online_ms == 1){
 			sys_env.tty_online_ms = 0;
-			update_finish ();
+			update_finish (sys_env.update_flag);
+		}
+		if (sys_env.net_task == 1){
+			sys_env.net_task = 0;
+			OSTimeDly(500); 
+			run_command ("reset");
 		}
 	}
 }
@@ -221,7 +265,7 @@ void Task1(void *pdata)
 		OSTimeDly(500); // LED3 1000ms闪烁
 		//cy_print(" OSIdleCtrRun: %ld  OSIdleCtrMax: %ld  \n", OSIdleCtrRun, OSIdleCtrMax);  
 		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);  
-		dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
+		//dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
 		//cy_println ("***********************task 1***********************");
 		if((sys_env.workstep == 10) && (sys_env.print_wave_to_pc == 0)){
 			disp_allcount_to_pc ();
@@ -244,11 +288,20 @@ void TaskStart(void *pdata)
 	OSStatInit(); //开启统计任务 
 	coin_init ();
 	
+	// Initilaize the LwIP stack
+	lwip_init();	
+	// ip address 192, 168, 1, 20
+	ethernetif_config();	
+	httpd_init();	
+	tftp_init ();
+	
 	cy_println ("[Please press ENTER to activate this console]");
 
+	//创建NET消息队列
+	//net_msg=OSQCreate(&netMsgGrp[0], NET_MSG_SIZE);	//创建消息队列
 	OSTaskCreate(Task1, (void *)0, &Task1Stk[TASK1_STK_SIZE - 1], Task1Prio);
 	OSTaskCreate(Task2, (void *)0, &Task2Stk[TASK2_STK_SIZE - 1], Task2Prio);
-	//OSTaskCreate(Task3, (void *)0, &Task3Stk[TASK3_STK_SIZE - 1], Task3Prio);
+	OSTaskCreate(Task3, (void *)0, &Task3Stk[TASK3_STK_SIZE - 1], Task3Prio);
 	while (1) {
 		OSTimeDly(10); // LED2 500ms闪烁	
 		

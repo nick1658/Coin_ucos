@@ -74,6 +74,13 @@ typedef struct
 }cmd_analyze_struct;  
 
 
+typedef enum {
+  NULL_UPDATE = 0,
+  UART_UPDATE = 1,
+  NET_UPDATE = 2,
+  NET_UPDATEING = 3
+} e_update_flag;
+
 typedef struct
 {
 	U32 print_wave_to_pc;
@@ -103,17 +110,25 @@ typedef struct
 	U32 sys_runing_time;
 	U32 sys_runing_time_total;
 	U32 password;
+	e_update_flag update_flag;
+	U32 net_task;
 }s_system_env;
 
 extern s_system_env sys_env;
+extern uint32_t time_out;
 #define CODE_BUF_SIZE 256*1024
 extern char iap_code_buf[CODE_BUF_SIZE]; // ³ÌÐò»º³åÇø256K
+
+
+
+extern void Delay_ms(uint32_t Count);	
+extern void Delay_us(uint32_t Count);
 
 void system_env_init (void);
 void print_ng_data (S16 index);
 void print_system_env_info (void);
 void fill_rec_buf(char data);
-void update_finish (void);
+void update_finish (e_update_flag flag);
 u16 CRC16(char * _data_buf, int len);
 void vTaskCmdAnalyze( void );
 void run_command (char * _cmd_str);

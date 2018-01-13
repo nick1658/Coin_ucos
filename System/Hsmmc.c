@@ -11,7 +11,7 @@ static unsigned int RCA; // 卡相对地址
 // Hsmmc缓存,内存空间关cache,以作DMA传输,声明从段section("No_Cache")分配内存,16k
 __align(4) static unsigned char Hsmmc_Buffer[16*1024] __attribute__((section("No_Cache"), zero_init));
 
-__asm static void Delay_us(unsigned int nCount) 
+__asm void Delay_us(unsigned int nCount) 
 {
 //延时1us,共延时nCount(R0) us
 Delay1	

@@ -1,7 +1,7 @@
 /**************************************************************/
 /*The initial Timer4*/
 /**************************************************************/
-#include "def.h"
+
 #include "S3C2416.h"
 #include "Exception.h"
 
@@ -164,17 +164,12 @@ void Timer3_Init(unsigned short us, void (*Callback)(void), unsigned short enabl
 
 
 volatile uint32_t SystemTick;
+uint32_t time_out = 0;
 
 void Timer2_IRQ(void)
 {
-//	static U32 T_count = 0;
-//	T_count++;
-//	
-//	if (T_count > 1000){
-//		T_count = 0;
-//		LED1_NOT;
-//	}
-//	SystemTick++; // 1ms/tick
+	SystemTick++; // 1ms/tick
+	if (time_out)time_out++;
 }
 
 static void Timer2_Handler(void)
@@ -352,7 +347,7 @@ void Timer_Init (void)
 	
 	//Timer1_Init(1000, OSTimeTick);//1ms
 	Timer1_Init(23000, Timer1_IRQ, 0);//1ms
-	//Timer2_Init(500, Timer2_IRQ, 1);//0.5ms
+	Timer2_Init(1000, Timer2_IRQ, 1);//0.5ms
 	Timer3_Init(100, Timer3_IRQ, 1);//0.1ms
 	Timer4_Init(20000, Timer4_IRQ, 1);//20ms
 	
