@@ -225,6 +225,7 @@ void disp_allcount_to_pc (void)
 	pc_print("%d,%d;",19, disp_buf.total_good);
 	pc_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
 	pc_print("%d,%d;",21, disp_buf.total_ng);
+	pc_print("%d,%d;",28, OSCPUUsage);
 	pc_print("%d,%d;",30, disp_buf.m_1jiao_big);
 	if (sys_env.workstep == 1){//停机
 		pc_print("%d,%d;",50, 0);
@@ -903,21 +904,8 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		}
 		break;
 	case ADDR_MODE:
-		para_set_value.data.system_mode = value;
-		for (i = 0; i < COIN_TYPE_NUM; i++){
-			if (value == 0x00){
-				addr = para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type];//预置计数设置值初始化
-			}else{
-				addr = 9999;
-			}
-			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set = addr;
-			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0;//当前计数值 清零
-			*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0;
-  
-			dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
-		}
+		change_coin_mode (value);
 		write_para (); //写入预置值  
-		counter_clear ();
 		break;
 	/////////////////////////////////////////////
 	//如果是1 共公参数置0 自学习值 重新赋值  鉴别范围 重新赋值
@@ -925,4 +913,23 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		dgus_tf1word(ADDR_CNCH,coinchoose);  //确认 图标变量
 		break;
 	}
+}
+
+void change_coin_mode (U16 value)
+{
+	int i, set_data;
+	para_set_value.data.system_mode = value;
+	for (i = 0; i < COIN_TYPE_NUM; i++){
+		if (value == 0x00){
+			set_data = para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type];//预置计数设置值初始化
+		}else{
+			set_data = 9999;
+		}
+		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set = set_data;
+		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0;//当前计数值 清零
+		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0;
+ 
+		dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
+	}
+	counter_clear ();
 }

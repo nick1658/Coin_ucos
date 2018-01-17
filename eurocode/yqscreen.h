@@ -233,6 +233,8 @@ struct disp_count_buf{
 
 void disp_precount(long ze,long zs,long fg);      //   预置计数 界面   实时 显示  币种 金额  数量   预置值  币数  异币
 
+void change_coin_mode (U16 value);
+
 
 #define PRESETMAX 999999   // 6  表示  只能设到7位   9999999   7位表示能设到8位
 #define PRESLA  8

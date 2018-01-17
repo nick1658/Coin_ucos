@@ -325,8 +325,8 @@ void TaskStart(void *pdata)
 			}
 			case 6: {    
 				setStdValue	();//设置鉴伪基准值
-				if( adstd_offset() == 1){//  检测基准值，并进行补偿
-				//if (1) {//  检测基准值，并进行补偿
+				//if( adstd_offset() == 1){//  检测基准值，并进行补偿
+				if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
