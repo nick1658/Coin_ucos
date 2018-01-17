@@ -559,14 +559,14 @@
               <FilePath>..\eurocode\AD_filter.c</FilePath>
             </File>
             <File>
-              <FileName>my_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\eurocode\my_cmd.c</FilePath>
-            </File>
-            <File>
               <FileName>log.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\eurocode\log.c</FilePath>
+            </File>
+            <File>
+              <FileName>my_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\eurocode\my_cmd.c</FilePath>
             </File>
           </Files>
         </Group>

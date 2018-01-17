@@ -10,6 +10,7 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 	int i = 0;
 	int good_coin;
 	
+	processed_coin_info.total_coin_old = processed_coin_info.total_coin;
 	//cy_println("begin init full coin num %d ...", coin_env.full_stack_num);
 	for (i = 0; i < coin_env.full_stack_num; i++){//预置计数模式时，当某种硬币的计数值达到预置值，就可以清零该硬币的计数
 		//cy_println("begin init i = %d", i);

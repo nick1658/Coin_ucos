@@ -14,6 +14,7 @@ typedef struct
 	U32 total_good;
 	U32 total_ng;
 	U32 total_coin;
+	U32 total_coin_old;
 	U32 coinnumber;
 	S16 ad2_averaged_value;
 }s_processed_coin_info;

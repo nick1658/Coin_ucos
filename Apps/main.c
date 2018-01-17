@@ -159,7 +159,7 @@ void coin_init (void)
 	adstd_offset ();//设置补偿值，后面每次启动之前都会补偿一次，因为鉴伪基准值会随温度在一定范围内变化
 	
 	comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	  // 跳转到主界面
-	//sys_env.system_delay = ELECTRICTIME;
+	sys_env.system_delay = para_set_value.data.system_boot_delay;
 	/*开机预热，如果时间不够，可适当延长*/
 	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	 
 }
@@ -267,9 +267,9 @@ void Task1(void *pdata)
 		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);  
 		//dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
 		//cy_println ("***********************task 1***********************");
-		if((sys_env.workstep == 10) && (sys_env.print_wave_to_pc == 0)){
-			disp_allcount_to_pc ();
-		}
+//		if((sys_env.workstep == 10) && (sys_env.print_wave_to_pc == 0)){
+//			disp_allcount_to_pc ();
+//		}
 	}
 }
 
@@ -310,17 +310,9 @@ void TaskStart(void *pdata)
 			case 0:{ 
 				ALL_STOP();//停掉所有的输出
 				sys_env.workstep = 1;
-				refresh_data ();
 				disp_allcount ();
-				pc_println ("50,stop;");//停机
 				if (sys_env.sys_runing_time_total > 0){
-					cy_print ("\n----------------------------------------------------------------------\n");
-					cy_print("   详细信息:  \n");
-					cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
-					cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
-					cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-					cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), 
-											((processed_coin_info.total_coin) * 60) / (sys_env.sys_runing_time_total / 10000));	
+					sys_env.coin_speed = ((processed_coin_info.total_coin - processed_coin_info.total_coin_old) * 60) / (sys_env.sys_runing_time_total / 10000);
 				}
 				break;
 			}
@@ -337,7 +329,6 @@ void TaskStart(void *pdata)
 				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
-					pc_println ("50,start;");//开机
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
 						for (i = 0; i < COIN_TYPE_NUM; i++){
 							*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0; //

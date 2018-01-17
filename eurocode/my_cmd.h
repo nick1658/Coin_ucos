@@ -78,7 +78,8 @@ typedef enum {
   NULL_UPDATE = 0,
   UART_UPDATE = 1,
   NET_UPDATE = 2,
-  NET_UPDATEING = 3
+  NET_UPDATEING = 3,
+  UART_COMMAND = 4
 } e_update_flag;
 
 typedef struct
@@ -112,6 +113,7 @@ typedef struct
 	U32 password;
 	e_update_flag update_flag;
 	U32 net_task;
+	U32 coin_speed;
 }s_system_env;
 
 extern s_system_env sys_env;
@@ -140,6 +142,7 @@ void coin_print (void);
 void coin_clear (void);
 void coin_clear_alarm (void);
 void refresh_data (void);
+void poll_data (void);
 
 S16 is_repeate (S16 _coin_index);//  判别 是不是重币的函数
 

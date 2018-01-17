@@ -1233,7 +1233,7 @@ typedef __I uint8_t vuc8;   /*!< Read Only */
 #endif
 
 
-//#define PC_PRINT	
+#define PC_PRINT	
 #ifdef PC_PRINT
 #define pc_print(format, arg...) Uart0_Printf("" format "", ## arg)
 #define pc_println(format, arg...) Uart0_Printf("" format "\n", ## arg)

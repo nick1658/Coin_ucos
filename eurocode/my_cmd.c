@@ -453,6 +453,9 @@ int get_hex_data (char * buf)
 					case 0x0005://清零
 						counter_clear ();
 						break;
+					case 0x0006://poll
+						poll_data ();
+						break;
 					case 0xE001://清除报警
 						coin_clear_alarm ();
 						break;
@@ -479,10 +482,10 @@ int get_hex_data (char * buf)
 						para_set_value.data.precoin_set_num[0] = para_value;
 						break;
 					case 6:
-						para_set_value.data.precoin_set_num[2] = para_value;
+						para_set_value.data.precoin_set_num[1] = para_value;
 						break;
 					case 7:
-						para_set_value.data.precoin_set_num[5] = para_value;
+						para_set_value.data.precoin_set_num[4] = para_value;
 						break;
 					case 8:
 						para_set_value.data.precoin_set_num[6] = para_value;
@@ -507,6 +510,34 @@ int get_hex_data (char * buf)
 						break;
 					case 24:
 						para_set_value.data.coin_full_rej_pos = para_value;
+						break;
+					case 25:
+						para_set_value.data.system_boot_delay = para_value;
+						break;
+					case 30:
+						para_set_value.data.precoin_set_num[3] = para_value;
+						break;
+					case 51:
+						sys_env.coin_index = para_value;
+						refresh_data ();
+						break;
+					case 52:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0 = para_value;
+						break;
+					case 53:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0 = para_value;
+						break;
+					case 54:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1 = para_value;
+						break;
+					case 55:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1 = para_value;
+						break;
+					case 56:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2 = para_value;
+						break;
+					case 57:
+						pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2 = para_value;
 						break;
 					default:
 						break;
@@ -602,6 +633,14 @@ void update_finish (e_update_flag flag)
 		case NET_UPDATE:
 			run_command ("write flash");
 			break;
+		case UART_COMMAND:
+			if (rec_count > 1){	
+				get_hex_data (cmd_analyze.rec_buf);
+				rec_count = 0;
+				sys_env.tty_mode = 0;
+				memset (cmd_analyze.rec_buf, 0, sizeof(cmd_analyze.rec_buf));
+			}
+			break;
 		default:break;
 	}
 	sys_env.update_flag = NULL_UPDATE;
@@ -654,6 +693,7 @@ void fill_rec_buf(char data)
 			return;
 		}else if (data == ':'){
 			sys_env.tty_mode = 0xaa;
+			sys_env.update_flag = UART_COMMAND;
 			cmd_analyze.rec_buf[rec_count++] = data; 
 			sys_env.tty_online_ms = TTY_ONLINE_TIME;
 		}else{
@@ -883,6 +923,19 @@ void refresh_data (void)
 	pc_print("%d,%d;",22, para_set_value.data.motor_idle_t);
 	pc_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
 	pc_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
+	pc_print("%d,%d;",25, para_set_value.data.system_boot_delay);
+	pc_print("%d,%d;",51, sys_env.coin_index);
+	pc_print("%d,%d;",52, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0);
+	pc_print("%d,%d;",53, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0);
+	pc_print("%d,%d;",54, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1);
+	pc_print("%d,%d;",55, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1);
+	pc_print("%d,%d;",56, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2);
+	pc_print("%d,%d;",57, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
+	disp_allcount_to_pc ();
+}
+
+void poll_data (void)
+{
 	disp_allcount_to_pc ();
 }
 
@@ -1020,6 +1073,10 @@ void set_para_2  (int32_t arg[])
 	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep1"))){                                                                                                                    
 		cy_println("set kick_keep_time1 = %d", arg[1]);                                                     
 		para_set_value.data.kick_keep_t1 = arg[1];   
+		write_para ();   
+	}else if (arg[0] == string_to_dec((uint8 *)("boot-delay"))){                                                                                                                    
+		cy_println("set system_boot_delay = %d", arg[1]);                                                     
+		para_set_value.data.system_boot_delay = arg[1];   
 		write_para ();                                                                                                                
 	}else if (arg[0] == string_to_dec((uint8 *)("kick-start2"))){                                                                                                                    
 		cy_println("set kick_start_delay_time2 = %d", arg[1]);                                                     
@@ -1437,7 +1494,7 @@ void print_system_env_info (void)
 	cy_println("----------------------------------------------------");           
 	cy_println ("pre_count_stop_n       = %d", para_set_value.data.pre_count_stop_n);    
 	cy_println ("coin_full_rej_pos      = %d", para_set_value.data.coin_full_rej_pos);    
-	//cy_println ("adj_offset_position    = %d", para_set_value.data.adj_offset_position);        
+	cy_println ("system_boot_delay      = %d", para_set_value.data.system_boot_delay);        
 	cy_println("----------------------------------------------------");  
 	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t);            
 	cy_println("----------------------------------------------------");
@@ -1642,8 +1699,7 @@ void print_speed (void)
 		cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
 		cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
 		cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-		cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), 
-					((processed_coin_info.total_coin) * 60) / (sys_env.sys_runing_time_total / 10000));	
+		cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), sys_env.coin_speed);	
 	}
 }
 

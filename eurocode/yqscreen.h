@@ -227,6 +227,7 @@ struct disp_count_buf{
 	U32 total_good;
 	U32 total_ng;
 	U32 total_money;
+	U32 coin_speed;
 };
 
 

@@ -210,7 +210,7 @@ void read_coin_value(void) 	 // read  COIN  0--8
 	pre_value.country[COUNTRY_ID].coin[0].data.coin_type = 0;
 	pre_value.country[COUNTRY_ID].coin[1].data.coin_type = 1;
 	pre_value.country[COUNTRY_ID].coin[2].data.coin_type = 1;
-	pre_value.country[COUNTRY_ID].coin[3].data.coin_type = 3;
+	pre_value.country[COUNTRY_ID].coin[3].data.coin_type = 3;//´ó1½Ç
 	pre_value.country[COUNTRY_ID].coin[4].data.coin_type = 4;
 	pre_value.country[COUNTRY_ID].coin[5].data.coin_type = 4;
 	pre_value.country[COUNTRY_ID].coin[6].data.coin_type = 6;

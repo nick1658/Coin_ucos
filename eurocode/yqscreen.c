@@ -195,6 +195,7 @@ void disp_allcount(void)     //pre counting ,detail list
 		disp_buf.total_good = processed_coin_info.total_good;
 		disp_buf.total_ng = processed_coin_info.total_ng;
 		disp_buf.total_money = processed_coin_info.total_money;
+		disp_buf.coin_speed = sys_env.coin_speed;
         OS_EXIT_CRITICAL();
 		
 		dgus_tf2word(ADDR_XD10, disp_buf.m_1yuan);		//list 1
@@ -225,6 +226,12 @@ void disp_allcount_to_pc (void)
 	pc_print("%d,%d.%d%d;",20, (disp_buf.total_money/100),((disp_buf.total_money%100)/10),((disp_buf.total_money%100)%10));
 	pc_print("%d,%d;",21, disp_buf.total_ng);
 	pc_print("%d,%d;",30, disp_buf.m_1jiao_big);
+	if (sys_env.workstep == 1){//Í£»ú
+		pc_print("%d,%d;",50, 0);
+	}else if(sys_env.workstep == 10){//ÔËÐÐ
+		pc_print("%d,%d;",50, 1);
+	}
+	pc_print("%d,%d;",58, disp_buf.coin_speed);
 	pc_println();
 }
 
