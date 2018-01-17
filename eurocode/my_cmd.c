@@ -908,22 +908,23 @@ void coin_print (void)
 
 void refresh_data (void)
 {
-	pc_print("%d,%d;", 1, para_set_value.data.kick_start_delay_t1);
-	pc_print("%d,%d;", 2, para_set_value.data.kick_keep_t1);
-	pc_print("%d,%d;", 3, para_set_value.data.kick_start_delay_t2);
-	pc_print("%d,%d;", 4, para_set_value.data.kick_keep_t1);
-	pc_print("%d,%d;", 5, para_set_value.data.precoin_set_num[0]);
-	pc_print("%d,%d;", 6, para_set_value.data.precoin_set_num[2]);
-	pc_print("%d,%d;", 7, para_set_value.data.precoin_set_num[5]);
-	pc_print("%d,%d;", 8, para_set_value.data.precoin_set_num[6]);
-	pc_print("%d,%d;", 9, para_set_value.data.precoin_set_num[7]);
-	pc_print("%d,%d;", 10, para_set_value.data.precoin_set_num[8]);
-	pc_print("%d,%d;", 11, para_set_value.data.precoin_set_num[9]);
-	pc_print("%d,%d;", 12, para_set_value.data.precoin_set_num[10]);
+	pc_print("%d,%d;",1, para_set_value.data.kick_start_delay_t1);
+	pc_print("%d,%d;",2, para_set_value.data.kick_keep_t1);
+	pc_print("%d,%d;",3, para_set_value.data.kick_start_delay_t2);
+	pc_print("%d,%d;",4, para_set_value.data.kick_keep_t1);
+	pc_print("%d,%d;",5, para_set_value.data.precoin_set_num[0]);
+	pc_print("%d,%d;",6, para_set_value.data.precoin_set_num[1]);
+	pc_print("%d,%d;",7, para_set_value.data.precoin_set_num[4]);
+	pc_print("%d,%d;",8, para_set_value.data.precoin_set_num[6]);
+	pc_print("%d,%d;",9, para_set_value.data.precoin_set_num[7]);
+	pc_print("%d,%d;",10, para_set_value.data.precoin_set_num[8]);
+	pc_print("%d,%d;",11, para_set_value.data.precoin_set_num[9]);
+	pc_print("%d,%d;",12, para_set_value.data.precoin_set_num[10]);
 	pc_print("%d,%d;",22, para_set_value.data.motor_idle_t);
 	pc_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
 	pc_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
 	pc_print("%d,%d;",25, para_set_value.data.system_boot_delay);
+	pc_print("%d,%d;",30, para_set_value.data.precoin_set_num[3]);
 	pc_print("%d,%d;",51, sys_env.coin_index);
 	pc_print("%d,%d;",52, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0);
 	pc_print("%d,%d;",53, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0);
