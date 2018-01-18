@@ -232,7 +232,7 @@ void disp_allcount_to_pc (void)
 	}else if(sys_env.workstep == 10){//ÔËÐÐ
 		pc_print("%d,%d;",50, 1);
 	}
-	pc_print("%d,%d;",58, disp_buf.coin_speed);
+	pc_print("%d,%d;",58, sys_env.coin_speed);
 	pc_println();
 }
 

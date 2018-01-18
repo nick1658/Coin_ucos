@@ -226,7 +226,7 @@ void alertfuc(U16 errorflag) //报错
 			ALERT_MSG ("提示", "轨道堵币！请检查轨道或传感器。再次启动前请先清零！");
 			break;	
 		case ADSTDEEROR:
-			ALERT_MSG ("提示", "传感器异常，请调整基准值，然后重试！");
+			ALERT_MSG ("提示", "传感器异常，请检查传感器下面是否卡有硬币或者调整基准值，然后重试！");
 			break;	
 		case COUNT_FINISHED:
 			switch (coin_env.full_stack_num){
@@ -275,10 +275,10 @@ void alertfuc(U16 errorflag) //报错
 			ALERT_MSG ("提示", str_buf);
 			break;	
 		case COMPLETE_UPDATE:
-			ALERT_MSG ("提示", "程序更新完成，请重新启动");
+			ALERT_MSG ("提示", "程序更新完成，请断电重新启动");
 			break;
 		default:
-			ALERT_MSG ("提示", "异常，请重新启动");
+			ALERT_MSG ("提示", "异常，请断电重新启动");
 			break;
 	}
 	return;
