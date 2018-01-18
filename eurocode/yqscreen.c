@@ -776,11 +776,13 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 ///////////////////////////////////////////////////////
 		for (i = 0; i < COIN_TYPE_NUM; i++){
 			if (addr == pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr){
-				para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type] = (int)(touchnum[7]*256 )+(int)touchnum[8];
-				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set = para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type];
+				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set =  (int)(touchnum[7]*256 )+(int)touchnum[8];
 				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0;//当前计数值 清零
 				*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_full_flag = 0;
-				write_para (); //写入预置值    
+				if (para_set_value.data.system_mode == 0){
+					para_set_value.data.precoin_set_num[pre_value.country[COUNTRY_ID].coin[i].data.coin_type] = *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set;
+					write_para (); //写入预置值    
+				}
 				
 				dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
 				break;

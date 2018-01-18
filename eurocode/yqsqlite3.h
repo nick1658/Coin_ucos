@@ -179,6 +179,7 @@ typedef struct
 	U32 * p_pre_count_full_flag;
 	U32 * p_coinval;
 	U32 coin_type;
+	U32 accept;
 	U16 hmi_pre_count_set_addr;
 	U16 money;
 }s_coin_cmp_value;

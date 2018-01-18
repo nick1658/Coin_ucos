@@ -222,6 +222,9 @@ void Task3(void *pdata)
 		if (sys_env.update_flag != NET_UPDATEING){
 			OSTimeDly(20); 
 		}
+		if (sys_env.workstep != 1){//待机状态下才能联网更新
+			continue;
+		}
 
 		if (DM9000_GetReceiveStatus()){
 			ethernetif_input(&DM9000_netif);
@@ -287,7 +290,7 @@ void TaskStart(void *pdata)
 	(void)pdata;
 	OSStatInit(); //开启统计任务 
 	coin_init ();
-	
+
 	// Initilaize the LwIP stack
 	lwip_init();	
 	// ip address 192, 168, 1, 20
@@ -309,11 +312,11 @@ void TaskStart(void *pdata)
 		{
 			case 0:{ 
 				ALL_STOP();//停掉所有的输出
-				sys_env.workstep = 1;
 				if (sys_env.sys_runing_time_total > 0){
 					sys_env.coin_speed = ((processed_coin_info.total_coin - processed_coin_info.total_coin_old) * 60) / (sys_env.sys_runing_time_total / 10000);
 				}
 				disp_allcount ();
+				sys_env.workstep = 1;
 				break;
 			}
 			case 1://待机状态
@@ -325,8 +328,8 @@ void TaskStart(void *pdata)
 			}
 			case 6: {    
 				setStdValue	();//设置鉴伪基准值
-				//if( adstd_offset() == 1){//  检测基准值，并进行补偿
-				if (1) {//  检测基准值，并进行补偿
+				if( adstd_offset() == 1){//  检测基准值，并进行补偿
+				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;
 					if ((sys_env.auto_clear == 1) || para_set_value.data.coin_full_rej_pos == 3){//如果设置自动清零，则每次启动都清零计数
