@@ -49,14 +49,7 @@ void coin_init (void)
 	tscount = 0;
 	blockflag = ADBLOCKT; //此变量在yqadc.c文件中定义
 	adtime = 0;    //定时中断里 计时
-	
-	coin_env.ad0_step =0;   // AD 步骤号  
-	coin_env.ad1_step =0;   // AD 步骤号  
-	coin_env.ad2_step =0;   // AD 步骤号 
-	
-	std_ad0 = 0;
-	std_ad1 = 0;
-	std_ad2 = 0;
+
 	
 //	db_id = 0;   //历史数据 表格已经显示 数
 	

@@ -168,7 +168,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\System\Exception.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\S3C2416\../System/Exception.c\95</Expression>
+          <Expression></Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
@@ -184,14 +184,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\System\Exception.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\S3C2416\../System/Exception.c\92</Expression>
+          <Expression></Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
           <LineNumber>55</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>805342932</Address>
+          <Address>805343000</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -200,7 +200,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\eurocode\yqcoin.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\S3C2416\../eurocode/yqcoin.c\55</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -394,7 +394,7 @@
 
   <Group>
     <GroupName>System</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

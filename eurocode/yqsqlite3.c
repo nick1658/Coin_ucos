@@ -114,9 +114,11 @@ void initial_nandflash(void)    //nandflash
 		para_set_value.data.motor_idle_t = 400;
 		para_set_value.data.adj_offset_position = 4096;
 		para_set_value.data.pre_count_stop_n = 1;
+		para_set_value.data.system_boot_delay = 0;
+		para_set_value.data.system_mode = 1;
 		
 		for (i = 0; i < COIN_TYPE_NUM; i++){
-			para_set_value.data.precoin_set_num[i] = 9999;
+			para_set_value.data.precoin_set_num[i] = 50;
 		}
 	
 		test_erase_r_code (Nand_EraseBlock(PUBULIC_DATA_START_BLOCK_NUM ));
@@ -147,11 +149,8 @@ void initial_nandflash(void)    //nandflash
 						(COUNTRY0_COIN_PRE_VALUE_START_BLOCK_NUM ),
 						(COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM + i)); 
 		}
-	}
-	else
-	{
+	}else{
 		cy_println ("Check Data Completed!");
-		//read_coin_value(); 	//读出 币种名称 工号
 	}
 	
 }
@@ -299,12 +298,6 @@ void ini_picaddr(void) //币种切换时的 初始化地址函数
 	int pi;
 	read_para();		 //开机 读入当前 当前累计总额  当前总量 当前异币
 	// 各币种 数量	开机初始化为零
-	ch0_count = 0;	   //每个通道的硬币数  初始化
-			
-	coin_env.ad0_step = 0;		// 各函数 步骤号初始化
-	coin_env.ad1_step = 0;
-	coin_env.ad2_step = 0;
-	ccstep = 0;
 	
 	for(pi = 0;pi<COIN_TYPE_NUM;pi++)
 	{
