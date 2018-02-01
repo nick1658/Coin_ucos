@@ -26,7 +26,7 @@ void print_func(void)     // 打印
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
 			if (touchnum[7]>0){
-				Uart1_Printf("日期:20%02x-%02x-%02x %02x:%02x\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11]);
+				Uart1_Printf(" 日期:20%02x-%02x-%02x %02x:%02x\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11]);
 				touch_flag = 0;
 				break;
 			}else{
