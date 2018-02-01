@@ -688,6 +688,9 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 						case 11:
 							sprintf (str_buf, "特征值与5元纪念币有冲突！请确认是否混有5元纪念币，请清除后重新学习，此次数据不会保存。本次学习硬币数量:%d枚", coinlearnnumber);
 							break;
+						case 1002:
+							sprintf (str_buf, "特征值范围太大，请确认是否混有其他种类的硬币，清除后重新学习，此次数据不会保存。本次学习硬币数量:%d枚", coinlearnnumber);
+							break;
 						default:
 							sprintf (str_buf, "特征学习异常，本次数据不会保存，请重试");break;
 					}

@@ -1582,7 +1582,8 @@ void print_ng_data (S16 index)
 		return;
 	print_cmp_data (index);                                                                                                                     
 	cy_println("-------------------print %6d ng data-------------------------------", ng_value_index);                                               
-	cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                    
+	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                  
+	cy_println ("   index   ad_index         H             M             L");                                                                   
 	for (i = 0; i < ng_value_index; i++)                                                                                                      
 	{                                                                                                                                          
 		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].ad_index, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);                   
@@ -1596,7 +1597,8 @@ void print_good_data (S16 index)
 	
 	print_cmp_data (index);                                                                                                                                      
 	cy_println("-------------------print %6d good data-----------------------------", good_value_index);                                                 
-	cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                    
+	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                               
+	cy_println ("   index   ad_index         H             M             L");                                                          
 	for (i = 0; i < good_value_index; i++)                                                                                                      
 	{                                                                                                                                        
 		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].ad_index, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);                      
@@ -2209,7 +2211,7 @@ S16 is_repeate (S16 _coin_index)
 		}
 	}
 	if(((coin_maxvalue0 - coin_minvalue0) > 100)){
-		ei = CNNM8+2;//在图标里，这个是提示 学习范围太大
+		ei = 1002;//在图标里，这个是提示 学习范围太大
 	}
 	return ei;
 }
