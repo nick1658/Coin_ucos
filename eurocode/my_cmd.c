@@ -950,9 +950,9 @@ void set_para_1  (int32_t arg[])
 	{
 		if (is_repeate (sys_env.coin_index))
 		{
-			dbg ("**********************************************************");
-			dbg ("**The Value May Be not Correct so Data Will not be Saved**");
-			dbg ("**********************************************************");
+			cy_println ("**********************************************************");
+			cy_println ("**The Value May Be not Correct so Data Will not be Saved**");
+			cy_println ("**********************************************************");
 			return ;
 		}
 		if (coinlearnnumber == 0)
@@ -2178,7 +2178,7 @@ S16 is_repeate (S16 _coin_index)
 	for (i = 0; i < COIN_TYPE_NUM; i++){
 		if ( _coin_index != i){
 			if (ng_info_echo_off != 1)
-				dbg ("Compare with Coin %d", i);
+				cy_println ("Compare with Coin %d", i);
 			if( 
 				(
 					((temp_coin_maxvalue0 >= coin_cmp_value[i].compare_max0) && (temp_coin_minvalue0 <= coin_cmp_value[i].compare_min0)) || //与1元   通道0比
@@ -2196,15 +2196,15 @@ S16 is_repeate (S16 _coin_index)
 					((temp_coin_minvalue2 <= coin_cmp_value[i].compare_max2) && (temp_coin_minvalue2 >= coin_cmp_value[i].compare_min2))
 				) && (pre_value.country[coinchoose].coin[i].data.max2 > pre_value.country[coinchoose].coin[i].data.min2) 
 			   ){
-				dbg ("Note!!! value Repeat with Coin %d please comfirm !!!", i);
-				dbg ("coin %d value is:", _coin_index);
-				dbg ("min0 = %d max0 = %d", temp_coin_minvalue0, temp_coin_maxvalue0);
-				dbg ("min1 = %d max1 = %d", temp_coin_minvalue1, temp_coin_maxvalue1);
-				dbg ("min2 = %d max2 = %d", temp_coin_minvalue2, temp_coin_maxvalue2);
-				dbg ("coin %d value is:", i);
-				dbg ("min0 = %d max0 = %d", coin_cmp_value[i].compare_min0, coin_cmp_value[i].compare_max0);
-				dbg ("min1 = %d max1 = %d", coin_cmp_value[i].compare_min1, coin_cmp_value[i].compare_max1);
-				dbg ("min2 = %d max2 = %d", coin_cmp_value[i].compare_min2, coin_cmp_value[i].compare_max2);
+				cy_println ("Note!!! value Repeat with Coin %d please comfirm !!!", i);
+				cy_println ("coin %d value is:", _coin_index);
+				cy_println ("min0 = %d max0 = %d", temp_coin_minvalue0, temp_coin_maxvalue0);
+				cy_println ("min1 = %d max1 = %d", temp_coin_minvalue1, temp_coin_maxvalue1);
+				cy_println ("min2 = %d max2 = %d", temp_coin_minvalue2, temp_coin_maxvalue2);
+				cy_println ("coin %d value is:", i);
+				cy_println ("min0 = %d max0 = %d", coin_cmp_value[i].compare_min0, coin_cmp_value[i].compare_max0);
+				cy_println ("min1 = %d max1 = %d", coin_cmp_value[i].compare_min1, coin_cmp_value[i].compare_max1);
+				cy_println ("min2 = %d max2 = %d", coin_cmp_value[i].compare_min2, coin_cmp_value[i].compare_max2);
 				ei = i+1;	//提示 交叉
 				return ei;
 			}
