@@ -1211,10 +1211,11 @@ int32_t run_step_motor (int32_t arg[])
 	int32_t step = arg[0];
 	int32_t pwm_width = arg[1];                                     
 	cy_println("run motor step = %d pwm_width = %d", step, pwm_width);    
-	if (step < 0)
-	{
-		//EMKICK2(STARTRUN);  //kick back	
+	if (step < 0){
+		EMKICK1(STARTRUN);  //kick back	
 		step *= -1;
+	}else{
+		EMKICK1(STOPRUN);  //kick back	
 	}
 	for (i = 0; i < step; i++)
 	{
@@ -1226,8 +1227,8 @@ int32_t run_step_motor (int32_t arg[])
 				__nop ();//SetWatchDog(); //¿´ÃÅ¹·Î¹¹·;
 			}
 			EMKICK2 (STOPRUN);	  // kick out 
-			//time = pwm_width;	  //kick_keep_time*1ms
-			time = 180;	  //kick_keep_time*1ms
+			time = pwm_width;	  //kick_keep_time*1ms
+			//time = 180;	  //kick_keep_time*1ms
 			while(time != 0)
 			{
 				__nop ();//SetWatchDog(); //¿´ÃÅ¹·Î¹¹·;
