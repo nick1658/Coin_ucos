@@ -1207,15 +1207,29 @@ void save_all_stdvalue_coin (int32_t _country_index, int32_t _coin_index, int32_
 
 int32_t run_step_motor (int32_t arg[])
 {
+	static int motor_dir = 0, motor_step = 0;
 	int i;
 	int32_t step = arg[0];
 	int32_t pwm_width = arg[1];                                     
 	cy_println("run motor step = %d pwm_width = %d", step, pwm_width);    
 	if (step < 0){
-		EMKICK1(STARTRUN);  //kick back	
+		EMKICK1(STARTRUN);  //
+		motor_dir = 0;
 		step *= -1;
+		motor_step = step;
+	}else if(step > 0){
+		motor_step = step;
+		EMKICK1(STOPRUN);  //
+		motor_dir = 1;
 	}else{
-		EMKICK1(STOPRUN);  //kick back	
+		if (motor_dir == 0){
+			EMKICK1(STOPRUN);  //
+			motor_dir = 1;
+		}else{
+			EMKICK1(STARTRUN);  //
+			motor_dir = 0;
+		}
+		step = motor_step;
 	}
 	for (i = 0; i < step; i++)
 	{
