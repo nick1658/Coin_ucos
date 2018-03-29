@@ -3,23 +3,23 @@
 #include "s3c2416.h"
 
 /////////////////////////////////////////////////
- U16 ccstep = 0;
+ uint16_t ccstep = 0;
 
-S16 coin_value0 =0;
-S16 coin_value1 =0;
-S16 coin_value2 =0;
+int16_t coin_value0 =0;
+int16_t coin_value1 =0;
+int16_t coin_value2 =0;
 
 
- S16 coin_maxvalue0 = AD0STDSET;
- S16 coin_minvalue0 = AD0STDSET;
- S16 coin_maxvalue1 = AD1STDSET;
- S16 coin_minvalue1 = AD1STDSET;
- S16 coin_maxvalue2 = AD2STDSET;
- S16 coin_minvalue2 = AD2STDSET;
+ int16_t coin_maxvalue0 = AD0STDSET;
+ int16_t coin_minvalue0 = AD0STDSET;
+ int16_t coin_maxvalue1 = AD1STDSET;
+ int16_t coin_minvalue1 = AD1STDSET;
+ int16_t coin_maxvalue2 = AD2STDSET;
+ int16_t coin_minvalue2 = AD2STDSET;
 s_processed_coin_info processed_coin_info;
 
 //4*9
-U16 coine[COINCNUM][COIN_TYPE_NUM]=     // 由币种决定
+uint16_t coine[COINCNUM][COIN_TYPE_NUM]=     // 由币种决定
 {
 {100,	50,	50,10,10,5,2,1,10,1000,	500},	//人民币 的面值 倍数  用于计算金额
 {200,	100,50,20,10,5,2,1,0, 0, 	0},//欧元的 的面值 倍数
@@ -55,10 +55,10 @@ void prepare_coin_cmp_value (void)
 	coin_env.AD_min_index[2] = 0;
 }
 
-S16 is_good_coin (void)
+int16_t is_good_coin (void)
 {
 	//鉴伪这里时间上还可以优化一下
-	S16 i;
+	int16_t i;
 	for (i = 0; i < COIN_TYPE_NUM; i++){
 		if   ( (( coin_value0 >= coin_cmp_value[i].compare_min0) && ( coin_value0 <= coin_cmp_value[i].compare_max0))
 			&& (( coin_value1 >= coin_cmp_value[i].compare_min1) && ( coin_value1 <= coin_cmp_value[i].compare_max1))
@@ -93,7 +93,7 @@ S16 is_good_coin (void)
 
 void cy_precoincount(void)
 {
-	S16 good_coin = -1;
+	int16_t good_coin = -1;
 	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
 		ch0_pre_count = ch0_count;		
 		processed_coin_info.coinnumber++;	
@@ -158,7 +158,7 @@ void cy_precoincount(void)
 
 
 // 根据AD值 计数并取 AD 最大值最小值
-U32 coinlearnnumber = 0;   //count the coin number all proceed
+uint32_t coinlearnnumber = 0;   //count the coin number all proceed
 void cy_coinlearn(void)
 {			
 	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
@@ -200,8 +200,8 @@ void detect_read(void)
 #define TIPS_SIZE 9
 const char *coin_tips [] = {"一元", "五角", "五角", "大一角", "一角", "一角", "五分", "两分", "一分", "纪念币10元", "纪念币5元"};
 
- U16 prepic_prenum =0;      // 用于记录 报错前的界面 
-void alertfuc(U16 errorflag) //报错
+ uint16_t prepic_prenum =0;      // 用于记录 报错前的界面 
+void alertfuc(uint16_t errorflag) //报错
 {
 	char str_buf[256];
 	dbg ("alert flag is %d", errorflag);

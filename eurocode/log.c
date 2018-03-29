@@ -2,7 +2,7 @@
 
 
 
-S16 coin_log (char *fmt, ...)
+int16_t coin_log (char *fmt, ...)
 {
 	FATFS fs;
 	FIL file;

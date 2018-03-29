@@ -4,8 +4,8 @@
 #include "def.h"
 
 
-extern U16 filterMedianAverageSample (U16 *adValueBuf, int sampleNum);
-extern U16 filterMedianSample (U16 *adValueBuf, int sampleNum);
+extern uint16_t filterMedianAverageSample (uint16_t *adValueBuf, int sampleNum);
+extern uint16_t filterMedianSample (uint16_t *adValueBuf, int sampleNum);
 
 #endif
 

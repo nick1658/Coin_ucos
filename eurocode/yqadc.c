@@ -4,7 +4,7 @@
 s_coin_env coin_env;// (std_ad0-40)  //波形下降 阀值  990   950  当前基准下降40  
 
 
-void adcsininget(U16 ad0,U16 ad1,U16 ad2)
+void adcsininget(uint16_t ad0,uint16_t ad1,uint16_t ad2)
 {
 	
 	coin_env.std_down_value0= (ad0 - WAVE_DOWN_VALUE);  //波形下降 阀值 40  	
@@ -15,11 +15,11 @@ void adcsininget(U16 ad0,U16 ad1,U16 ad2)
 
 void setStdValue (void)
 {
-	U16 is;
+	uint16_t is;
 		////////////////////////////////////
-	U16 ad0_std[AD0STDNUM];
-	U16 ad2_std[AD2STDNUM];
-	U16 ad1_std[AD1STDNUM];
+	uint16_t ad0_std[AD0STDNUM];
+	uint16_t ad2_std[AD2STDNUM];
+	uint16_t ad1_std[AD1STDNUM];
 
 	for(is=0;is<AD0STDNUM;is++)
 	{
@@ -45,52 +45,52 @@ void setStdValue (void)
 	adcsininget(std_ad0,std_ad1,std_ad2);//AD 波形进入 的阀值
 }
 
-volatile U32 adtime = 0;    //定时中断里 计时
+volatile uint32_t adtime = 0;    //定时中断里 计时
 
 //////////////////////////////////////////////////////
- U16 ad0_mintemp = 0;    // = AD0STDVALUE;		//作为 与ad1_ad_value 值进行比较的值，为了取得波形最高值
- U16 ad0_maxtemp = 0;   //波形恢复  参考比较值
- U16 wave0down_flagone = 0;
- U16 wave0up_flagone = 0;    //波形上升 参考比较值
- U16 wave0up_flag = 0;
- U16 wave0down_flagtwo =0;   //双峰时，用于判断第二个峰
- U32 ch0_count =0;  //通道0 通过的硬币计数 
- U32 ch0_pre_count =0;  //通道0 来硬币 标记  
- U32 ch0_coin_come =0;  //通道 来硬币 标记
- volatile U16 blockflag = 0;      //堵币标志变量
- U16 ad0_min = 0;     //贮存每枚硬币过去后的 最大值
+ uint16_t ad0_mintemp = 0;    // = AD0STDVALUE;		//作为 与ad1_ad_value 值进行比较的值，为了取得波形最高值
+ uint16_t ad0_maxtemp = 0;   //波形恢复  参考比较值
+ uint16_t wave0down_flagone = 0;
+ uint16_t wave0up_flagone = 0;    //波形上升 参考比较值
+ uint16_t wave0up_flag = 0;
+ uint16_t wave0down_flagtwo =0;   //双峰时，用于判断第二个峰
+ uint32_t ch0_count =0;  //通道0 通过的硬币计数 
+ uint32_t ch0_pre_count =0;  //通道0 来硬币 标记  
+ uint32_t ch0_coin_come =0;  //通道 来硬币 标记
+ volatile uint16_t blockflag = 0;      //堵币标志变量
+ uint16_t ad0_min = 0;     //贮存每枚硬币过去后的 最大值
  
  
-//S16 coin_env.ad0_averaged_value = 0;    //在运行过程中 是ADSAMPNUM个 value的求和值
- S16 ad0_ad_value = 0;  //在运行过程中 是ADSAMPNUM个 value的和值的平均值
+//int16_t coin_env.ad0_averaged_value = 0;    //在运行过程中 是ADSAMPNUM个 value的求和值
+ int16_t ad0_ad_value = 0;  //在运行过程中 是ADSAMPNUM个 value的和值的平均值
 
 
- S16 ad0_temp_value = 0;  //在求平均值时用到的临时 变量
- S16 ad0_samp_number = 0;   // ad value sample times 
- S16 ad1_temp_value = 0;  //在求平均值时用到的临时 变量
- S16 ad1_samp_number = 0;   // ad value sample times 
- S16 ad2_temp_value = 0;  //在求平均值时用到的临时 变量
- S16 ad2_samp_number = 0;   // ad value sample times 
+ int16_t ad0_temp_value = 0;  //在求平均值时用到的临时 变量
+ int16_t ad0_samp_number = 0;   // ad value sample times 
+ int16_t ad1_temp_value = 0;  //在求平均值时用到的临时 变量
+ int16_t ad1_samp_number = 0;   // ad value sample times 
+ int16_t ad2_temp_value = 0;  //在求平均值时用到的临时 变量
+ int16_t ad2_samp_number = 0;   // ad value sample times 
  
- S16 ad0_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
- S16 ad1_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
- S16 ad2_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
+ int16_t ad0_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
+ int16_t ad1_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
+ int16_t ad2_ad_value_buf[ADSAMPNUM0];	//ad value sample  ADSAMPNUM times 
 
 
 
- U16 ad1_ad_value= 0;	//ad value sample  ADSAMPNUM times 
- U16 ad1_mintemp = 0;// = AD1STDVALUE;		//作为 与ad1_ad_value 值进行比较的值，为了取得波形最高值
- U16 ad1_maxtemp = 0;   //波形恢复  参考比较值
- U16 ad1_min = 0;     //贮存每枚硬币过去后的 最大值
- U32 ch1_coin_come =0;  //通道0 来硬币 标记
+ uint16_t ad1_ad_value= 0;	//ad value sample  ADSAMPNUM times 
+ uint16_t ad1_mintemp = 0;// = AD1STDVALUE;		//作为 与ad1_ad_value 值进行比较的值，为了取得波形最高值
+ uint16_t ad1_maxtemp = 0;   //波形恢复  参考比较值
+ uint16_t ad1_min = 0;     //贮存每枚硬币过去后的 最大值
+ uint32_t ch1_coin_come =0;  //通道0 来硬币 标记
 
 
- U16 ad2_ad_value = 0;	//ad value sample  ADSAMPNUM times 
- U16 ad2_mintemp = 0;		//作为 与ad2_ad_value 值进行比较的值，为了取得波形最高值
- U16 wave2up_flagone =0;    //波形上升 参考比较值
- U32 ch2_coin_come =0;  //通道0 来硬币 标记
- U16 ad2_min = 0;     //贮存每枚硬币过去后的 最大值
- U32 ch1_count1temp =0;  //通道1 来硬币 标记  
+ uint16_t ad2_ad_value = 0;	//ad value sample  ADSAMPNUM times 
+ uint16_t ad2_mintemp = 0;		//作为 与ad2_ad_value 值进行比较的值，为了取得波形最高值
+ uint16_t wave2up_flagone =0;    //波形上升 参考比较值
+ uint32_t ch2_coin_come =0;  //通道0 来硬币 标记
+ uint16_t ad2_min = 0;     //贮存每枚硬币过去后的 最大值
+ uint32_t ch1_count1temp =0;  //通道1 来硬币 标记  
 
 
 //模拟转换  0  函数
@@ -105,7 +105,7 @@ void coin_env_init (void)
 		*(p++) = 0;
 	}	
 }
-
+extern int print_ad0, print_ad1, print_ad2;
 //模拟量采样
 void AD_Sample_All (void)
 {
@@ -121,6 +121,7 @@ void AD_Sample_All (void)
 	
 	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
 	ad0_ad_value_buf[ad0_samp_number] = ((int)rADCDAT0 & 0x3ff);
+	print_ad0 = ad0_ad_value_buf[ad0_samp_number];
 	
 	//Read AD 1 ////////////////////////////////////////////////////////////////////////////////////////
 	rADCMUX = 0x01;		//setup channel
@@ -146,6 +147,7 @@ void AD_Sample_All (void)
 	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
 
 	ad1_ad_value_buf[ad1_samp_number] = ((int)rADCDAT0 & 0x3ff);
+	print_ad1 = ad1_ad_value_buf[ad1_samp_number];
 	
 	//Read AD 2 ////////////////////////////////////////////////////////////////////////////////////////
 	rADCMUX = 0x02;		//setup channel
@@ -170,6 +172,7 @@ void AD_Sample_All (void)
 	
 	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
 	ad2_ad_value_buf[ad2_samp_number] = ((int)rADCDAT0 & 0x3ff);
+	print_ad2 = ad2_ad_value_buf[ad2_samp_number];
 	
 	//Process AD 2 Start ***********************************************************************
 	/*coin_env.ad2_averaged_value 求和数*/
@@ -181,6 +184,10 @@ void AD_Sample_All (void)
 		ad2_samp_number = 0;
 	}
 	//Process AD 2 End ***********************************************************************
+//		cy_println ("AD0:	%d,	AD1:	%d,	AD2:	%d", ad0_ad_value_buf[ad0_samp_number-1],
+//																						 ad1_ad_value_buf[ad1_samp_number-1], 
+//																						 ad2_ad_value_buf[ad2_samp_number-1]);
+
 	
 	detect_sample_data_buf_index++;
 	if (detect_sample_data_buf_index >= DATA_BUF_LENGTH){
@@ -188,7 +195,7 @@ void AD_Sample_All (void)
 	}
 }
 
-U32 coin_cross_time = 0;
+uint32_t coin_cross_time = 0;
 	
 void cy_ad0_valueget(void)
 {
@@ -473,10 +480,10 @@ void cy_ad2_valueget(void)
 
 	
 ////////////////////////////////////////////////////////////////////////////////
-S16 std_ad0 = 0;
-S16 std_ad1 = 0;
-S16 std_ad2 = 0;
-S16 std_ad3= 0;
+int16_t std_ad0 = 0;
+int16_t std_ad1 = 0;
+int16_t std_ad2 = 0;
+int16_t std_ad3= 0;
 
  int temperstd = 281;   //20度  20*10 +600  = 800MV;  800/3300 *1024 = 248.24
  int temperpre = 250;
@@ -485,7 +492,7 @@ S16 std_ad3= 0;
 
 
 //测试没有硬币通过时 DA0 DA1 DA2 通道的当前值是否符合检测的要求
-U16 adstd_test(void)
+uint16_t adstd_test(void)
 {
 	unsigned int is;
 	int adstdtest0,adstdtest1,adstdtest2;
@@ -561,11 +568,11 @@ U16 adstd_test(void)
 
 void print_std_value(void)    //  检测 基准值   有不大偏差进行补偿
 {
-	U16 is = 0;
-	U16 ad2_std[AD2STDNUM];
-	U16 ad1_std[AD1STDNUM];
-	U16 ad0_std[AD0STDNUM];
-	U16 ad2countis = 10;
+	uint16_t is = 0;
+	uint16_t ad2_std[AD2STDNUM];
+	uint16_t ad1_std[AD1STDNUM];
+	uint16_t ad0_std[AD0STDNUM];
+	uint16_t ad2countis = 10;
 	std_ad3 = ReadAdc3();
 
 	for(is =0;is<ad2countis;is++)
@@ -593,15 +600,15 @@ void print_std_value(void)    //  检测 基准值   有不大偏差进行补偿
 	std_ad0 = (ad0_std[2] +ad0_std[3] +ad0_std[4]+ad0_std[5]+ad0_std[6]+ad0_std[7]+ad0_std[8]+ad0_std[9])/8;
 }
 
-U16 adstd_offset()    //  检测 基准值   有不大偏差进行补偿
+uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 {
-	U16 is;
+	uint16_t is;
 		////////////////////////////////////
-	U16 ad0_std[AD0STDNUM];
-	U16 ad2_std[AD2STDNUM];
-	U16 ad1_std[AD1STDNUM];
+	uint16_t ad0_std[AD0STDNUM];
+	uint16_t ad2_std[AD2STDNUM];
+	uint16_t ad1_std[AD1STDNUM];
 	
-	S16 std0_offset, std1_offset, std2_offset;
+	int16_t std0_offset, std1_offset, std2_offset;
 
 
 	for(is=0;is<AD0STDNUM;is++){
@@ -690,7 +697,7 @@ U16 adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 }
 
 
-volatile U32 start_sample = 0;
+volatile uint32_t start_sample = 0;
 
 
 
@@ -700,10 +707,10 @@ AD_Value *Detect_AD_Value_buf_p;
 //volatile AD_Value Adj_AD_Value_buf[ADJ_BUF_LENGTH];
 volatile AD_Value NG_value_buf[NG_BUF_LENGTH];
 volatile AD_Value GOOD_value_buf[NG_BUF_LENGTH];
-volatile U32 ng_value_index = 0;
-volatile U32 good_value_index = 0;
-volatile U32  sample_data_buf_index = 0;
-volatile U32 detect_sample_data_buf_index = 0;
+volatile uint32_t ng_value_index = 0;
+volatile uint32_t good_value_index = 0;
+volatile uint32_t  sample_data_buf_index = 0;
+volatile uint32_t detect_sample_data_buf_index = 0;
 
 /////////////////////////////////
 
@@ -711,9 +718,9 @@ extern void Uart_SendByte(int data);
 
 void send_sample_data (AD_Value ad_value_buf[DATA_BUF_LENGTH], int counter)
 {
-	U16  minTempAD0 = 1000;
-	U16  minTempAD1 = 1000;
-	U16  minTempAD2 = 1000;
+	uint16_t  minTempAD0 = 1000;
+	uint16_t  minTempAD1 = 1000;
+	uint16_t  minTempAD2 = 1000;
 	int i = 0;
 	int H_min_index = 0;
 	int M_min_index = 0;
@@ -754,13 +761,13 @@ void send_sample_data (AD_Value ad_value_buf[DATA_BUF_LENGTH], int counter)
 	dgus_tf1word(ADDR_STDM,  minTempAD1); //	middle frequence
 	dgus_tf1word(ADDR_STDL, (minTempAD2)); //	low frequence	
 }
-U16 adstd_sample(void)    //基准值调试  
+uint16_t adstd_sample(void)    //基准值调试  
 {
-	U16 is = 0;
-	U16 ad2_std[AD2STDNUM];
-	U16 ad1_std[AD1STDNUM];
-	U16 ad0_std[AD0STDNUM];
-//	U16 ad2countis = 10;
+	uint16_t is = 0;
+	uint16_t ad2_std[AD2STDNUM];
+	uint16_t ad1_std[AD1STDNUM];
+	uint16_t ad0_std[AD0STDNUM];
+//	uint16_t ad2countis = 10;
 
 	for(is=0;is<AD0STDNUM;is++)
 	{
@@ -804,13 +811,13 @@ U16 adstd_sample(void)    //基准值调试
 	return 1;
 }
 
-U16 cy_adstd_adj(void)    //基准调试
+uint16_t cy_adstd_adj(void)    //基准调试
 {
-	U16 is = 0;
-	U16 ad2_std[AD2STDNUM];
-	U16 ad1_std[AD1STDNUM];
-	U16 ad0_std[AD0STDNUM];
-	U16 ad2countis = 10;
+	uint16_t is = 0;
+	uint16_t ad2_std[AD2STDNUM];
+	uint16_t ad1_std[AD1STDNUM];
+	uint16_t ad0_std[AD0STDNUM];
+	uint16_t ad2countis = 10;
 	std_ad3 = ReadAdc3();
 
 	for(is =0;is<ad2countis;is++){

@@ -1,8 +1,8 @@
 #include "s3c2416.h"
 
-void comscreen(U8* str,S16 length)  //发送 指令至液晶屏57600bps
+void comscreen(U8* str,int16_t length)  //发送 指令至液晶屏57600bps
 {
-	U32 i;
+	uint32_t i;
 	U8 temp;
 	for(i = 0;i<length;i++)
 	{
@@ -18,8 +18,8 @@ DGUS(UART 1)  read touch back values
 **********************************/
 char touch_serialnum[TSGET_NUM] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 volatile U8 touchnum[TSGET_NUM] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-volatile U16 uartcount = 0;  // 串口2接收 字节 计数
-volatile U16 touch_flag =0;  // 串口2接收 标志位
+volatile uint16_t uartcount = 0;  // 串口2接收 字节 计数
+volatile uint16_t touch_flag =0;  // 串口2接收 标志位
 void touchget_from_uart2(void)    //receive the touch from dgus at real time 
 {
 
@@ -109,7 +109,7 @@ DGUS(UART 1) read real time from dgus
 /*********************************
 chinese 
 **********************************/
-void dgus_chinese(U16 addr,S8 str[],U16 strnum)    // dgus  chinese
+void dgus_chinese(uint16_t addr,S8 str[],uint16_t strnum)    // dgus  chinese
 {
 
 	U8 str1[6] = {0xA5,0x5A,0x00,0x82,0x0F,0x00};
@@ -449,10 +449,10 @@ volatile U8 scrdis[5][50]=
 };
 
 
-S16 test_repete(void)    //  判别 是不是重币的函数
+int16_t test_repete(void)    //  判别 是不是重币的函数
 {
 
-	S16 ei = 0;
+	int16_t ei = 0;
 
 	ei = is_repeate (sys_env.coin_index);
 	
@@ -507,12 +507,12 @@ void counter_clear (void) //
 	disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//when counting pre ze zs foege data variable 
 }
 
-volatile U16 prepic_num =0 ;   // 保存之前的图片
-volatile S32 db_id = 0;   //历史数据 表格已经显示 数
+volatile uint16_t prepic_num =0 ;   // 保存之前的图片
+volatile int32_t db_id = 0;   //历史数据 表格已经显示 数
 /*A5 5A 06 83 地址L,H + 长度字数据 + 数据*/
 void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 {
-	U16 addr, value, i;
+	uint16_t addr, value, i;
 	char str_buf[256];
 	addr = (touchnum[4] << 8) | (touchnum[5]);
 	value = (touchnum[7] << 8) | (touchnum[8]);
@@ -620,7 +620,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		}else if( (value == 0x04)){	//back value 04 混计数界面 xiandan save
 			 // A5 5A 06 83 00 08 01 00 04  按键值返回	保存 当前计数
 		    if( (processed_coin_info.total_money >0) || (processed_coin_info.total_good >0)  || (processed_coin_info.total_ng >0)){
-				U16 ci = 0;
+				uint16_t ci = 0;
 				prepic_num = JSJM;
 					
 				para_set_value.data.total_money += processed_coin_info.total_money;
@@ -920,7 +920,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	}
 }
 
-void change_coin_mode (U16 value)
+void change_coin_mode (uint16_t value)
 {
 	int i, set_data;
 	para_set_value.data.system_mode = value;

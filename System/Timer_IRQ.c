@@ -19,7 +19,7 @@ static void timer_update (void)
 }
 
 /*中断程序*/
-volatile U32 tscount=0;
+volatile uint32_t tscount=0;
 //20ms中断一次
 void Timer4_IRQ(void)
 {   
@@ -263,7 +263,7 @@ void Timer1_Init(unsigned short us, void (*Callback)(void), unsigned short enabl
 
 void Timer0_IRQ (void)
 {
-	static U32 T_count = 0;
+	static uint32_t T_count = 0;
 	T_count++;
 	
 	if (T_count > 1000){

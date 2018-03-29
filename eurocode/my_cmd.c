@@ -13,6 +13,8 @@ void do_write(int32_t argc, void *cmd_arg);
 void do_erase(int32_t argc, void *cmd_arg);
 void do_reset_cpu(int32_t argc, void *cmd_arg);
 void do_db(int32_t argc, void *cmd_arg);
+
+
 /*命令表*/  
 const cmd_list_struct cmd_list[]={  
 /*   命令    参数数目    处理函数        帮助信息                         */     
@@ -30,7 +32,7 @@ const cmd_list_struct cmd_list[]={
 
 s_system_env sys_env;
 
-static S16 ng_info_echo_off = 0;
+static int16_t ng_info_echo_off = 0;
 
 char iap_code_buf[CODE_BUF_SIZE]; // 程序缓冲区256K
 //U8 hex_file_buf[8192*2][64];//hex文件
@@ -286,31 +288,24 @@ void vTaskCmdAnalyze( void )
 	//cy_println ("processed_buf = %s", cmd_analyze.processed_buf);
                                                                                                                                        
       /*从接收数据中提取命令*/                                                                                                         
-      for(i=0;i<CMD_LEN;i++)                                                                                                           
-      {                                                                                                                                
-          if((i > 0) && ((cmd_analyze.processed_buf[i]==' ') || (cmd_analyze.processed_buf[i]==0x0D)  || (cmd_analyze.processed_buf[i] == 0) ))                                       
-          {                                                                                                                            
+      for(i=0;i<CMD_LEN;i++){                                                                                                                                
+          if((i > 0) && ((cmd_analyze.processed_buf[i]==' ') || (cmd_analyze.processed_buf[i]==0x0D)  || (cmd_analyze.processed_buf[i] == 0) )){                                                                                                                            
                cmd_buf[i]='\0';        //字符串结束符                                                                                  
                break;                                                                                                                  
-          }                                                                                                                            
-          else                                                                                                                         
-          {                                                                                                                            
+          }else{                                                                                                                            
                cmd_buf[i]=cmd_analyze.processed_buf[i];                                                                                
           }                                                                                                                            
       }                                                                                                                                
                                                                                                                                        
       rec_arg_num=cmd_arg_analyze(&cmd_analyze.processed_buf[i], rec_num);                                                              
                                                                                                                                        
-      for(i=0;i<sizeof(cmd_list)/sizeof(cmd_list[0]);i++)                                                                              
-      {                                                                                                                                
-          if(!strcmp(cmd_buf,cmd_list[i].cmd_name))       //字符串相等                                                                 
-          {                                                                                                                            
-               if(rec_arg_num<0 || rec_arg_num>cmd_list[i].max_args)                                                                   
-               {                                                                                                                       
+      for(i=0;i<sizeof(cmd_list)/sizeof(cmd_list[0]);i++){                                                                                                                                
+          if(!strcmp(cmd_buf,cmd_list[i].cmd_name)){       //字符串相等                                                                 
+                                                                                                                                      
+               if(rec_arg_num<0 || rec_arg_num>cmd_list[i].max_args) {                                                                                                                       
                    cy_println("Too Much arg\n");                                                                                             
-               }                                                                                                                       
-               else                                                                                                                    
-               {                                                                                                                       
+               }else {
+					clear_ctrlc	();			   
 					cmd_list[i].handle(rec_arg_num,(void *)cmd_analyze.cmd_arg);  
 					//cy_println ("<End cmd_list[%d].%s>", i, cmd_list[i].cmd_name);	
 					cy_println ();
@@ -319,13 +314,11 @@ void vTaskCmdAnalyze( void )
           }                                                                                                                            
                                                                                                                                        
       }                                                                                                                                
-	if(i>=sizeof(cmd_list)/sizeof(cmd_list[0]))                                                                                      
-	{                                                                                                                                
+	if(i>=sizeof(cmd_list)/sizeof(cmd_list[0])){                                                                                                                                
 		//cy_println("Unsurport Cmd: %s", cmd_buf);     
 		//cmd();
 		strcpy (cmd_buf, cmd_analyze.rec_buf);	
-		if (my_run_command (cmd_buf, 0) >= 0)
-		{
+		if (my_run_command (cmd_buf, 0) >= 0){
 		}	
 	}    
 	cmd ();	                                                                                                                            
@@ -341,7 +334,7 @@ char str[8];
 typedef struct{
 	U8 start;
 	U8 len;
-	U16 addr;
+	uint16_t addr;
 	U8 type;
 	char data[16];
 	U8 sum_check;
@@ -402,13 +395,13 @@ int get_hex_struct (s_hex_file *p_hex, char *_data_buf)
 	p_hex->sum_check = simple_strtoul(temp, NULL, 16);
 	return AnalyseHEX(_data_buf, p_hex->len * 2 + 11);
 }
-//static U32 section_addr = 0, app_size = 0;
+//static uint32_t section_addr = 0, app_size = 0;
 int get_hex_data (char * buf)
 {
 //	int i = 0;
 	s_hex_file p_hex;
-	U16 func_code = 0;
-	U16 para_value = 0;
+	uint16_t func_code = 0;
+	uint16_t para_value = 0;
 	
 		if (get_hex_struct (&p_hex, buf)){//文件错误
 			return -1;
@@ -651,6 +644,12 @@ void update_finish (e_update_flag flag)
 /*提供给串口中断服务程序，保存串口接收到的单个字符*/   
 void fill_rec_buf(char data)                                                           
 {
+	if (data == CTRL_C)
+	{
+		cy_println ("Op Cancel!");
+		sys_env.sys_break = 1;
+		return;
+	}
 	if (sys_env.uart0_cmd_flag == 0xA5){
 		if (0x0D != data){
 			return;
@@ -724,7 +723,7 @@ void fill_rec_buf(char data)
 		rec_count = 0;
 	}
 }                                                                                      
-void print_ng_data (S16 index);
+void print_ng_data (int16_t index);
 /*打印字符串:Hello world!*/                                    
  void do_help(int32_t argc, void *cmd_arg)              
  {  
@@ -1207,49 +1206,34 @@ void save_all_stdvalue_coin (int32_t _country_index, int32_t _coin_index, int32_
 
 int32_t run_step_motor (int32_t arg[])
 {
-	static int motor_dir = 0, motor_step = 0;
-	int i;
-	int32_t step = arg[0];
-	int32_t pwm_width = arg[1];                                     
-	cy_println("run motor step = %d pwm_width = %d", step, pwm_width);    
-	if (step < 0){
-		EMKICK1(STARTRUN);  //
-		motor_dir = 0;
-		step *= -1;
-		motor_step = step;
-	}else if(step > 0){
-		motor_step = step;
-		EMKICK1(STOPRUN);  //
-		motor_dir = 1;
-	}else{
-		if (motor_dir == 0){
-			EMKICK1(STOPRUN);  //
-			motor_dir = 1;
-		}else{
-			EMKICK1(STARTRUN);  //
+	static int  motor_dir = 0, motor_step = 0;
+	int repeate;
+	int32_t motor_id, step, motor_speed;
+	motor_id = arg[0];
+	step = arg[1];
+	motor_speed = arg[2]; 
+	repeate = arg[3];
+	do{ 
+		if (step < 0){
 			motor_dir = 0;
+			motor_step = step*(-1);
+		}else if(step > 0){
+			motor_dir = 1;
+			motor_step = step;
+		}else{
+			motor_dir ^= 1;
 		}
-		step = motor_step;
-	}
-	for (i = 0; i < step; i++)
-	{
-			EMKICK2(STARTRUN);	  // kick out 
-//			Timer3_Start ();
-			time = pwm_width;	  //kick_keep_time*1ms
-			while(time != 0)
-			{
-				__nop ();//SetWatchDog(); //看门狗喂狗;
-			}
-			EMKICK2 (STOPRUN);	  // kick out 
-			time = pwm_width;	  //kick_keep_time*1ms
-			//time = 180;	  //kick_keep_time*1ms
-			while(time != 0)
-			{
-				__nop ();//SetWatchDog(); //看门狗喂狗;
-			}
-	}
-	EMKICK2 (STOPRUN);	  // kick out 
-//	Timer3_Stop ();	
+		cy_println("run motor:[id = %d, step = %d, pwm_width = %d, dir = %d]", motor_id, motor_step, motor_speed, motor_dir);  
+		step = 0;
+		set_motor_dir (motor_id, motor_dir);
+		if (start_motor (motor_id, motor_step, motor_speed) < 0){
+			return -1;
+		}
+		if (had_ctrlc ()){
+			return -1;
+		}
+	}while (repeate == 1);
+	
 	return 0;
 }
 
@@ -1258,13 +1242,7 @@ void set_para_3  (int32_t arg[])
 	#define VALUE_SIZE 6 + 3 + 6
 	int32_t coin_index_temp = 0;
 	int32_t value_temp_buf[VALUE_SIZE];
-	int i;
-	
-	if (arg[0] == string_to_dec((uint8 *)("step"))) //             
-	{                                                                                                   
-		run_step_motor (&arg[1]);
-		return ;
-	} 
+	int i; 
 	
 	coin_index_temp = get_coin_index (arg[0]);   
 	if (coin_index_temp < 0)
@@ -1517,7 +1495,7 @@ void print_system_env_info (void)
 	cy_println("----------------------------------------------------");  
 	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t);            
 	cy_println("----------------------------------------------------");
-}    
+}   
 
 void print_coin_env_info (void)
 {                                                                       
@@ -1539,7 +1517,7 @@ void print_coin_env_info (void)
 
 
 
-void print_cmp_data (S16 _coin_index)
+void print_cmp_data (int16_t _coin_index)
 {
 	cy_println ("ad std offset complete");
 	cy_println ("----------------------------------------------------------------------");   	
@@ -1590,7 +1568,7 @@ void print_cmp_data (S16 _coin_index)
 	cy_println("----------------------------------------------------------------------");                   
 }
 	
-void print_ng_data (S16 index)
+void print_ng_data (int16_t index)
 {	
 	int	i;  
 	if (ng_info_echo_off)
@@ -1606,7 +1584,7 @@ void print_ng_data (S16 index)
 	cy_println("----------------------------------------------------------------------");                                                                        
 }
 
-void print_good_data (S16 index)
+void print_good_data (int16_t index)
 {	
 	int	i;  
 	
@@ -1622,7 +1600,7 @@ void print_good_data (S16 index)
 }
 
 
-void print_coin_pre_value (S16 index)
+void print_coin_pre_value (int16_t index)
 {	 
 	int i = index;
 	cy_println("--------------------print country %2d coin value---------------------", coinchoose);                                      
@@ -1647,7 +1625,7 @@ void print_coin_pre_value (S16 index)
 
 void print_all_coin_pre_value (void)
 {	
-	S16 i;                                                                                                                                 
+	int16_t i;                                                                                                                                 
 	cy_println("--------------------print country %2d coin value---------------------", coinchoose);                                      
 	cy_println (" coin  min0        max0        min1        max1        min2        max2 ");     
 	for (i = 0; i < COIN_TYPE_NUM; i++)
@@ -1694,7 +1672,7 @@ void print_coin_pre_value_info (int32_t arg[])
 
 void print_pre_count_set_value (void)
 {
-	S16 i;                                                                                                                                 
+	int16_t i;                                                                                                                                 
 	cy_println("----------------------print pre_count_set value----------------------", coinchoose);    
 	for (i = 0; i < 9; i++)
 	{
@@ -1704,7 +1682,7 @@ void print_pre_count_set_value (void)
 }
 void print_pre_count_current (void)
 {
-	S16 i;                                                                                                                                 
+	int16_t i;                                                                                                                                 
 	cy_println("--------------------print pre_count_current value--------------------", coinchoose);    
 	for (i = 0; i < 9; i++)
 	{
@@ -1982,7 +1960,7 @@ void write_para_1 (int32_t arg[])
 	}else if (arg[0] == string_to_dec((uint8 *)("flash"))){
 		int *magic_num = (int*)(&iap_code_buf[0x3c]);
 		if (*magic_num == PROGRAM_MAGIC_NUM){
-			r_code = WriteAppToAppSpace ((U32)&iap_code_buf, sizeof(iap_code_buf));
+			r_code = WriteAppToAppSpace ((uint32_t)&iap_code_buf, sizeof(iap_code_buf));
 			if (r_code == 0)
 				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 completed");   
 			else
@@ -2169,17 +2147,17 @@ void do_db(int32_t argc, void *cmd_arg)
 
 
 
-S16 is_repeate (S16 _coin_index)
+int16_t is_repeate (int16_t _coin_index)
 {
-	S16 ei, i;
+	int16_t ei, i;
 	ei = 0;
 	
-	S16 temp_coin_maxvalue0;
-	S16 temp_coin_minvalue0;
-	S16 temp_coin_maxvalue1;
-	S16 temp_coin_minvalue1;
-	S16 temp_coin_maxvalue2;
-	S16 temp_coin_minvalue2;
+	int16_t temp_coin_maxvalue0;
+	int16_t temp_coin_minvalue0;
+	int16_t temp_coin_maxvalue1;
+	int16_t temp_coin_minvalue1;
+	int16_t temp_coin_maxvalue2;
+	int16_t temp_coin_minvalue2;
 	
 	adstd_offset ();
 	
@@ -2280,6 +2258,36 @@ MY_CMD(
 	"version\n"
 );
 
+
+int do_motor  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	int32_t arg[4];
+	switch (argc) {
+	case 4 :
+		arg[0] = simple_strtol (argv[1], NULL, 10);
+		arg[1] = simple_strtol (argv[2], NULL, 10);
+		arg[2] = simple_strtol (argv[3], NULL, 10);
+		arg[3] = 0;
+		break;
+	case 5 :
+		arg[0] = simple_strtol (argv[1], NULL, 10);
+		arg[1] = simple_strtol (argv[2], NULL, 10);
+		arg[2] = simple_strtol (argv[3], NULL, 10);
+		arg[3] = simple_strtol (argv[4], NULL, 10);
+		break;
+	default:
+		cy_print ("Usage:\n%s\n", cmdtp->usage);
+		return 1;
+	}
+	run_step_motor (arg);
+	return 0;
+}
+MY_CMD(
+	motor,	6,	1,	do_motor,
+	"motor id step speed [repeat]\n",
+	"motor - run motor\n"
+);
+
 int do_receive (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	switch (argc) {
@@ -2308,7 +2316,7 @@ MY_CMD(
 
 /* test if ctrl-c was pressed */
 static int ctrlc_disabled = 0;	/* see disable_ctrl() */
-static int ctrlc_was_pressed = 0;
+//static int ctrlc_was_pressed = 0;
 int ctrlc (void)
 {
 //	if (!ctrlc_disabled && gd->have_console) {
@@ -2391,7 +2399,7 @@ int do_my_help (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			const char *usage = cmd_array[i]->usage;
 
 			/* allow user abort */
-			if (ctrlc ())
+			if (had_ctrlc ())
 				return 1;
 			if (usage == NULL)
 				continue;
@@ -2479,12 +2487,12 @@ int disable_ctrlc (int disable)
 
 int had_ctrlc (void)
 {
-	return ctrlc_was_pressed;
+	return sys_env.sys_break;
 }
 
 void clear_ctrlc (void)
 {
-	ctrlc_was_pressed = 0;
+	sys_env.sys_break = 0;
 }
 /****************************************************************************/
 

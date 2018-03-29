@@ -182,7 +182,7 @@ void HandleUART2(void)   //串口2 中断接收函数
 }
 
 
-volatile U16 uart0_count = 0;
+volatile uint16_t uart0_count = 0;
 void HandleUART0 (void)
 {
 	rSUBSRCPND |= 0x3<<0;   //清除中断标志  发送 接收都清除

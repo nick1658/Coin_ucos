@@ -13,6 +13,8 @@
 #define HEX_TO_DEC(X) (X >> 4) * 10 + (X & 0xf)
 
 
+#define CTRL_C 0X03
+
 /*
  * Monitor Command Table
  */
@@ -84,36 +86,37 @@ typedef enum {
 
 typedef struct
 {
-	U32 print_wave_to_pc;
-	U32 auto_stop;
-	U32 auto_clear;
-	U32 sim_count_flag;
-	U32 save_ng_data;
-	U32 save_good_data;
+	uint32_t print_wave_to_pc;
+	uint32_t auto_stop;
+	uint32_t auto_clear;
+	uint32_t sim_count_flag;
+	uint32_t save_ng_data;
+	uint32_t save_good_data;
 	
-	U32 country_index;
-	U32 coin_index;
-	U32 workstep;
-	U32 uart0_cmd_flag;
-	U32 tty_mode;
-	U32 hmi_debug_flag;
-	U32 stop_time;
-	U32 stop_flag;
-	U32 coin_cross_time;
-	U32 tty_online_ms;
-	U32 coin_over;
-	U32 coin_leave;
-	U32 AD_data_len;
-	U32 AD_buf_index;
-	U32 AD_buf_sending;
+	uint32_t country_index;
+	uint32_t coin_index;
+	uint32_t workstep;
+	uint32_t uart0_cmd_flag;
+	uint32_t tty_mode;
+	uint32_t hmi_debug_flag;
+	uint32_t stop_time;
+	uint32_t stop_flag;
+	uint32_t coin_cross_time;
+	uint32_t tty_online_ms;
+	uint32_t coin_over;
+	uint32_t coin_leave;
+	uint32_t AD_data_len;
+	uint32_t AD_buf_index;
+	uint32_t AD_buf_sending;
 	AD_Value *Detect_AD_buf_p;
-	U32 system_delay;
-	U32 sys_runing_time;
-	U32 sys_runing_time_total;
-	U32 password;
+	uint32_t system_delay;
+	uint32_t sys_runing_time;
+	uint32_t sys_runing_time_total;
+	uint32_t password;
 	e_update_flag update_flag;
-	U32 net_task;
-	U32 coin_speed;
+	uint32_t net_task;
+	uint32_t coin_speed;
+	int16_t sys_break;
 }s_system_env;
 
 extern s_system_env sys_env;
@@ -127,7 +130,7 @@ extern void Delay_ms(uint32_t Count);
 extern void Delay_us(uint32_t Count);
 
 void system_env_init (void);
-void print_ng_data (S16 index);
+void print_ng_data (int16_t index);
 void print_system_env_info (void);
 void fill_rec_buf(char data);
 void update_finish (e_update_flag flag);
@@ -144,7 +147,10 @@ void coin_clear_alarm (void);
 void refresh_data (void);
 void poll_data (void);
 
-S16 is_repeate (S16 _coin_index);//  判别 是不是重币的函数
+int had_ctrlc (void);
+void clear_ctrlc (void);
+
+int16_t is_repeate (int16_t _coin_index);//  判别 是不是重币的函数
 
 #define TTY_ONLINE_TIME 25
 

@@ -12,55 +12,55 @@
 
 typedef struct _AD_Value_S
 {
-	S16 use_index;
-	S16 AD0;
-	S16 AD1;
-	S16 AD2;
-	S16 ad_index;
+	int16_t use_index;
+	int16_t AD0;
+	int16_t AD1;
+	int16_t AD2;
+	int16_t ad_index;
 } AD_Value;
 
 typedef struct
 {
-	S16 compare_min0;
-	S16 compare_max0;
-	S16 compare_min1;
-	S16 compare_max1;
-	S16 compare_min2;
-	S16 compare_max2;
+	int16_t compare_min0;
+	int16_t compare_max0;
+	int16_t compare_min1;
+	int16_t compare_max1;
+	int16_t compare_min2;
+	int16_t compare_max2;
 }s_coin_compare_value;
 
 typedef struct
 {
-	S16 std_down_value0;
-	S16 std_up_value0;
-	S16 ad0_averaged_value;
-	S16 ad1_averaged_value;
-	S16 ad2_averaged_value;
-	S16 ad0_step;
-	S16 ad1_step;
-	S16 ad2_step;
-	S16 cmp_use_index;
-	S16 ad_index;
-	U16 AD_min_index[3];
-	U16 full_kick;
-	U16 full_stack_num;
-	U16 full_coin_stack[COIN_TYPE_NUM]; //满币堆栈
-	U16 kick_remain;
-	U16 kick_total;
-	//S16 kick_start_t1;
-	U16 kick_keep_t1;
-	U16 kick_Q[KICK_Q_LEN];//剔除队列
-	U16 kick_Q_index;
-	U16 full_kick_remain;
-	U16 full_kick_total;
-	//S16 full_kick_start_t2;
-	U16 full_kick_keep_t2;
-	U16 full_kick_Q[KICK_Q_LEN];//剔除队列
-	U16 full_kick_Q_index;
+	int16_t std_down_value0;
+	int16_t std_up_value0;
+	int16_t ad0_averaged_value;
+	int16_t ad1_averaged_value;
+	int16_t ad2_averaged_value;
+	int16_t ad0_step;
+	int16_t ad1_step;
+	int16_t ad2_step;
+	int16_t cmp_use_index;
+	int16_t ad_index;
+	uint16_t AD_min_index[3];
+	uint16_t full_kick;
+	uint16_t full_stack_num;
+	uint16_t full_coin_stack[COIN_TYPE_NUM]; //满币堆栈
+	uint16_t kick_remain;
+	uint16_t kick_total;
+	//int16_t kick_start_t1;
+	uint16_t kick_keep_t1;
+	uint16_t kick_Q[KICK_Q_LEN];//剔除队列
+	uint16_t kick_Q_index;
+	uint16_t full_kick_remain;
+	uint16_t full_kick_total;
+	//int16_t full_kick_start_t2;
+	uint16_t full_kick_keep_t2;
+	uint16_t full_kick_Q[KICK_Q_LEN];//剔除队列
+	uint16_t full_kick_Q_index;
 	
-	U16 coin_Q[COIN_Q_LEN];//硬币经过队列
-	U16 coin_Q_index;
-	U16 coin_Q_remain;
+	uint16_t coin_Q[COIN_Q_LEN];//硬币经过队列
+	uint16_t coin_Q_index;
+	uint16_t coin_Q_remain;
 }s_coin_env;
 
 //各函数申明    步骤号  参数变量定义
@@ -90,23 +90,23 @@ typedef struct
 #define ADADJACTERTIME 50
 
 
-extern  U16 ad0_min;     //贮存每枚硬币过去后的 最大值
-extern  U16 ad1_min;     //贮存每枚硬币过去后的 最大值
-extern  U16 ad2_min;     //贮存每枚硬币过去后的 最大值
+extern  uint16_t ad0_min;     //贮存每枚硬币过去后的 最大值
+extern  uint16_t ad1_min;     //贮存每枚硬币过去后的 最大值
+extern  uint16_t ad2_min;     //贮存每枚硬币过去后的 最大值
 
 #define ADBLOCKT  20  //10  //30     //130 00---30     //时间 鉴伪传感器 鉴别 堵币时间
-extern volatile U16 blockflag;      //堵币标志变量
-extern volatile U32 adtime;
+extern volatile uint16_t blockflag;      //堵币标志变量
+extern volatile uint32_t adtime;
 
-extern U32 ch0_count;  //通道0 通过的硬币计数 
+extern uint32_t ch0_count;  //通道0 通过的硬币计数 
 
-extern U32 ch0_coin_come;  //通道 来硬币 标记
-extern U32 coin_cross_time;
-extern U32 ch0_pre_count;  //通道0 有硬币经过 标记 
+extern uint32_t ch0_coin_come;  //通道 来硬币 标记
+extern uint32_t coin_cross_time;
+extern uint32_t ch0_pre_count;  //通道0 有硬币经过 标记 
 		
-extern  S16 std_ad0;
-extern  S16 std_ad1;
-extern  S16 std_ad2;
+extern  int16_t std_ad0;
+extern  int16_t std_ad1;
+extern  int16_t std_ad2;
 
 void ad2_valueget(void);  //adc function   get value
 void ad1_valueget(void);  //adc function   get value
@@ -114,9 +114,9 @@ void ad0_valueget(void);  //adc function   get value
 
 
 extern  int temperstd;   //20度  20*10 +600  = 800MV;  800/3300 *1024 = 248.24  // 传感器输出电压公式 VO = (10mV/C * T) + 600
-U16 adstd_test(void);   //只有在电压值在标准状态时才可以启动所有的电机与AD转换  本程序值控制在 1010左右吧
-U16 adstd_sample(void);    //基准值调试  
-U16 cy_adstd_adj (void);
+uint16_t adstd_test(void);   //只有在电压值在标准状态时才可以启动所有的电机与AD转换  本程序值控制在 1010左右吧
+uint16_t adstd_sample(void);    //基准值调试  
+uint16_t cy_adstd_adj (void);
 void print_std_value(void);
 void coin_env_init (void);
 
@@ -125,7 +125,7 @@ void coin_env_init (void);
 #define AD2STDNUM 10
 
 
-U16 adstd_offset(void);
+uint16_t adstd_offset(void);
 #define OFFSETMAX 200
 #define OFFSETMIN 200   //990
 
@@ -156,15 +156,15 @@ extern AD_Value *Detect_AD_Value_buf_p;
 
 extern volatile AD_Value NG_value_buf[NG_BUF_LENGTH];//异币采样数据缓冲区
 extern volatile AD_Value GOOD_value_buf[GOOD_BUF_LENGTH];//异币采样数据缓冲区
-extern volatile U32 ng_value_index;
-extern volatile U32 good_value_index;
+extern volatile uint32_t ng_value_index;
+extern volatile uint32_t good_value_index;
 
-extern volatile U32 sample_data_buf_index;
-extern volatile U32 detect_sample_data_buf_index;
-extern volatile U32 adj_data_buf_index;
+extern volatile uint32_t sample_data_buf_index;
+extern volatile uint32_t detect_sample_data_buf_index;
+extern volatile uint32_t adj_data_buf_index;
 
-extern volatile U32 start_sample;
-//extern S16 coin_env.ad0_averaged_value;
+extern volatile uint32_t start_sample;
+//extern int16_t coin_env.ad0_averaged_value;
 
 extern int ad0_value_changed;
 

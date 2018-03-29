@@ -7,8 +7,8 @@
 
 
 void comscreen(U8* str,short int length);  //发送 指令至液晶屏
-extern volatile U16 touch_flag;
-extern volatile U16 uartcount;  // 串口2接收 字节 计数
+extern volatile uint16_t touch_flag;
+extern volatile uint16_t uartcount;  // 串口2接收 字节 计数
 
 void touchget_from_uart0(void);     //receive the touch from dgus at real time 
 void touchget_from_uart2(void);     //receive the touch from dgus at real time 
@@ -16,7 +16,7 @@ void touchget_from_uart2(void);     //receive the touch from dgus at real time
 #define TIMEBP1 50     //beep time  for  kai ji
 #define TIMEBP2 100     //beep time  for  alert
 void dgus_tfbeep(int bztime); 			 	 //uart1,dgus deep control
-void dgus_chinese(U16 addr,S8 str[],U16 strnum);    // dgus  chinese
+void dgus_chinese(uint16_t addr,S8 str[],uint16_t strnum);    // dgus  chinese
 void dgus_tf2word(int addr,long name);  	  //transfer 2word data variables to specify address 
 void dgus_tf1word(int addr,long data);  	  //transfer 1word data variables to specify address 
 void disp_KJAmount(void); // initial addr on zhu jiemian ze zs forge
@@ -180,12 +180,12 @@ extern volatile U8 scrdis[5][50];  //根据币种 确定图片
 extern U8 Disp1_Indexpic[Number_IndexpicB];         //MCU控制图片寄存器数据  切换 屏图片 指令数组
 extern U8 Disp_Indexpic[Number_IndexpicA][Number_IndexpicB];         //MCU控制图片寄存器数据  切换 屏图片 指令数组
 
-extern volatile U16 prepic_num; 	//记录当前的 图片号 所显示的
-S16 test_repete(void);   
+extern volatile uint16_t prepic_num; 	//记录当前的 图片号 所显示的
+int16_t test_repete(void);   
 
 #define TSGET_NUM 32 //触摸屏数据帧最大长度
 extern volatile U8 touchnum[TSGET_NUM];
-extern volatile S32 db_id;   //历史数据 表格已经显示 数
+extern volatile int32_t db_id;   //历史数据 表格已经显示 数
 void touchresult(void); 	 //manage the instruct from dgus
 void  disp_allcount(void);	  // 取出界面 显示	 当前计数  详单
 void disp_allcount_to_pc (void);
@@ -205,35 +205,35 @@ void disp_allcount_to_pc (void);
 
 struct precoin_num 	 //用于   预置计数	 
 {
-	U32 pre_count_cur;
-	U32 pre_count_set;
-	U32 coinval; //卷数
-	U32 full_flag;
+	uint32_t pre_count_cur;
+	uint32_t pre_count_set;
+	uint32_t coinval; //卷数
+	uint32_t full_flag;
 };
 extern struct precoin_num count_coin_temp[11];   //用于   预置计数	 
 
 extern struct disp_count_buf disp_buf;
 
 struct disp_count_buf{
-	U32 m_1yuan;
-	U32 m_5jiao;
-	U32 m_1jiao;
-	U32 m_1jiao_big;
-	U32 m_5fen;
-	U32 m_2fen;
-	U32 m_1fen;
-	U32 m_10yuan;
-	U32 m_5yuan;
-	U32 total_good;
-	U32 total_ng;
-	U32 total_money;
-	U32 coin_speed;
+	uint32_t m_1yuan;
+	uint32_t m_5jiao;
+	uint32_t m_1jiao;
+	uint32_t m_1jiao_big;
+	uint32_t m_5fen;
+	uint32_t m_2fen;
+	uint32_t m_1fen;
+	uint32_t m_10yuan;
+	uint32_t m_5yuan;
+	uint32_t total_good;
+	uint32_t total_ng;
+	uint32_t total_money;
+	uint32_t coin_speed;
 };
 
 
 void disp_precount(long ze,long zs,long fg);      //   预置计数 界面   实时 显示  币种 金额  数量   预置值  币数  异币
 
-void change_coin_mode (U16 value);
+void change_coin_mode (uint16_t value);
 
 
 #define PRESETMAX 999999   // 6  表示  只能设到7位   9999999   7位表示能设到8位

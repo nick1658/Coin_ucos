@@ -448,6 +448,11 @@
               <FileType>1</FileType>
               <FilePath>..\Apps\tftpserver.c</FilePath>
             </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Apps\motor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

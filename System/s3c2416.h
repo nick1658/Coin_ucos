@@ -1216,7 +1216,7 @@ typedef __I uint8_t vuc8;   /*!< Read Only */
 #include "tftpserver.h"
 #include "DM9000.h"
 
-
+#include "motor.h"
 #include "ucos_ii.h"
 	
 //#define __MY_DEBUG__

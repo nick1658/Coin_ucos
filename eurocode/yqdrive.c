@@ -1,8 +1,8 @@
 #include "s3c2416.h"
 
-volatile U32 runtime = 0;   // // 执行件用的计时变量
+volatile uint32_t runtime = 0;   // // 执行件用的计时变量
 unsigned short int runstep = 0;   //  部件动作步骤号
-volatile U32 time = 0;   // //部件测试时踢币电磁铁用的计时变量
+volatile uint32_t time = 0;   // //部件测试时踢币电磁铁用的计时变量
 
 
 void deviceinit(void)	//开机先把通道上的币挡下去 

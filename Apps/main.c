@@ -6,12 +6,12 @@
 
 S8 alertflag = 0; 		 //报错标志位
 
-//U32 time_20ms;
-U32 time_20ms_old;
+//uint32_t time_20ms;
+uint32_t time_20ms_old;
 
 
 #define CODE_FLAG		(*(volatile unsigned *)0x33F80000)  		//MPLL lock time conut
-__align(4) U32 code_flag __attribute__((at(0x32104000), zero_init));
+__align(4) uint32_t code_flag __attribute__((at(0x32104000), zero_init));
 
 
 int check_ad1_ad2_value (void);
@@ -35,7 +35,7 @@ void LwIP_Periodic_Handle(uint32_t localtime)
 
 void coin_init (void)
 {
-	U16 i=0;
+	uint16_t i=0;
 	rWTCON = 0;	// 关闭开门狗
 	system_env_init ();
 	coin_env_init ();
@@ -111,7 +111,7 @@ void coin_init (void)
 		extern unsigned int __CodeSize__;	
 	#if 1
 		cy_println ("Code_flag = 0x%x, Begin Write code to flash...", code_flag);
-		r_code = WriteAppToAppSpace ((U32)__CodeAddr__, __CodeSize__);
+		r_code = WriteAppToAppSpace ((uint32_t)__CodeAddr__, __CodeSize__);
 		if (r_code == 0)
 			cy_println ("write code to nand flash block 10 page 0 nand addr 0 completed");   
 		else
@@ -156,7 +156,7 @@ void coin_init (void)
 	/*开机预热，如果时间不够，可适当延长*/
 	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	 
 }
-
+int print_ad0, print_ad1, print_ad2;
 void main_task(void)
 {
 	static unsigned int running_state = 0;
@@ -252,13 +252,37 @@ void Task2(void *pdata)
 		}
 	}
 }
-
+void AD_Sample_All (void);
 void Task1(void *pdata)
 {
 	(void)pdata;
 	while (1) {
 		LED2_NOT;
-		OSTimeDly(500); // LED3 1000ms闪烁
+		OSTimeDly(500); // LED3 1000ms闪烁void 
+		//AD_Sample_All ();//		//Read AD 0 ////////////////////////////////////////////////////////////////////////////////////////
+//	rADCMUX = 0;		//setup channel
+//	rADCCON|=0x1;									//start ADC
+//	while(rADCCON & 0x1);							//check if Enable_start is low
+//	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
+//	print_ad0 = ((int)rADCDAT0 & 0x3ff);
+//	
+//	//Read AD 1 ////////////////////////////////////////////////////////////////////////////////////////
+//	rADCMUX = 0x01;		//setup channel
+//	rADCCON|=0x1;									//start ADC
+//	while(rADCCON & 0x1);							//check if Enable_start is low
+//	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
+//	print_ad1 = ((int)rADCDAT0 & 0x3ff);
+//	
+//	//Read AD 2 ////////////////////////////////////////////////////////////////////////////////////////
+//	rADCMUX = 0x02;		//setup channel
+//	rADCCON|=0x1;									//start ADC
+//	while(rADCCON & 0x1);							//check if Enable_start is low
+//	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
+//	print_ad2 = ((int)rADCDAT0 & 0x3ff);
+
+//		cy_println ("AD0:	%d,	AD1:	%d,	AD2:	%d", print_ad0,
+//																						 print_ad1, 
+//																						 print_ad2);
 		//cy_print(" OSIdleCtrRun: %ld  OSIdleCtrMax: %ld  \n", OSIdleCtrRun, OSIdleCtrMax);  
 		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);  
 		//dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
@@ -443,7 +467,7 @@ void TaskStart(void *pdata)
 		}
 	}
 }
-extern int System_call(U32 call_id);
+extern int System_call(uint32_t call_id);
 int main (void)
 {
 //	int re;

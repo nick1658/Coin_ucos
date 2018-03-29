@@ -2,21 +2,20 @@
 #ifndef __TQ2416_YQCOIN_H__
 #define __TQ2416_YQCOIN_H__
 
-
-
 #include "def.h"
 #include "yqsqlite3.h"
 
 
+
 typedef struct
 {
-	U32 total_money;
-	U32 total_good;
-	U32 total_ng;
-	U32 total_coin;
-	U32 total_coin_old;
-	U32 coinnumber;
-	S16 ad2_averaged_value;
+	uint32_t total_money;
+	uint32_t total_good;
+	uint32_t total_ng;
+	uint32_t total_coin;
+	uint32_t total_coin_old;
+	uint32_t coinnumber;
+	int16_t ad2_averaged_value;
 }s_processed_coin_info;
 
 extern s_processed_coin_info processed_coin_info;
@@ -24,21 +23,21 @@ extern s_processed_coin_info processed_coin_info;
 #define COINCNUM 4     //目前 可以 计数的 国家币种  的总数量 
 
 void cy_precoincount(void);	// 鉴伪计数
-extern  U16 ccstep;
+extern  uint16_t ccstep;
 
-extern  U32 coinlearnnumber;
+extern  uint32_t coinlearnnumber;
 
 void cy_coinlearn(void);   //自学习的程序
 
-extern  S16 coin_maxvalue0;
-extern  S16 coin_minvalue0;
-extern  S16 coin_maxvalue1;
-extern  S16 coin_minvalue1;
-extern  S16 coin_maxvalue2;
-extern  S16 coin_minvalue2;
+extern  int16_t coin_maxvalue0;
+extern  int16_t coin_minvalue0;
+extern  int16_t coin_maxvalue1;
+extern  int16_t coin_minvalue1;
+extern  int16_t coin_maxvalue2;
+extern  int16_t coin_minvalue2;
 
 
-extern  U16 coine[COINCNUM][COIN_TYPE_NUM];
+extern  uint16_t coine[COINCNUM][COIN_TYPE_NUM];
 
 void detect_read(void);   
 
@@ -67,8 +66,8 @@ void detect_read(void);
 
 
 
-extern  U16 prepic_prenum;      // 用于记录 报错前的界面 
-void alertfuc(U16 alertflag); //报错
+extern  uint16_t prepic_prenum;      // 用于记录 报错前的界面 
+void alertfuc(uint16_t alertflag); //报错
 
 
 

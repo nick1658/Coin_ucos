@@ -99,13 +99,13 @@
 
 typedef struct
 {
-	U32	index;
+	uint32_t	index;
 	U8  time[8];
-	U32 ID;
-	U32 money;
-	U32 total_good;
-	U32 total_ng;
-	U32 RESERVE;
+	uint32_t ID;
+	uint32_t money;
+	uint32_t total_good;
+	uint32_t total_ng;
+	uint32_t RESERVE;
 }s_db_item_info;
 
 typedef struct
@@ -125,27 +125,27 @@ typedef struct
 
 typedef struct
 {
-	U16 magic_num;
-	U16 db_total_item_num;
-	U16 country_id;
-	U16 coin_id;
-	U16 op_id;
-	U16 rej_level;
+	uint16_t magic_num;
+	uint16_t db_total_item_num;
+	uint16_t country_id;
+	uint16_t coin_id;
+	uint16_t op_id;
+	uint16_t rej_level;
 	//---------------------------------
-	U32 precoin_set_num[COIN_TYPE_NUM];
-	U32 total_money;
-	U32 total_good;
-	U32 total_ng;
-	U16 kick_start_delay_t1;
-	U16 kick_keep_t1;
-	U16 kick_start_delay_t2;
-	U16 kick_keep_t2;
-	U16 motor_idle_t;
-	U16 pre_count_stop_n;
-	U16 coin_full_rej_pos;
-	U16 adj_offset_position;
-	U16 system_mode;
-	U16 system_boot_delay;
+	uint32_t precoin_set_num[COIN_TYPE_NUM];
+	uint32_t total_money;
+	uint32_t total_good;
+	uint32_t total_ng;
+	uint16_t kick_start_delay_t1;
+	uint16_t kick_keep_t1;
+	uint16_t kick_start_delay_t2;
+	uint16_t kick_keep_t2;
+	uint16_t motor_idle_t;
+	uint16_t pre_count_stop_n;
+	uint16_t coin_full_rej_pos;
+	uint16_t adj_offset_position;
+	uint16_t system_mode;
+	uint16_t system_boot_delay;
 }s_coin_parameter_value;
 
 typedef union
@@ -159,29 +159,29 @@ extern u_coin_parameter_value para_set_value;
 
 typedef struct
 {
-	S16 max0;
-	S16 min0;
-	S16 max1;
-	S16 min1;
-	S16 max2;
-	S16 min2;
-	S16 std0;
-	S16 std1;
-	S16 std2;
-	S16 offsetmax0;
-	S16 offsetmin0;
-	S16 offsetmax1;
-	S16 offsetmin1;
-	S16 offsetmax2;
-	S16 offsetmin2;
-	U32 * p_pre_count_set;
-	U32 * p_pre_count_cur;
-	U32 * p_pre_count_full_flag;
-	U32 * p_coinval;
-	U32 coin_type;
-	U32 accept;
-	U16 hmi_pre_count_set_addr;
-	U16 money;
+	int16_t max0;
+	int16_t min0;
+	int16_t max1;
+	int16_t min1;
+	int16_t max2;
+	int16_t min2;
+	int16_t std0;
+	int16_t std1;
+	int16_t std2;
+	int16_t offsetmax0;
+	int16_t offsetmin0;
+	int16_t offsetmax1;
+	int16_t offsetmin1;
+	int16_t offsetmax2;
+	int16_t offsetmin2;
+	uint32_t * p_pre_count_set;
+	uint32_t * p_pre_count_cur;
+	uint32_t * p_pre_count_full_flag;
+	uint32_t * p_coinval;
+	uint32_t coin_type;
+	uint32_t accept;
+	uint16_t hmi_pre_count_set_addr;
+	uint16_t money;
 }s_coin_cmp_value;
 
 typedef union
@@ -216,7 +216,7 @@ void write_para (void);
 void read_coin_value(void); 	 // read  COIN  0--8
 void write_coin_value (void);
 
-//void Writecoinall_value(U16 coin);   	//write coin 0--8
+//void Writecoinall_value(uint16_t coin);   	//write coin 0--8
 
 
 
@@ -227,12 +227,12 @@ void ini_screen (void);
 
 void initial_nandflash(void);    //nandflash
 
-void yqsql_exec(U16 chos);    
+void yqsql_exec(uint16_t chos);    
 
 
-S16 test_read_r_code (S16 r_code);
-S16 test_write_r_code (S16 r_code);
-S16 test_erase_r_code (S16 r_code);
+int16_t test_read_r_code (int16_t r_code);
+int16_t test_write_r_code (int16_t r_code);
+int16_t test_erase_r_code (int16_t r_code);
 
 
 

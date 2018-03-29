@@ -21,7 +21,7 @@
 u_coin_parameter_value para_set_value;
 s_country_coin pre_value;
 
-S16 test_read_r_code (S16 r_code)
+int16_t test_read_r_code (int16_t r_code)
 {
 	if (r_code == 0)
 	{
@@ -38,7 +38,7 @@ S16 test_read_r_code (S16 r_code)
 	}
 	return -1;
 }
-S16 test_write_r_code (S16 r_code)
+int16_t test_write_r_code (int16_t r_code)
 {
 	if (r_code == 0)
 	{
@@ -63,7 +63,7 @@ S16 test_write_r_code (S16 r_code)
 	}
 	return -1;
 }
-S16 test_erase_r_code (S16 r_code)
+int16_t test_erase_r_code (int16_t r_code)
 {
 	if (r_code == 0)
 	{
@@ -84,7 +84,7 @@ S16 test_erase_r_code (S16 r_code)
 void initial_nandflash(void)    //nandflash
 {
 
-	U16 i=0, j;
+	uint16_t i=0, j;
 
 	cy_println ("sizeof (s_coin_parameter_value)   = %d", sizeof (s_coin_parameter_value));
 	cy_println ("sizeof (u_coin_cmp_value) = %d", sizeof (u_coin_cmp_value));
@@ -186,7 +186,7 @@ void write_para (void)	//写入 当前币种 历史数据 总
 						
 void read_coin_value(void) 	 // read  COIN  0--8
 {
-	U32 i;
+	uint32_t i;
 	for (i = 0; i < COUNTRY_NUM; i++)
 	{
 		test_read_r_code (Nand_ReadPage(COUNTRY0_COIN_PRE_VALUE_START_BLOCK_NUM, COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM + i, (U8 *)(&(pre_value.country[i]))));
@@ -249,7 +249,7 @@ void read_coin_value(void) 	 // read  COIN  0--8
 
 void write_coin_value (void)
 {
-	U16 i;
+	uint16_t i;
 	
 	for (i = 0; i < COUNTRY_NUM; i++)
 	{
@@ -316,7 +316,7 @@ void ini_picaddr(void) //币种切换时的 初始化地址函数
 }
 
 
-void yqsql_exec(U16 chos)    
+void yqsql_exec(uint16_t chos)    
 {
 	switch(chos)
 	{
@@ -327,8 +327,8 @@ void yqsql_exec(U16 chos)
 									      //条数				//日期					   //工号 //金额				//数量				//异币		
 			s_db_item_info * db_item_info_temp;
 			s_db_item_block * db_item_block_temp;
-			U16 item_index;
-			U16 i = 0;
+			uint16_t item_index;
+			uint16_t i = 0;
 			U8 yqnddata[PAGE_BYTE_SIZE];
 			for(i = 0; i < PAGE_BYTE_SIZE; i++)
 			{
@@ -408,7 +408,7 @@ void yqsql_exec(U16 chos)
 			U8 yqnddata[PAGE_BYTE_SIZE];
 			
 	
-			U16 str_addr[6][5] = {   //屏上地址 
+			uint16_t str_addr[6][5] = {   //屏上地址 
 					{0x0100,0x0110,0x0112,0x0118,0x011E},
 					{0x0120,0x0130,0x0132,0x0138,0x013E},
 					{0x0140,0x0150,0x0152,0x0158,0x015E},
@@ -417,10 +417,10 @@ void yqsql_exec(U16 chos)
 					{0x01A0,0x01B0,0x01B2,0x01B8,0x01BE},
 					};
 			S8 str_db[20];
-			U32 temp = 0;
-			U16 num = 0;     //计时 显示到6次就结束 
+			uint32_t temp = 0;
+			uint16_t num = 0;     //计时 显示到6次就结束 
 			
-			S32	db_id_temp = 0;
+			int32_t	db_id_temp = 0;
 				
 			memset(str_db,' ',20);	
 			for(num = 0; num < 6;  num++){ 
@@ -544,7 +544,7 @@ void yqsql_exec(U16 chos)
 			s_db_item_block * db_item_block_temp;
 			U8 yqnddata[PAGE_BYTE_SIZE];
 			
-			U16 str_addr[6][5] = {   //屏上地址 
+			uint16_t str_addr[6][5] = {   //屏上地址 
 					{0x0100,0x0110,0x0112,0x0118,0x011E},
 					{0x0120,0x0130,0x0132,0x0138,0x013E},
 					{0x0140,0x0150,0x0152,0x0158,0x015E},
@@ -553,10 +553,10 @@ void yqsql_exec(U16 chos)
 					{0x01A0,0x01B0,0x01B2,0x01B8,0x01BE},
 					};
 			S8 str_db[20];
-			U32 temp = 0;
-			U16 num = 0;     //计时 显示到6次就结束 
+			uint32_t temp = 0;
+			uint16_t num = 0;     //计时 显示到6次就结束 
 					
-			S32	db_id_temp = 0;
+			int32_t	db_id_temp = 0;
 					
 					
 			if ((db_id + 6) < para_set_value.data.db_total_item_num)

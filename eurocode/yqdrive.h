@@ -32,6 +32,8 @@
 #define  EMKICK1(x) 		 OUT3(x)			//P2^4; CLKOUT1/GPH14      // kick out 
 #define  EMKICK2(x) 		 OUT2(x)			//P2^5; //EINT15/GPG7   //kick back
 
+
+
 #define STORAGE_MOTOR_STARTRUN() STORAGE_MOTOR(1)
 #define STORAGE_MOTOR_STOPRUN() STORAGE_MOTOR(0)
 
@@ -93,9 +95,9 @@ void deviceinit(void);	//开机前初始化
 
 #define STOP_TIME para_set_value.data.motor_idle_t//无币停机时间10秒
 
-extern volatile U32 runtime;   // // 执行件 用的计时
+extern volatile uint32_t runtime;   // // 执行件 用的计时
 extern unsigned short int runstep;  //  部件动作步骤号
-extern volatile U32 time;   // //踢币电磁铁 用的计时
+extern volatile uint32_t time;   // //踢币电磁铁 用的计时
 
 
 void runfunction(void);   //部件动作函数

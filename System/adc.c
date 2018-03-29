@@ -94,7 +94,7 @@ void adc_init(void)    //初始化ADC
 {
 	int m=0; //Initialize variables
 //	preScaler = ADC_FREQ;
-    U32 preScaler = 66;
+    uint32_t preScaler = 66;
 	preScaler = PCLK/ADC_FREQ -1;   //PCLK =  M 
 	cy_println("PCLK/ADC_FREQ - 1 = %d",preScaler);
 	rADCCON = (1<<14)|(preScaler<<6)|(0<<3);		//使能 分频 精度

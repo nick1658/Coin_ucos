@@ -476,7 +476,7 @@ int Hsmmc_WriteBlock(unsigned char *pBuffer, unsigned int BlockAddr, unsigned in
 	return 0; // 写完所有数据
 }
 
-static S16 Hsmmc_init_flag = 0;
+static int16_t Hsmmc_init_flag = 0;
 int Hsmmc_Init()
 {
 	unsigned int i;
