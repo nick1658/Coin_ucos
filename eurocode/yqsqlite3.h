@@ -146,6 +146,9 @@ typedef struct
 	uint16_t adj_offset_position;
 	uint16_t system_mode;
 	uint16_t system_boot_delay;
+	uint32_t coin_size;
+	uint32_t coin_push_size;
+	uint32_t coin_h;
 }s_coin_parameter_value;
 
 typedef union

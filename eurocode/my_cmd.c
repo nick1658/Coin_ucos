@@ -644,7 +644,7 @@ void update_finish (e_update_flag flag)
 /*提供给串口中断服务程序，保存串口接收到的单个字符*/   
 void fill_rec_buf(char data)                                                           
 {
-	if (data == CTRL_C)
+	if ((data == CTRL_C ) && (sys_env.tty_mode == 0))
 	{
 		cy_println ("Op Cancel!");
 		sys_env.sys_break = 1;
@@ -1089,7 +1089,19 @@ void set_para_2  (int32_t arg[])
 	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep2"))){                                                                                                                    
 		cy_println("set kick_keep_time2 = %d", arg[1]);                                                     
 		para_set_value.data.kick_keep_t2 = arg[1];   
-		write_para ();              
+		write_para ();    
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-size"))){                                                                                                                    
+		cy_println("set coin_size = %d", arg[1]);                                                     
+		para_set_value.data.coin_size = arg[1];   
+		write_para ();			
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-push-size"))){                                                                                                                    
+		cy_println("set coin-push-size = %d", arg[1]);                                                     
+		para_set_value.data.coin_push_size = arg[1];   
+		write_para ();			
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-h"))){                                                                                                                    
+		cy_println("set coin_h = %d", arg[1]);                                                     
+		para_set_value.data.coin_h = arg[1];   
+		write_para ();			
 	}else if (arg[0] == string_to_dec((uint8 *)("motor-dir"))){                                                                                                                     
 		cy_println("set motor-dir = %d", arg[1]);  
 		if (arg[1] == 1){
@@ -1493,7 +1505,10 @@ void print_system_env_info (void)
 	cy_println ("pre_count_stop_n       = %d", para_set_value.data.pre_count_stop_n);    
 	cy_println ("coin_full_rej_pos      = %d", para_set_value.data.coin_full_rej_pos);        
 	cy_println("----------------------------------------------------");  
-	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t);            
+	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t); 
+	cy_println ("coin_size              = %d", para_set_value.data.coin_size);    
+	cy_println ("coin_push_size         = %d", para_set_value.data.coin_push_size);   
+	cy_println ("coin_h                 = %d", para_set_value.data.coin_h);           
 	cy_println("----------------------------------------------------");
 }   
 
@@ -1702,6 +1717,25 @@ void print_speed (void)
 	}
 }
 
+void print_input_status (void)
+{		
+	while (1){
+		cy_print ("IN0:%d ", A0IN0);
+		cy_print ("IN1:%d ", A0IN1);
+		cy_print ("IN2:%d ", A0IN2);
+		cy_print ("IN3:%d ", A0IN3);
+		cy_print ("IN4:%d ", A0IN4);
+		cy_print ("IN5:%d ", A0IN5);
+		cy_print ("IN6:%d ", A0IN6);
+		cy_print ("IN7:%d ", A0IN7);
+		cy_println ();
+		OSTimeDly(500); // LED3 1000ms闪烁void 
+		if (had_ctrlc ()){
+			return;
+		}
+	}
+}
+
 void do_print(int32_t argc, void *cmd_arg)
 {                                                                                
 	int32_t  *arg=(int32_t *)cmd_arg;   
@@ -1711,6 +1745,8 @@ void do_print(int32_t argc, void *cmd_arg)
 		case 1:     
 			if (arg[argc - 1] == string_to_dec((uint8 *)("ng"))){      
 				print_ng_data (sys_env.coin_index);
+			}else if (arg[argc - 1] == string_to_dec((uint8 *)("input"))){ // 进行特征值采样
+				print_input_status ();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("gd"))){ // 进行特征值采样
 				print_good_data (sys_env.coin_index);
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("env-s"))){ // 进行特征值采样
@@ -2263,6 +2299,10 @@ int do_motor  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	 
 	int32_t arg[4];
 	switch (argc) {
+	case 2:
+		arg[0] = simple_strtol (argv[1], NULL, 10);
+		set_motor (0, MOTOR_DIR_UP, arg[0], 6, MOTOR_WATCH_POS1);
+		return 0;
 	case 4 :
 		arg[0] = simple_strtol (argv[1], NULL, 10);
 		arg[1] = simple_strtol (argv[2], NULL, 10);
@@ -2286,6 +2326,101 @@ MY_CMD(
 	motor,	6,	1,	do_motor,
 	"motor id step speed [repeat]\n",
 	"motor - run motor\n"
+);
+
+int do_0  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (0, MOTOR_DIR_UP, 600000, 6, MOTOR_WATCH_POS1);
+	set_motor (1, MOTOR_DIR_OPEN, 600000, 2, MOTOR_WATCH_POS1);
+	return 0;
+}
+MY_CMD(
+	0,	6,	1,	do_0,
+	"0 run step 0 program\n",
+	"0 - run step 0\n"
+);
+
+int do_1  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	motors[0].motor_steps = 0;
+	sys_env.coin_cross_time = 0;
+	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_size, 2, MOTOR_WATCH_NONE);
+	return 0;
+}
+MY_CMD(
+	1,	6,	1,	do_1,
+	"1 run step 1 program\n",
+	"1 - run step 1\n"
+);
+int do_2  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (0, MOTOR_DIR_DOWN, 600000, 6, MOTOR_WATCH_POS2);
+	return 0;
+}
+MY_CMD(
+	2,	6,	1,	do_2,
+	"2 run step 2 program\n",
+	"2 - run step 2\n"
+);
+int do_3  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_push_size, 2, MOTOR_WATCH_NONE);
+	return 0;
+}
+MY_CMD(
+	3,	6,	1,	do_3,
+	"3 run step 1 program\n",
+	"3 - run step 1\n"
+);
+int do_4  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (0, MOTOR_DIR_DOWN, 600000, 6, MOTOR_WATCH_POS3);
+	return 0;
+}
+MY_CMD(
+	4,	6,	1,	do_4,
+	"4 run step 4 program\n",
+	"4 - run step 4\n"
+);
+int do_5  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (2, MOTOR_DIR_NONE, 400, 4, MOTOR_WATCH_NONE);
+	return 0;
+}
+MY_CMD(
+	5,	6,	1,	do_5,
+	"5 run step 5 program\n",
+	"5 - run step 5\n"
+);
+int do_6  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	set_motor (1, MOTOR_DIR_OPEN, 600000, 2, MOTOR_WATCH_POS1);
+	return 0;
+}
+MY_CMD(
+	6,	6,	1,	do_6,
+	"6 run step 6 program\n",
+	"6 - run step 6\n"
+);
+int do_7  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	  
+	set_motor (2, MOTOR_DIR_NONE, 400, 4, MOTOR_WATCH_NONE);
+	return 0;
+}
+MY_CMD(
+	7,	6,	1,	do_7,
+	"7 run step 7 program\n",
+	"7 - run step 7\n"
+);
+int do_8  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{	 
+	//set_motor (2, MOTOR_DIR_DOWN, 400, 4, MOTOR_WATCH_NONE);
+	return 0;
+}
+MY_CMD(
+	8,	6,	1,	do_8,
+	"8 run step 8 program\n",
+	"8 - run step 8\n"
 );
 
 int do_receive (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])

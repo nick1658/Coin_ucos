@@ -259,6 +259,15 @@ void Task1(void *pdata)
 	while (1) {
 		LED2_NOT;
 		OSTimeDly(500); // LED3 1000ms…¡À∏void 
+//		cy_print ("IN0:%d ", A0IN0);
+//		cy_print ("IN1:%d ", A0IN1);
+//		cy_print ("IN2:%d ", A0IN2);
+//		cy_print ("IN3:%d ", A0IN3);
+//		cy_print ("IN4:%d ", A0IN4);
+//		cy_print ("IN5:%d ", A0IN5);
+//		cy_print ("IN6:%d ", A0IN6);
+//		cy_print ("IN7:%d ", A0IN7);
+//		cy_println ();
 		//AD_Sample_All ();//		//Read AD 0 ////////////////////////////////////////////////////////////////////////////////////////
 //	rADCMUX = 0;		//setup channel
 //	rADCCON|=0x1;									//start ADC

@@ -96,11 +96,74 @@ void Timer4_Init(unsigned short us, void (*Callback)(void), unsigned short enabl
 extern void main_task(void);
 void Timer3_IRQ(void)
 {   
+	static int32_t coin_in = 0;
 	main_task ();
 	KICK_Q_SCAN(0);
 	KICK_Q_SCAN(1);
 	FULL_KICK_Q_SCAN(0);
 	FULL_KICK_Q_SCAN(1);
+	
+	if ((A0IN0 == 0) && (coin_in == 0)){
+		sys_env.coin_cross_time++;
+		coin_in = 1;
+		set_motor (0, MOTOR_DIR_DOWN, para_set_value.data.coin_h, 6, MOTOR_WATCH_POS2);
+	}else if (A0IN0 == 1){
+		coin_in = 0;
+	}
+	
+	if (motors[0].motor_status == MOTOR_RUN){
+		switch(motors[0].motor_watch)
+		{
+			case MOTOR_WATCH_POS1:
+				if (A0IN1 == 0){
+					motors[0].motor_status = MOTOR_STOP;
+					motors[0].motor_steps = 0;
+				}
+				break;
+			case MOTOR_WATCH_POS2:
+				if (A0IN2 == 0){
+					motors[0].motor_status = MOTOR_STOP;
+					motors[0].motor_steps = 0;
+				}
+				break;
+			case MOTOR_WATCH_POS3:
+				if (A0IN3 == 0){
+					motors[0].motor_status = MOTOR_STOP;
+					motors[0].motor_steps = 0;
+				}
+				break;
+			default:break;
+		}
+		EXC_MOTOR (0);
+	}
+	
+	if (motors[1].motor_status == MOTOR_RUN){
+		switch(motors[1].motor_watch)
+		{
+			case MOTOR_WATCH_POS1:
+				if (A0IN4 == 1){
+					motors[1].motor_status = MOTOR_STOP;
+					motors[1].motor_steps = 0;
+				}
+				break;
+			default:break;
+		}
+		
+		EXC_MOTOR (1);
+	}
+	if (motors[2].motor_status == MOTOR_RUN){
+//		switch(motors[2].motor_watch)
+//		{
+//			case MOTOR_WATCH_POS1:
+//				if (A0IN5 == 1){
+//					motors[2].motor_status = MOTOR_STOP;
+//				}
+//				break;
+//			default:break;
+//		}
+		EXC_MOTOR (2);
+	}
+	
 	
 	if (coin_env.kick_keep_t1 > 0){
 		coin_env.kick_keep_t1--;
