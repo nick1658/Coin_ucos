@@ -116,6 +116,7 @@ typedef struct
 	e_update_flag update_flag;
 	uint32_t net_task;
 	uint32_t coin_speed;
+	uint32_t coin_count;
 	int16_t sys_break;
 }s_system_env;
 

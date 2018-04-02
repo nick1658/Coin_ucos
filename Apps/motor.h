@@ -42,6 +42,8 @@ typedef enum {
 #define MOTOR_DIR_CLOSE 0
 #define MOTOR_DIR_OPEN 1
 
+typedef void (*motor_cplt_call_back) (void);
+
 
 typedef struct {
 	int32_t motor_id;
@@ -52,6 +54,7 @@ typedef struct {
 	int32_t motor_spd_ctr;
 	int32_t motor_watch;
 	int32_t motor_pwm_status;
+	motor_cplt_call_back cb;
 }s_motor_def;
 
 #define MOTOR_NUMS 3
@@ -73,13 +76,23 @@ typedef struct {
 				MOTOR##X(STOPRUN); \
 				motors[X].motor_pwm_status = MOTOR_PWM_HIGH; \
 				motors[X].motor_steps--; \
-				if (motors[X].motor_steps == 0){ \
-					motors[X].motor_status = MOTOR_STOP; \
-				} \
 			}else{ \
 				motors[X].motor_spd_ctr++; \
 			} \
 		} \
+	}else{ \
+		motors[X].motor_status = MOTOR_STOP; \
+		if (motors[X].cb != 0){ \
+			motors[X].cb (); \
+			motors[X].cb = 0; \
+		} \
+	} \
+}
+
+
+#define SET_MOTOR_CPLT_CALLBACK(X) { \
+	if (X < MOTOR_NUMS){ \
+		motors[X].cb = motor_##X##_cplt_callback; \
 	} \
 }
 
@@ -88,6 +101,11 @@ extern s_motor_def motors[MOTOR_NUMS];
 void set_motor(int32_t motor_id, int32_t motor_dir, int32_t steps, int32_t speed, int32_t watch);
 int start_motor (int32_t motor_id, int32_t motor_step, int32_t motor_speed);
 int set_motor_dir (int32_t motor_id, int32_t motor_dir);
+void set_motor_cplt_callback (int32_t motor_id, motor_cplt_call_back cb);
+void clr_motor_cplt_callback (int32_t motor_id);
+void motor_0_cplt_callback (void);
+void motor_1_cplt_callback (void);
+void motor_2_cplt_callback (void);
 
 #endif
 

@@ -104,7 +104,7 @@ void Timer3_IRQ(void)
 	FULL_KICK_Q_SCAN(1);
 	
 	if ((A0IN0 == 0) && (coin_in == 0)){
-		sys_env.coin_cross_time++;
+		sys_env.coin_count++;
 		coin_in = 1;
 		set_motor (0, MOTOR_DIR_DOWN, para_set_value.data.coin_h, 6, MOTOR_WATCH_POS2);
 	}else if (A0IN0 == 1){
