@@ -22,79 +22,36 @@ int set_motor_dir (int32_t motor_id, int32_t motor_dir)
 }
 int start_motor (int32_t motor_id, int32_t motor_step, int32_t motor_speed)
 {
-//	int i;
-	//cy_println ("run motor id = %d", motor_id);
+	motors[motor_id].motor_watch = MOTOR_WATCH_NONE;
 	switch (motor_id){
 		case 0:
-			motors[0].motor_pwm_status = MOTOR_PWM_HIGH;
-			motors[0].motor_spd = motor_speed;
-			motors[0].motor_steps = motor_step;
-			if (motors[0].motor_dir == MOTOR_DIR_UP){
-				motors[0].motor_watch = MOTOR_WATCH_POS1;
+			if (motors[motor_id].motor_dir == MOTOR_DIR_UP){
+				motors[motor_id].motor_watch = MOTOR_WATCH_POS1;
 			}else{
-				motors[0].motor_watch = MOTOR_WATCH_POS2;
+				motors[motor_id].motor_watch = MOTOR_WATCH_POS2;
 			}
-			motors[0].motor_status = MOTOR_RUN;
-//			for (i = 0; i < motor_step; i++){
-//				MOTOR0(STARTRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				MOTOR0 (STOPRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				if (had_ctrlc ()){
-//					return -1;
-//				}
-//			}
 			break;
 		case 1:
-			motors[1].motor_pwm_status = MOTOR_PWM_HIGH;
-			motors[1].motor_spd = motor_speed;
-			motors[1].motor_steps = motor_step;
-			if (motors[1].motor_dir == MOTOR_DIR_OPEN){
-				motors[1].motor_watch = MOTOR_WATCH_POS1;
+			if (motors[motor_id].motor_dir == MOTOR_DIR_OPEN){
+				motors[motor_id].motor_watch = MOTOR_WATCH_POS1;
 			}else{
-				motors[1].motor_watch = MOTOR_WATCH_POS2;
+				motors[motor_id].motor_watch = MOTOR_WATCH_POS2;
 			}
-			motors[1].motor_status = MOTOR_RUN;
-//			for (i = 0; i < motor_step; i++){
-//				MOTOR1(STARTRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				MOTOR1 (STOPRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				if (had_ctrlc ()){
-//					return -1;
-//				}
-//			}
 			break;
 		case 2:
-			motors[2].motor_pwm_status = MOTOR_PWM_HIGH;
-			motors[2].motor_spd = motor_speed;
-			motors[2].motor_steps = motor_step;
-			motors[2].motor_status = MOTOR_RUN;
-//			for (i = 0; i < motor_step; i++){
-//				MOTOR2(STARTRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				MOTOR2 (STOPRUN);	  //  
-//				time = motor_speed;	  //
-//				while(time != 0);
-//				if (had_ctrlc ()){
-//					return -1;
-//				}
-//			}
 			break;
 		default:
 		    return -1;
-			//break;
 	}
+	motors[motor_id].motor_pwm_status = MOTOR_PWM_HIGH;
+	motors[motor_id].motor_spd = motor_speed;
+	motors[motor_id].motor_steps = motor_step;
+	motors[motor_id].motor_status = MOTOR_RUN;
 	return 0;
 }
 
 
-void set_motor(int32_t motor_id, int32_t motor_dir, int32_t steps, int32_t speed, int32_t watch)
+void set_motor(int32_t motor_id, int32_t motor_dir, int32_t steps, int32_t speed, e_motor_status watch)
 {
 	if (motor_id > MOTOR_NUMS - 1)
 		return;
