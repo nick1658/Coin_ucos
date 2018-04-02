@@ -87,11 +87,11 @@ void clr_motor_cplt_callback (int32_t motor_id)
 
 void motor_0_cplt_callback (void)
 {
-	set_motor (0, MOTOR_DIR_UP, 300, 6, MOTOR_WATCH_NONE);
+	set_motor (0, MOTOR_DIR_UP, 25, MOTOR_0_SPEED, MOTOR_WATCH_NONE);
 }
 void motor_1_cplt_callback (void)
 {
-	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_size, 8, MOTOR_WATCH_NONE);
+	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_size, MOTOR_1_SPEED, MOTOR_WATCH_NONE);
 }
 void motor_2_cplt_callback (void)
 {

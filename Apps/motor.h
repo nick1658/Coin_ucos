@@ -42,6 +42,9 @@ typedef enum {
 #define MOTOR_DIR_CLOSE 0
 #define MOTOR_DIR_OPEN 1
 
+#define MOTOR_0_SPEED 6
+#define MOTOR_1_SPEED 3
+
 typedef void (*motor_cplt_call_back) (void);
 
 

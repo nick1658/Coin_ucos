@@ -2333,8 +2333,8 @@ int do_0  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	sys_env.coin_count = 0;
 	SET_MOTOR_CPLT_CALLBACK (1);
 	set_motor_cplt_callback (0, motor_0_cplt_callback);
-	set_motor (0, MOTOR_DIR_UP, 600000, 6, MOTOR_WATCH_POS1);
-	set_motor (1, MOTOR_DIR_OPEN, 600000, 8, MOTOR_WATCH_POS1);
+	set_motor (0, MOTOR_DIR_UP, 600000, MOTOR_0_SPEED, MOTOR_WATCH_POS1);
+	set_motor (1, MOTOR_DIR_OPEN, 600000, MOTOR_1_SPEED, MOTOR_WATCH_POS1);
 	return 0;
 }
 MY_CMD(
@@ -2355,7 +2355,7 @@ MY_CMD(
 );
 int do_2  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	 
-	set_motor (0, MOTOR_DIR_DOWN, 600000, 6, MOTOR_WATCH_POS2);
+	set_motor (0, MOTOR_DIR_DOWN, 600000, MOTOR_0_SPEED, MOTOR_WATCH_POS2);
 	return 0;
 }
 MY_CMD(
