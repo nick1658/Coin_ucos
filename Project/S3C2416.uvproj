@@ -453,6 +453,11 @@
               <FileType>1</FileType>
               <FilePath>..\Apps\motor.c</FilePath>
             </File>
+            <File>
+              <FileName>httpserver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Apps\httpserver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

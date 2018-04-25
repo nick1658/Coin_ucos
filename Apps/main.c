@@ -49,7 +49,7 @@ void coin_init (void)
 	tscount = 0;
 	blockflag = ADBLOCKT; //此变量在yqadc.c文件中定义
 	adtime = 0;    //定时中断里 计时
-
+	
 	
 //	db_id = 0;   //历史数据 表格已经显示 数
 	
@@ -156,7 +156,7 @@ void coin_init (void)
 	/*开机预热，如果时间不够，可适当延长*/
 	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	 
 }
-int print_ad0, print_ad1, print_ad2;
+//int print_ad0, print_ad1, print_ad2;
 void main_task(void)
 {
 	static unsigned int running_state = 0;
@@ -169,6 +169,7 @@ void main_task(void)
 		sys_env.sys_runing_time++;
 	}
 	
+	AD_Sample_All ();
 	switch (sys_env.workstep)
 	{
 		case 10:{        //main  proceed
@@ -307,6 +308,7 @@ OS_STK  Task1Stk[TASK1_STK_SIZE];
 OS_STK  Task2Stk[TASK2_STK_SIZE];
 OS_STK  Task3Stk[TASK3_STK_SIZE];
 
+
 void TaskStart(void *pdata)
 {
 	int i = 0;
@@ -316,12 +318,12 @@ void TaskStart(void *pdata)
 	(void)pdata;
 	OSStatInit(); //开启统计任务 
 	coin_init ();
-
 	// Initilaize the LwIP stack
 	lwip_init();	
 	// ip address 192, 168, 1, 20
 	ethernetif_config();	
 	httpd_init();	
+	//IAP_httpd_init ();
 	tftp_init ();
 	
 	cy_println ("[Please press ENTER to activate this console]");

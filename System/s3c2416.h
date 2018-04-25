@@ -1215,6 +1215,7 @@ typedef __I uint8_t vuc8;   /*!< Read Only */
 #include "httpd.h"
 #include "tftpserver.h"
 #include "DM9000.h"
+#include "httpserver.h"
 
 #include "motor.h"
 #include "ucos_ii.h"
@@ -1249,6 +1250,9 @@ typedef __I uint8_t vuc8;   /*!< Read Only */
 #else
 #define LOG(format, arg...)
 #endif
+
+
+#define USE_IAP_HTTP
 
 
 

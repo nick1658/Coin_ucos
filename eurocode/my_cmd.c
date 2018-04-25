@@ -772,7 +772,7 @@ void do_go(int32_t argc, void *cmd_arg)
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("tzxx"))) // 进入特征学习
 			{ 
-				if( adstd_test() == 1)
+				if( adstd_offset() == 1)
 				{
 					cy_println("goto TZBC menu"); 
 					comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);
@@ -2375,7 +2375,7 @@ MY_CMD(
 );
 int do_4  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	 
-	set_motor (0, MOTOR_DIR_DOWN, 600000, 6, MOTOR_WATCH_POS3);
+	set_motor (0, MOTOR_DIR_DOWN, 600000, MOTOR_0_SPEED, MOTOR_WATCH_POS3);
 	return 0;
 }
 MY_CMD(
@@ -2385,7 +2385,7 @@ MY_CMD(
 );
 int do_5  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	 
-	set_motor (2, MOTOR_DIR_NONE, 400, 4, MOTOR_WATCH_NONE);
+	set_motor (2, MOTOR_DIR_NONE, 400, MOTOR_2_SPEED, MOTOR_WATCH_NONE);
 	return 0;
 }
 MY_CMD(
@@ -2395,7 +2395,7 @@ MY_CMD(
 );
 int do_6  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	 
-	set_motor (1, MOTOR_DIR_OPEN, 600000, 2, MOTOR_WATCH_POS1);
+	set_motor (1, MOTOR_DIR_OPEN, 600000, MOTOR_1_SPEED, MOTOR_WATCH_POS1);
 	return 0;
 }
 MY_CMD(
@@ -2405,7 +2405,7 @@ MY_CMD(
 );
 int do_7  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {	  
-	set_motor (2, MOTOR_DIR_NONE, 400, 4, MOTOR_WATCH_NONE);
+	set_motor (2, MOTOR_DIR_NONE, 400, MOTOR_2_SPEED, MOTOR_WATCH_NONE);
 	return 0;
 }
 MY_CMD(
