@@ -26,7 +26,7 @@ void print_func(void)     // 打印
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
 			if (touchnum[7]>0){
-				Uart1_Printf(" 日期:20%02x-%02x-%02x %02x:%02x\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11]);
+				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], 16);
 				touch_flag = 0;
 				break;
 			}else{
@@ -42,7 +42,7 @@ void print_func(void)     // 打印
 					((coine[coinchoose][3]*(disp_buf.m_1jiao_big))/100),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)/10),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)%10));
-			Uart1_Printf("   1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao),
+			Uart1_Printf("   1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao),//858, 85, 8,0);//
 					((coine[coinchoose][3]*(disp_buf.m_1jiao))/100),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)/10),
 					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)%10));
@@ -57,10 +57,13 @@ void print_func(void)     // 打印
 			Uart1_Printf("   币种  数量(枚)  金额(元)\r\n");
 			Uart1_Printf("   详细信息:  \r\n");
 			Uart1_Printf("\r\n");
-	//		Uart1_Printf("    异币:        %d 枚\r\n",processed_coin_info.total_ng);
-			Uart1_Printf("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-			Uart1_Printf("   总数:     %d 枚\r\n",processed_coin_info.total_good);
+	//		Uart1_Printf("    异币:        %d 枚\r\n",processed_coin_info.total_ng);//85, 8, 0);//
+			Uart1_Printf("   总金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+			Uart1_Printf("   总  数:     %d 枚\r\n",processed_coin_info.total_good);//858);
+//			Uart1_Printf("   结束时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-1,51);
+//			Uart1_Printf("   开始时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-2,46);
 			Uart1_Printf("   本次清分:\r\n");
+//			Uart1_Printf("   广州畅阳电子科技有限公司\r\n\r\n");
 		}else{//包装模式
 			Uart1_Printf(" 大1角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[3].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[3].data.p_coinval * 5);
 			Uart1_Printf("   1角     %4d     %d\r\n",*pre_value.country[COUNTRY_ID].coin[4].data.p_coinval, *pre_value.country[COUNTRY_ID].coin[4].data.p_coinval * 5);
@@ -69,9 +72,12 @@ void print_func(void)     // 打印
 			Uart1_Printf("   币种  数量(卷)  金额(元)\r\n");
 			Uart1_Printf("   详细信息:  \r\n");
 			Uart1_Printf("\r\n");
-			Uart1_Printf("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-			Uart1_Printf("   总数:     %d 枚\r\n",processed_coin_info.total_good);
+			Uart1_Printf("   总金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+			Uart1_Printf("   总  数:     %d 枚\r\n",processed_coin_info.total_good);
+			//Uart1_Printf("   结束时间:20%02d-%02d-%02d %02d:%02d:%02d\r\n",18,4,25,14,37,51);
+			//Uart1_Printf("   开始时间:20%02d-%02d-%02d %02d:%02d:%02d\r\n",18,4,25,14,36,46);
 			Uart1_Printf("   本次清分:\r\n");
+			//Uart1_Printf("   广州畅阳电子科技有限公司\r\n\r\n");
 		}
 	}
 /*

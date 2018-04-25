@@ -2195,8 +2195,6 @@ int16_t is_repeate (int16_t _coin_index)
 	int16_t temp_coin_maxvalue2;
 	int16_t temp_coin_minvalue2;
 	
-	adstd_offset ();
-	
 	temp_coin_maxvalue0 = coin_maxvalue0 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0;
 	temp_coin_minvalue0 = coin_minvalue0 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0;
 	temp_coin_maxvalue1 = coin_maxvalue1 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1;

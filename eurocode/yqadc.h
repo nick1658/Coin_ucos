@@ -71,7 +71,8 @@ typedef struct
 #define ADOFFSET  40
 
 
-#define ADSAMPNUM0  16    //every ad channel sample number for getting average value 2  8 
+#define ADSAMPNUM0  10    //every ad channel sample number for getting average value 2  8 
+#define ADSAMPNUM  50    //every ad channel sample number for getting average value 2  8 
 
 #define  WAVE_DOWN_TO_STD_N  32   //1  //8确认波形下降 次数  4
 #define  WAVE_GO_UP_N  32 //1  //8 15   //确认波形峰值  次数 50 40   65     20
@@ -104,9 +105,9 @@ extern uint32_t ch0_coin_come;  //通道 来硬币 标记
 extern uint32_t coin_cross_time;
 extern uint32_t ch0_pre_count;  //通道0 有硬币经过 标记 
 		
-extern  int16_t std_ad0;
-extern  int16_t std_ad1;
-extern  int16_t std_ad2;
+extern  uint16_t std_ad0;
+extern  uint16_t std_ad1;
+extern  uint16_t std_ad2;
 
 void ad2_valueget(void);  //adc function   get value
 void ad1_valueget(void);  //adc function   get value
@@ -171,6 +172,8 @@ extern int ad0_value_changed;
 extern void send_sample_data (AD_Value ad_value_buf[], int counter);
 
 void setStdValue (void);
+
+void AD_Sample_All (void);
 
 extern int L_H_min;
 extern int L_M_min;

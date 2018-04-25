@@ -83,6 +83,7 @@ void coin_init (void)
 	cy_println ("\n#####    Program For YQ ##### ");
 	i = 1;
 	watchdog_reset();/*初始化看门狗,T = WTCNT * t_watchdog*/
+	adc_init();    //初始化ADC 	
 	Timer_Init ();
 	
 	//init RTC************************************************************
@@ -91,11 +92,11 @@ void coin_init (void)
 	};	
 	
 
-	adc_init();    //初始化ADC 	
 //	init_Iic();
 //	yqi2c_init();
     rNF_Init();
 	initial_nandflash();    //nandflash
+	
 	Hsmmc_Init ();//SD卡
 	cy_println ("Hsmmc_init_flag is %d", Hsmmc_exist ());
 	
@@ -148,8 +149,8 @@ void coin_init (void)
 	
  	sys_env.workstep = 0; //停机状态
 	print_system_env_info ();//串口打印编译信息和系统环境变量，便于调试。
-	setStdValue	();//设置鉴伪基准值，后面每次启动之前都会设置一次，因为鉴伪基准值会随温度在一定范围内变化
-	adstd_offset ();//设置补偿值，后面每次启动之前都会补偿一次，因为鉴伪基准值会随温度在一定范围内变化
+//	setStdValue	();//设置鉴伪基准值，后面每次启动之前都会设置一次，因为鉴伪基准值会随温度在一定范围内变化
+//	adstd_offset ();//设置补偿值，后面每次启动之前都会补偿一次，因为鉴伪基准值会随温度在一定范围内变化
 	
 	comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	  // 跳转到主界面
 	sys_env.system_delay = para_set_value.data.system_boot_delay;
@@ -168,7 +169,6 @@ void main_task(void)
 	if (sys_env.sys_runing_time){
 		sys_env.sys_runing_time++;
 	}
-	
 	AD_Sample_All ();
 	switch (sys_env.workstep)
 	{
@@ -253,7 +253,6 @@ void Task2(void *pdata)
 		}
 	}
 }
-void AD_Sample_All (void);
 void Task1(void *pdata)
 {
 	(void)pdata;
@@ -333,6 +332,7 @@ void TaskStart(void *pdata)
 	OSTaskCreate(Task1, (void *)0, &Task1Stk[TASK1_STK_SIZE - 1], Task1Prio);
 	OSTaskCreate(Task2, (void *)0, &Task2Stk[TASK2_STK_SIZE - 1], Task2Prio);
 	OSTaskCreate(Task3, (void *)0, &Task3Stk[TASK3_STK_SIZE - 1], Task3Prio);
+	
 	while (1) {
 		OSTimeDly(10); // LED2 500ms闪烁	
 		
@@ -356,8 +356,8 @@ void TaskStart(void *pdata)
 				break;
 			}
 			case 6: {    
-				setStdValue	();//设置鉴伪基准值
 				if( adstd_offset() == 1){//  检测基准值，并进行补偿
+				setStdValue	();//设置鉴伪基准值
 				//if (1) {//  检测基准值，并进行补偿
 					sys_env.stop_time = STOP_TIME;//无币停机时间
 					sys_env.workstep =10;

@@ -649,6 +649,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				run_command ("set save-f");
 			}else{
 				prepic_num = TZJM;
+				adstd_offset ();
 				i = is_repeate (sys_env.coin_index);
 				if (i == 0){
 					sprintf (str_buf, "特征值保存完毕！本次学习硬币数量:%d枚", coinlearnnumber);

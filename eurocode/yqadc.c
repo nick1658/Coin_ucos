@@ -13,37 +13,6 @@ void adcsininget(uint16_t ad0,uint16_t ad1,uint16_t ad2)
 	//cy_println( "dn: %d", coin_env.std_up_value0);
 }
 
-void setStdValue (void)
-{
-	uint16_t is;
-		////////////////////////////////////
-	uint16_t ad0_std[AD0STDNUM];
-	uint16_t ad2_std[AD2STDNUM];
-	uint16_t ad1_std[AD1STDNUM];
-
-	for(is=0;is<AD0STDNUM;is++)
-	{
-		ad0_std[is] = ReadAdc0();
-	}
-	std_ad0 = (ad0_std[2]  +ad0_std[4]+ad0_std[5]+ad0_std[7]+ad0_std[9])/5;
-
-	
-/////////////////////////
-	for(is =0;is<AD2STDNUM;is++)
-	{
-		ad2_std[is] = ReadAdc2();	
-	}
-	std_ad2 = (ad2_std[2]+ad2_std[3]+ad2_std[4] +ad2_std[5] +ad2_std[6] +ad2_std[7]+ad2_std[8] +ad2_std[9])/8;
-	/////////////////////////////////////////
-	for(is=0;is<AD1STDNUM;is++)
-	{
-		ad1_std[is] = ReadAdc1();
-	}
-	std_ad1  = (ad1_std[2] +ad1_std[3] +ad1_std[4]+ad1_std[5]+ad1_std[6]+ad1_std[7]+ad1_std[8]+ad1_std[9])/8;
-//	cy_print("A0 :%d   A1 :%d  A2 :%d  \r\n",std_ad0,std_ad1,std_ad2);
-	
-	adcsininget(std_ad0,std_ad1,std_ad2);//AD 波形进入 的阀值
-}
 
 volatile uint32_t adtime = 0;    //定时中断里 计时
 
@@ -104,8 +73,11 @@ void coin_env_init (void)
 	{
 		*(p++) = 0;
 	}	
+	
+	Detect_AD_Value_buf_p = Detect_AD_Value_buf[0];
 }
 extern int print_ad0, print_ad1, print_ad2;
+uint16_t ad_updated = 0;
 //模拟量采样
 void AD_Sample_All (void)
 {
@@ -137,6 +109,9 @@ void AD_Sample_All (void)
 	ad0_ad_value = (coin_env.ad0_averaged_value)/ADSAMPNUM0;   //求当前数组总和后求平均值
 	Detect_AD_Value_buf_p[detect_sample_data_buf_index].AD0 = ad0_ad_value; // save ad to buffer
 	ad0_samp_number++;
+	if( (ad0_samp_number > (ADSAMPNUM0-1)) ){   //如果采集够了ADSAMPNUM个数据10
+		ad0_samp_number = 0;
+	}
 	//Process AD 0 End ***********************************************************************
 	
 	//PreProcess AD 1 Start*********************************************************************
@@ -163,6 +138,9 @@ void AD_Sample_All (void)
 	ad1_ad_value = (coin_env.ad1_averaged_value)/ADSAMPNUM0;   //求当前数组总和后求平均值
 	Detect_AD_Value_buf_p[detect_sample_data_buf_index].AD1 = ad1_ad_value; // save ad to buffer
 	ad1_samp_number++;
+	if( (ad1_samp_number > (ADSAMPNUM0-1)) ){   //如果采集够了ADSAMPNUM个数据10
+		ad1_samp_number = 0;
+	}
 	//Process AD 1 End ***********************************************************************
 	
 	//PreProcess AD 2 Start*********************************************************************
@@ -183,6 +161,9 @@ void AD_Sample_All (void)
 	ad2_ad_value = (coin_env.ad2_averaged_value)/ADSAMPNUM0;   //求当前数组总和后求平均值
 	Detect_AD_Value_buf_p[detect_sample_data_buf_index].AD2 = ad2_ad_value; // save ad to buffer
 	ad2_samp_number++;
+	if( (ad2_samp_number > (ADSAMPNUM0-1)) ){   //如果采集够了ADSAMPNUM个数据10
+		ad2_samp_number = 0;
+	}
 	//Process AD 2 End ***********************************************************************
 //		cy_println ("AD0:	%d,	AD1:	%d,	AD2:	%d", ad0_ad_value_buf[ad0_samp_number-1],
 //																						 ad1_ad_value_buf[ad1_samp_number-1], 
@@ -193,12 +174,16 @@ void AD_Sample_All (void)
 	if (detect_sample_data_buf_index >= DATA_BUF_LENGTH){
 		detect_sample_data_buf_index = 0;
 	}
+	if (ad_updated == 0){
+		ad_updated = 1;
+	}
 }
 
 uint32_t coin_cross_time = 0;
 	
 void cy_ad0_valueget(void)
 {
+	
 	switch(coin_env.ad0_step)
 	{ 
 		case 0: 
@@ -216,14 +201,14 @@ void cy_ad0_valueget(void)
 			detect_sample_data_buf_index = 0;
 			
 			ad0_samp_number = 0;
-			coin_env.ad0_averaged_value = 0;
+			//coin_env.ad0_averaged_value = 0;
 
 			ad0_ad_value = AD0STDSET;
 			ad0_mintemp = AD0STDSET;//900
 			ad0_min = AD0STDSET;//900
 			
 			blockflag = ADBLOCKT;	   //使用鉴伪传感器 报堵币 堵币时间5
-			coin_env.ad0_step = 2;
+			coin_env.ad0_step = 3;
 			sys_env.AD_buf_index = 0;
 			Detect_AD_Value_buf_p = Detect_AD_Value_buf[sys_env.AD_buf_index];
 			break;
@@ -362,9 +347,9 @@ void cy_ad1_valueget(void)
 			ad1_mintemp = AD1STDSET;
 			ad1_min = AD1STDSET;
 			ad1_samp_number = 0;
-			coin_env.ad1_averaged_value = 0;
+//			coin_env.ad1_averaged_value = 0;
 
-			coin_env.ad1_step = 2;
+			coin_env.ad1_step = 3;
 			break;
 		}
 		case 2:
@@ -426,9 +411,9 @@ void cy_ad2_valueget(void)
 			ad2_min = AD2STDSET;//900
 			
 			ad2_samp_number = 0;
-			coin_env.ad2_averaged_value = 0;
+			//coin_env.ad2_averaged_value = 0;
 			
-			coin_env.ad2_step = 2;
+			coin_env.ad2_step = 3;
 			break;
 		}
 		case 2:
@@ -479,10 +464,10 @@ void cy_ad2_valueget(void)
 
 	
 ////////////////////////////////////////////////////////////////////////////////
-int16_t std_ad0 = 0;
-int16_t std_ad1 = 0;
-int16_t std_ad2 = 0;
-int16_t std_ad3= 0;
+uint16_t std_ad0 = 0;
+uint16_t std_ad1 = 0;
+uint16_t std_ad2 = 0;
+uint16_t std_ad3= 0;
 
  int temperstd = 281;   //20度  20*10 +600  = 800MV;  800/3300 *1024 = 248.24
  int temperpre = 250;
@@ -505,47 +490,72 @@ int16_t std_ad3= 0;
 
 void print_std_value(void)    //  检测 基准值   有不大偏差进行补偿
 {
-	uint16_t is = 0;
-	uint16_t ad2_std[AD2STDNUM];
-	uint16_t ad1_std[AD1STDNUM];
-	uint16_t ad0_std[AD0STDNUM];
-	uint16_t ad2countis = 10;
-	std_ad3 = ReadAdc3();
+//	uint16_t is = 0;
+//	uint16_t ad2_std[AD2STDNUM];
+//	uint16_t ad1_std[AD1STDNUM];
+//	uint16_t ad0_std[AD0STDNUM];
+//	uint16_t ad2countis = 10;
+//	std_ad3 = ReadAdc3();
 
-	for(is =0;is<ad2countis;is++)
-	{
-		ad2_std[is] = ReadAdc2(); 
-	}	
+//	for(is =0;is<ad2countis;is++)
+//	{
+//		ad2_std[is] = ReadAdc2(); 
+//	}	
+//	std_ad2 = 0;
+//	for(is =0;is<ad2countis;is++)
+//	{
+//		std_ad2 = std_ad2+ad2_std[is]; 
+//	}	
+//	
+//	std_ad2 =std_ad2/ad2countis;
+//	/////////////////////////////////////////
+//	for(is=0;is<AD1STDNUM;is++)
+//	{
+//		ad1_std[is] = ReadAdc1();
+//	}
+//	std_ad1 = (ad1_std[2] +ad1_std[3] +ad1_std[4]+ad1_std[5]+ad1_std[6]+ad1_std[7]+ad1_std[8]+ad1_std[9])/8;
+//	////////////////////////////////////
+//	for(is=0;is<AD0STDNUM;is++)
+//	{
+//		ad0_std[is] = ReadAdc0();
+//	}
+//	std_ad0 = (ad0_std[2] +ad0_std[3] +ad0_std[4]+ad0_std[5]+ad0_std[6]+ad0_std[7]+ad0_std[8]+ad0_std[9])/8;
+	std_ad0 = ad0_ad_value;
+	std_ad1 = ad1_ad_value;
+	std_ad2 = ad2_ad_value;
+}
+
+void get_ad_value (void)
+{
+	uint16_t is;
+	std_ad0 = 0;
+	std_ad1 = 0;
 	std_ad2 = 0;
-	for(is =0;is<ad2countis;is++)
-	{
-		std_ad2 = std_ad2+ad2_std[is]; 
-	}	
-	
-	std_ad2 =std_ad2/ad2countis;
-	/////////////////////////////////////////
-	for(is=0;is<AD1STDNUM;is++)
-	{
-		ad1_std[is] = ReadAdc1();
+	for (is = 0; is < ADSAMPNUM+2; is++){
+		while (ad_updated == 0);
+		ad_updated = 0;
+		if (is > 1){
+			std_ad0 += ad0_ad_value;
+			std_ad1 += ad1_ad_value;
+			std_ad2 += ad2_ad_value;
+		}
+		//cy_print("--%02d:A0 :%d   A1 :%d  A2 :%d  \r\n",is, ad0_ad_value,ad1_ad_value,ad2_ad_value);
 	}
-	std_ad1 = (ad1_std[2] +ad1_std[3] +ad1_std[4]+ad1_std[5]+ad1_std[6]+ad1_std[7]+ad1_std[8]+ad1_std[9])/8;
-	////////////////////////////////////
-	for(is=0;is<AD0STDNUM;is++)
-	{
-		ad0_std[is] = ReadAdc0();
-	}
-	std_ad0 = (ad0_std[2] +ad0_std[3] +ad0_std[4]+ad0_std[5]+ad0_std[6]+ad0_std[7]+ad0_std[8]+ad0_std[9])/8;
+	std_ad0 /= ADSAMPNUM;
+	std_ad1 /= ADSAMPNUM;
+	std_ad2 /= ADSAMPNUM;
+	cy_print("A0 :%d   A1 :%d  A2 :%d  \r\n",std_ad0,std_ad1,std_ad2);
 }
 
 uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 {
+	int16_t std0_offset, std1_offset, std2_offset;
 	uint16_t is;
-		////////////////////////////////////
+//		////////////////////////////////////
 //	uint16_t ad0_std[AD0STDNUM];
 //	uint16_t ad2_std[AD2STDNUM];
 //	uint16_t ad1_std[AD1STDNUM];
 //	
-//	int16_t std0_offset, std1_offset, std2_offset;
 
 
 //	for(is=0;is<AD0STDNUM;is++){
@@ -565,13 +575,11 @@ uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 //		ad1_std[is] = ReadAdc1();
 //	}
 //	std_ad1  = (ad1_std[2] +ad1_std[3] +ad1_std[4]+ad1_std[5]+ad1_std[6]+ad1_std[7]+ad1_std[8]+ad1_std[9])/8;
-	std_ad0 = ad0_ad_value;
-	std_ad1 = ad1_ad_value;
-	std_ad2 = ad2_ad_value;
-	cy_print("A0 :%d   A1 :%d  A2 :%d  \r\n",std_ad0,std_ad1,std_ad2);
+
 	//offset_ad0 = std_ad0 - AD0STDSET;
 	/////////////////////////每个硬币 单独进行补偿 
 //	std_ad3 = ReadAdc3();
+	get_ad_value ();
 	//如果偏差在200 可以进行补偿，否则可能传感器出问题了，给出报警提示
 	if( ( ((std_ad0-GETTEMPERCP) < (pre_value.country[coinchoose].coin[0].data.std0 + OFFSETMAX))) && 
 		  ((std_ad0-GETTEMPERCP) > (pre_value.country[coinchoose].coin[0].data.std0 - OFFSETMIN)) ){        
@@ -803,3 +811,36 @@ uint16_t cy_adstd_adj(void)    //基准调试
 }
 
 
+void setStdValue (void)
+{
+//	uint16_t is;
+//		////////////////////////////////////
+//	uint16_t ad0_std[AD0STDNUM];
+//	uint16_t ad2_std[AD2STDNUM];
+//	uint16_t ad1_std[AD1STDNUM];
+
+//	for(is=0;is<AD0STDNUM;is++)
+//	{
+//		ad0_std[is] = ReadAdc0();
+//	}
+//	std_ad0 = (ad0_std[2]  +ad0_std[4]+ad0_std[5]+ad0_std[7]+ad0_std[9])/5;
+
+//	
+///////////////////////////
+//	for(is =0;is<AD2STDNUM;is++)
+//	{
+//		ad2_std[is] = ReadAdc2();	
+//	}
+//	std_ad2 = (ad2_std[2]+ad2_std[3]+ad2_std[4] +ad2_std[5] +ad2_std[6] +ad2_std[7]+ad2_std[8] +ad2_std[9])/8;
+//	/////////////////////////////////////////
+//	for(is=0;is<AD1STDNUM;is++)
+//	{
+//		ad1_std[is] = ReadAdc1();
+//	}
+//	std_ad1  = (ad1_std[2] +ad1_std[3] +ad1_std[4]+ad1_std[5]+ad1_std[6]+ad1_std[7]+ad1_std[8]+ad1_std[9])/8;
+	
+//	get_ad_value ();
+
+	
+	adcsininget(std_ad0,std_ad1,std_ad2);//AD 波形进入 的阀值
+}
