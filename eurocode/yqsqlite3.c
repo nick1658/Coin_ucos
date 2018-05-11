@@ -20,6 +20,7 @@
 
 u_coin_parameter_value para_set_value;
 s_country_coin pre_value;
+u_db_item_info db_item_info;
 
 int16_t test_read_r_code (int16_t r_code)
 {
@@ -380,10 +381,10 @@ void yqsql_exec(uint16_t chos)
 				}
 			}
 
-			db_item_info_temp->ID = para_set_value.data.coin_full_rej_pos;
-			db_item_info_temp->money = processed_coin_info.total_money;
-			db_item_info_temp->total_good = processed_coin_info.total_good;		
-			db_item_info_temp->total_ng = processed_coin_info.total_ng;	
+			//db_item_info_temp->ID = para_set_value.data.coin_full_rej_pos;
+			//db_item_info_temp->money = processed_coin_info.total_money;
+			//db_item_info_temp->total_good = processed_coin_info.total_good;		
+			//db_item_info_temp->total_ng = processed_coin_info.total_ng;	
 			Nand_WritePage(HISTORY_START_BLOCK_NUM, (para_set_value.data.db_total_item_num * ITEM_SIZE / PAGE_BYTE_SIZE), yqnddata);   //rNF_WritePage(YQNDHISTORYPAGENUM,yqnddata);	 //公共信息用一页	20块的第0页 写入
 
 			para_set_value.data.db_total_item_num += 1;
@@ -493,7 +494,7 @@ void yqsql_exec(uint16_t chos)
 						sprintf(str_db,"%2d",temp);
 						dgus_chinese(str_addr[num][1],str_db,strlen(str_db));	 // dgus  chinese  gh
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////					
-						temp =	db_item_info_temp->money;
+//						temp =	db_item_info_temp->money;
 						sprintf(str_db,"%10d.%d%d ",(temp/100),((temp%100)/10),((temp%100)%10));
 						cy_print("|%s", str_db);
 						sprintf((char*)str_db,"%d.%d",(temp/100),(temp%100));
@@ -623,26 +624,26 @@ void yqsql_exec(uint16_t chos)
 						cy_print("|%s", str_db);
 						dgus_chinese(str_addr[num][0],str_db,strlen(str_db));	 // dgus  chinese  time
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						temp = db_item_info_temp->ID;
+//						temp = db_item_info_temp->ID;
 						sprintf(str_db,"%04d",temp);
 						cy_print("|%s", str_db);
 						sprintf(str_db,"%2d",temp);
 						dgus_chinese(str_addr[num][1],str_db,strlen(str_db));	 // dgus  chinese  gh
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////					
-						temp =	db_item_info_temp->money;	
+//						temp =	db_item_info_temp->money;	
 						sprintf(str_db,"%10d.%d%d ",(temp/100),((temp%100)/10),((temp%100)%10));
 						cy_print("|%s", str_db);
 						sprintf((char*)str_db,"%d.%d",(temp/100),(temp%100));
 						dgus_chinese(str_addr[num][2],str_db,strlen(str_db));	 // dgus  chinese  ze
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						temp =	db_item_info_temp->total_good;
+//						temp =	db_item_info_temp->total_good;
 						sprintf(str_db,"%15d ",temp);
 						cy_print("|%s", str_db);
 						sprintf((char*)str_db,"%d",temp);
 						dgus_chinese(str_addr[num][3],str_db,strlen(str_db));	 // dgus  chinese  zs
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						temp =	db_item_info_temp->total_ng;	
+//						temp =	db_item_info_temp->total_ng;	
 						sprintf(str_db,"%10d ",temp);
 						cy_print("|%s|", str_db);
 						sprintf((char*)str_db,"%d",temp);

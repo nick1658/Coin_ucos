@@ -12,6 +12,64 @@
 /*************
 	PRINTER  打印 
 ***************/
+
+
+void test_print (void)
+{
+	
+	while(1){     // read time 
+			comscreen(dgus_readt,6);	//read time
+			while(touch_flag ==0){;}
+			if (touchnum[7]>0){
+				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], 29);
+				touch_flag = 0;
+				break;
+			}else{
+				touch_flag = 0;
+			}
+		}
+#define NUM_COIN_ 457
+		disp_buf.m_1jiao = 0;
+		disp_buf.m_5jiao = 0;
+		disp_buf.m_1yuan = 0;
+		disp_buf.m_1jiao_big = NUM_COIN_;
+		processed_coin_info.total_good = NUM_COIN_;
+		if (para_set_value.data.system_mode == 1){//清分模式
+			//Uart1_Printf("工号: %d \r\n",gh_now);
+			//Uart1_Printf("   1分     %4d     %d.%d%d\r\n",coin_num[8],((coine[coinchoose][8]*coin_num[8])/100),(((coine[coinchoose][8]*coin_num[8])%100)/10),(((coine[coinchoose][8]*coin_num[8])%100)%10));
+			//Uart1_Printf("   2分     %4d     %d.%d%d\r\n",coin_num[7],((coine[coinchoose][7]*coin_num[7])/100),(((coine[coinchoose][7]*coin_num[7])%100)/10),(((coine[coinchoose][7]*coin_num[7])%100)%10));
+			//Uart1_Printf("   5分     %4d     %d.%d%d\r\n",coin_num[6],((coine[coinchoose][6]*coin_num[6])/100),(((coine[coinchoose][6]*coin_num[6])%100)/10),(((coine[coinchoose][6]*coin_num[6])%100)%10));
+			Uart1_Printf(" 大1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao_big),
+					((coine[coinchoose][3]*(disp_buf.m_1jiao_big))/100),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)/10),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao_big))%100)%10));
+			Uart1_Printf("   1角     %4d     %d.%d%d\r\n",(disp_buf.m_1jiao),//858, 85, 8,0);//
+					((coine[coinchoose][3]*(disp_buf.m_1jiao))/100),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)/10),
+					(((coine[coinchoose][3]*(disp_buf.m_1jiao))%100)%10));
+			Uart1_Printf("   5角     %4d     %d.%d%d\r\n",(disp_buf.m_5jiao),
+					((coine[coinchoose][1]*(disp_buf.m_5jiao))/100),
+					(((coine[coinchoose][1]*(disp_buf.m_5jiao))%100)/10),
+					(((coine[coinchoose][1]*(disp_buf.m_5jiao))%100)%10));
+			Uart1_Printf("   1元     %4d     %d.%d%d\r\n",disp_buf.m_1yuan,
+					((coine[coinchoose][0]*disp_buf.m_1yuan)/100),
+					(((coine[coinchoose][0]*disp_buf.m_1yuan)%100)/10),
+					(((coine[coinchoose][0]*disp_buf.m_1yuan)%100)%10));
+			Uart1_Printf("   币种  数量(枚)  金额(元)\r\n");
+			Uart1_Printf("   详细信息:  \r\n");
+			Uart1_Printf("\r\n");
+	//		Uart1_Printf("    异币:        %d 枚\r\n",processed_coin_info.total_ng);//85, 8, 0);//
+			Uart1_Printf("   总金额:     %d.%d%d 元\n",45, 7, 0);//(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
+			Uart1_Printf("   总  数:     %d 枚\r\n",processed_coin_info.total_good);//858);
+			Uart1_Printf("   结束时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-1,33);
+			Uart1_Printf("   开始时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-2,31);
+			Uart1_Printf("   本次清分:\r\n");
+			Uart1_Printf("   广州畅阳电子科技有限公司\r\n\r\n");
+			Uart1_Printf("\r\n");
+			Uart1_Printf("\r\n");
+			Uart1_Printf("\r\n");
+		}
+}
 #define PINTNUM 60
 U8 dgus_readt[6]= {0xA5,0x5A,0x03,0x81,0x20, 0x10};  // only need y-m-d w h:m:s  读时间
 void print_func(void)     // 打印 
@@ -20,7 +78,8 @@ void print_func(void)     // 打印
 	Uart1_Printf("\r\n");
 	//Uart1_Printf("\r\n");
 	//Uart1_Printf("\r\n");
-
+//	test_print ();
+//	return;
 	if(coinchoose == CN0){    //中文
 		while(1){     // read time 
 			comscreen(dgus_readt,6);	//read time

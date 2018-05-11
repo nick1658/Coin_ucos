@@ -64,8 +64,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-*.uvopt
 *.Administrator
 *.iex
 *.asm
-*.Administrator

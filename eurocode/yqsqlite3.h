@@ -90,7 +90,7 @@ typedef union
 	s_db_item_info data;
 }u_db_item_info;
 
-extern u_coin_parameter_value para_set_value;
+extern u_db_item_info db_item_info;
 
 typedef struct
 {
