@@ -182,7 +182,7 @@ void disp_allcount(void)     //pre counting ,detail list
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 	if( coinchoose == CN0){
-        OS_ENTER_CRITICAL();
+    //OS_ENTER_CRITICAL();
 		disp_buf.m_1yuan = *(pre_value.country[COUNTRY_ID].coin[0].data.p_pre_count_cur);
 		disp_buf.m_5jiao = (*(pre_value.country[COUNTRY_ID].coin[1].data.p_pre_count_cur));
 		disp_buf.m_1jiao_big = (*(pre_value.country[COUNTRY_ID].coin[3].data.p_pre_count_cur));
@@ -196,7 +196,7 @@ void disp_allcount(void)     //pre counting ,detail list
 		disp_buf.total_ng = processed_coin_info.total_ng;
 		disp_buf.total_money = processed_coin_info.total_money;
 		disp_buf.coin_speed = sys_env.coin_speed;
-        OS_EXIT_CRITICAL();
+    //OS_EXIT_CRITICAL();
 		
 		dgus_tf2word(ADDR_XD10, disp_buf.m_1yuan);		//list 1
 		dgus_tf2word(ADDR_XD5, disp_buf.m_5jiao);					//	 list 0.5		

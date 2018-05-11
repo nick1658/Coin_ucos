@@ -86,16 +86,20 @@ void initial_nandflash(void)    //nandflash
 
 	uint16_t i=0, j;
 
+	cy_println ("Start Check Data ...!");
 	cy_println ("sizeof (s_coin_parameter_value)   = %d", sizeof (s_coin_parameter_value));
 	cy_println ("sizeof (u_coin_cmp_value) = %d", sizeof (u_coin_cmp_value));
 	
 	cy_println ("sizeof (para_set_value)   = %d", sizeof (para_set_value));
 	cy_println ("sizeof (u_coin_pre_value) = %d", sizeof (u_coin_pre_value));
 	
+	cy_println ("sizeof (s_db_item_info) = %d", sizeof (s_db_item_info));
+	cy_println ("sizeof (u_db_item_info) = %d", sizeof (u_db_item_info));
+	
 	ASSERT(sizeof (para_set_value) > PAGE_BYTE_SIZE);
 	ASSERT(sizeof (u_coin_pre_value) > PAGE_BYTE_SIZE);
+	ASSERT(sizeof (u_db_item_info) > ITEM_SIZE);
 	
-	cy_println ("Start Check Data ...!");
 	test_read_r_code (Nand_ReadPage(PUBULIC_DATA_START_BLOCK_NUM, PUBULIC_DATA_START_PAGE_NUM, (U8 *)&para_set_value));
 		
 	if(para_set_value.data.magic_num != MAGIC_NUM){    //不满足条件需要初始化    这里每个国家的信息都 初始化了 在界面更换硬币时不用担心值不确定

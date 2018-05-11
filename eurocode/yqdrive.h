@@ -22,6 +22,11 @@
 #define OUT2(x) 	(rGPGDAT = (rGPGDAT & (~0x80)) |(x<<7))	//EINT15/GPG7 
 #define OUT1(x) 	(rGPFDAT = (rGPFDAT & (~0x2)) |(x<<1))	//EINT1/GPF1/sd0_CDN
 #define OUT0(x) 	(rGPEDAT = (rGPEDAT & (~0x20)) |(x<<5))	//SD0_CLK/GPE5
+
+
+#define PAYOUT1(x)		OUT7(X)
+#define PAYOUT2(x)		(rGPFDAT = (rGPFDAT & (~(0x01<<5))) |(x<<5))	//EINT5/GPF5
+#define PAYOUT3(x)		(rGPFDAT = (rGPFDAT & (~(0x01<<6))) |(x<<6))	//EINT6/GPF6
 				  
 #define  PAN_MOTOR_LEFT(x) 	 OUT7(x)			//P2^0; 	//EINT11/GPG3 //  转盘反转
 #define  PAN_MOTOR_RIGHT(x)  OUT6(x)			//P2^1; TOUT1/GPB1  //  转盘正转 PAN_MOTOR_RIGHT(x)

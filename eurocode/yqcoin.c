@@ -131,7 +131,7 @@ void cy_precoincount(void)
 				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//
 				if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
 					*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 1; //此类硬币预置数到，做个标记
-					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;
+					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;//包装卷数
 					coin_env.full_coin_stack[coin_env.full_stack_num] = good_coin;
 					coin_env.full_stack_num++;
 					if (coin_env.full_stack_num >= para_set_value.data.pre_count_stop_n){

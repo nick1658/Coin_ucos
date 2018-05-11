@@ -13,7 +13,7 @@
 #define DBDISPLAY 3
 #define DBDISPLAYBACK 4
 
-#define HISTORYSAVANUM (32)
+#define HISTORYSAVANUM (64)
 
 #define PAGE_BYTE_SIZE (2048)
 #define BLOCK_PAGE_SIZE (64)
@@ -38,7 +38,6 @@
 
 #define YQNDHISTORY_DB_ID_PAGE_ADDR (YQNDHISTORYBLOCK + (db_id * ITEM_SIZE / PAGE_BYTE_SIZE))
 
-//{100,50,50,10,10,5,2,1,10},	//人民币 的面值 倍数  用于计算金额
 
 #define COUNTRY_ID 0
 #define ALL_COIN
@@ -64,49 +63,34 @@
 #endif
 
 
-#define NDGETKICKD 3// 公共信息页 地址定义getkickd
-#define NDGETKICKT 4// 公共信息页 地址定义getkickt
-#define NDPANBLOCKTIME 5// 公共信息页 地址定义panblocktime
-#define NDCOINCHOOSE 7// 公共信息页 地址定义coinchoose
-#define NDGHNOW 8// 公共信息页 地址定义gh_now
-
-//		para_set_value.data.db_total_item_num == 0;
-//		yqnddata[NDdb_total_item_num(0)] = 0x00;    //公共信息 para_set_value.data.db_total_item_num
-
-// 每种币给 300个字节 4一个程序限4种币 *300 = 1200
-#define NDdb_total_item_num (9+300*coinchoose)  //para_set_value.data.db_total_item_num  2BYTE
-#define NDZENUM (9+300*coinchoose+2)// para_set_value.data.total_money 4BYTE 
-#define NDZSNUM (9+300*coinchoose+6)// para_set_value.data.total_good 4BYTE
-#define NDFGNUM (9+300*coinchoose+10)// para_set_value.data.total_ng 4BYTE
-
-#define NDCN0VALUELEVEL (9+300*coinchoose+14)// accoinamount[coinchoose]. fg_coin 3BYTE	  15 16
- 
-
-#define NDCOIN0MAXNUM(i) (9+300*coinchoose+17+20*i)// COIN0 2BYTE 14
-#define NDCOIN0MINNUM(i) (9+300*coinchoose+19+20*i)// COIN0 2BYTE 16
-#define NDCOIN1MAXNUM(i) (9+300*coinchoose+21+20*i)// COIN0 2BYTE 18
-#define NDCOIN1MINNUM(i) (9+300*coinchoose+23+20*i)// COIN0 2BYTE 20
-#define NDCOIN2MAXNUM(i) (9+300*coinchoose+25+20*i)// COIN0 2BYTE 22
-#define NDCOIN2MINNUM(i) (9+300*coinchoose+27+20*i)// COIN0 2BYTE 24
-#define NDCOIN0STDNUM(i) (9+300*coinchoose+29+20*i)// COIN0 2BYTE 26
-#define NDCOIN1STDNUM(i) (9+300*coinchoose+31+20*i)// COIN0 2BYTE 28
-#define NDCOIN2STDNUM(i) (9+300*coinchoose+33+20*i)// COIN0 2BYTE 30
-
-#define NDCOINYZNUM(i) (9+300*coinchoose+35+20*i)// COIN0 yuzhi value	32
-
-
-
-
 typedef struct
 {
-	uint32_t	index;
 	U8  time[8];
-	uint32_t ID;
-	uint32_t money;
-	uint32_t total_good;
-	uint32_t total_ng;
-	uint32_t RESERVE;
+	uint16_t	index;
+	uint16_t ID;
+	uint16_t m_1yuan;
+	uint16_t m_5jiao;
+	uint16_t m_1jiao;
+	uint16_t m_1jiao_big;
+	uint16_t m_5fen;
+	uint16_t m_2fen;
+	uint16_t m_1fen;
+	uint16_t m_10yuan;
+	uint16_t m_5yuan;
+	uint16_t total_good;
+	uint16_t total_ng;
+	uint16_t total_money;
+	//uint16_t coin_speed;
 }s_db_item_info;
+
+
+typedef union
+{
+	U8 fill[ITEM_SIZE];
+	s_db_item_info data;
+}u_db_item_info;
+
+extern u_coin_parameter_value para_set_value;
 
 typedef struct
 {
