@@ -440,6 +440,7 @@ void yqsql_exec(uint16_t chos)
 
 			int32_t	db_id_temp = 0;
 
+				cy_println ("\ndb_id = %d", db_id);
 			if (db_id <= 0){
 				cmd ();
 				break;
@@ -467,9 +468,9 @@ void yqsql_exec(uint16_t chos)
 			cy_print ("Display pre page data, db_total_item_num = %d\n", para_set_value.data.db_total_item_num);
 			cy_print("Block = %d page = %d addr = %d db_id = %d item_index = %d\n",
 				YQNDHISTORY_DB_ID_PAGE_ADDR / BLOCK_BYTE_SIZE,
-				(YQNDHISTORY_DB_ID_PAGE_ADDR - YQNDHISTORYBLOCK) / PAGE_BYTE_SIZE,
+				(YQNDHISTORY_DB_ID_PAGE_ADDR - YQNDHISTORYBLOCK),
 				YQNDHISTORY_DB_ID_PAGE_ADDR,
-				db_id,
+				db_id+1,
 				db_id % PAGE_ITEM_NUM_SIZE);
 
 			if(db_id >= 0){
@@ -503,12 +504,20 @@ void yqsql_exec(uint16_t chos)
 							db_item_info_temp->time[5]);   //read time
 
 						cy_print("|%s", str_db);
+						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x",
+							db_item_info_temp->time[0],
+							db_item_info_temp->time[1],
+							db_item_info_temp->time[2],
+							db_item_info_temp->time[3],
+							db_item_info_temp->time[4],
+							db_item_info_temp->time[5]);   //read time
 						dgus_chinese(str_addr[num][0],str_db,strlen(str_db));	 // dgus  chinese  time
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp = db_item_info_temp->ID;
 						sprintf(str_db,"%04d",temp);
 						cy_print("|%s", str_db);
-						sprintf(str_db,"%2d",temp);
+						//sprintf(str_db,"%2d",temp);
+						sprintf(str_db,"  ");
 						dgus_chinese(str_addr[num][1],str_db,strlen(str_db));	 // dgus  chinese  gh
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp =	db_item_info_temp->total_money;
@@ -596,9 +605,9 @@ void yqsql_exec(uint16_t chos)
 			cy_print ("display next page data, db_total_item_num = %d\n", para_set_value.data.db_total_item_num);
 			cy_print("Block = %d page = %d addr = %d db_id = %d item_index = %d\n",
 				YQNDHISTORY_DB_ID_PAGE_ADDR / BLOCK_BYTE_SIZE,
-				(YQNDHISTORY_DB_ID_PAGE_ADDR - YQNDHISTORYBLOCK) / PAGE_BYTE_SIZE,
+				(YQNDHISTORY_DB_ID_PAGE_ADDR - YQNDHISTORYBLOCK),
 				YQNDHISTORY_DB_ID_PAGE_ADDR,
-				db_id,
+				db_id+1,
 				db_id % PAGE_ITEM_NUM_SIZE);
 			if(db_id < para_set_value.data.db_total_item_num)
 			{
@@ -643,12 +652,20 @@ void yqsql_exec(uint16_t chos)
 							db_item_info_temp->time[5]);   //read time
 
 						cy_print("|%s", str_db);
+						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x",
+							db_item_info_temp->time[0],
+							db_item_info_temp->time[1],
+							db_item_info_temp->time[2],
+							db_item_info_temp->time[3],
+							db_item_info_temp->time[4],
+							db_item_info_temp->time[5]);   //read time
 						dgus_chinese(str_addr[num][0],str_db,strlen(str_db));	 // dgus  chinese  time
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp = db_item_info_temp->ID;
 						sprintf(str_db,"%04d",temp);
 						cy_print("|%s", str_db);
-						sprintf(str_db,"%2d",temp);
+						//sprintf(str_db,"%2d",temp);
+						sprintf(str_db,"  ");
 						dgus_chinese(str_addr[num][1],str_db,strlen(str_db));	 // dgus  chinese  gh
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp =	db_item_info_temp->total_money;

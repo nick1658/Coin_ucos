@@ -178,7 +178,9 @@ void fill_http_data (s_db_item_info * db_item_info_temp)
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->m_1jiao_big);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->m_10yuan);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->m_5yuan);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->total_money);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d.%d%d (Ԫ)</td>", (db_item_info_temp->total_money/100),
+																((db_item_info_temp->total_money%100)/10),
+																((db_item_info_temp->total_money%100)%10));
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->total_good);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (ö)</td>", db_item_info_temp->total_ng);
 }
@@ -219,7 +221,13 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 		* NETCONN_NOCOPY: our data is const static, so no need to copy it
 		*/
 		hs->pbuffer = (uint8_t *)http_html;
-	  yqsql_exec(DBDISPLAY);	  //
+		if (para_set_value.data.db_total_item_num == 0){
+			HTTP_START();
+			HTTP_END();
+		}else if (db_id == 0){
+			db_id = para_set_value.data.db_total_item_num;
+		}
+		yqsql_exec(DBDISPLAY);	  //
 		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
 		http_write(pcb, hs);
 	}else if (strncmp((const char *)pBuffer, "GET /nextpage", 13) == 0) {
@@ -229,6 +237,10 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 		* NETCONN_NOCOPY: our data is const static, so no need to copy it
 		*/
 		hs->pbuffer = (uint8_t *)http_html;
+		if (para_set_value.data.db_total_item_num == 0){
+			HTTP_START();
+			HTTP_END();
+		}
 		yqsql_exec(DBDISPLAYBACK);
 		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
 		http_write(pcb, hs);
@@ -239,8 +251,13 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 		* NETCONN_NOCOPY: our data is const static, so no need to copy it
 		*/
 		hs->pbuffer = (uint8_t *)http_html;
-		db_id = para_set_value.data.db_total_item_num;
-	  yqsql_exec(DBDISPLAY);	  //
+		if (para_set_value.data.db_total_item_num == 0){
+			HTTP_START();
+			HTTP_END();
+		}else{
+			db_id = para_set_value.data.db_total_item_num;
+			yqsql_exec(DBDISPLAY);	  //
+		}
 		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
 		http_write(pcb, hs);
 	} else {
