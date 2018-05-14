@@ -1,7 +1,7 @@
 
 #include "S3C2416.h"
 
-cmd_analyze_struct cmd_analyze; 
+cmd_analyze_struct cmd_analyze;
 
 void printf_hello(int32_t argc, void *cmd_arg);
 void do_go(int32_t argc, void *cmd_arg);
@@ -15,19 +15,19 @@ void do_reset_cpu(int32_t argc, void *cmd_arg);
 void do_db(int32_t argc, void *cmd_arg);
 
 
-/*命令表*/  
-const cmd_list_struct cmd_list[]={  
-/*   命令    参数数目    处理函数        帮助信息                         */     
-{"help",		0,	do_help,		"help"},  
-{"go",			8,	do_go,			"go <yccs>"},  
-{"set",			8,	do_set,			"set <print> <1>"},  
-{"print",		8,	do_print,		"print <env> "}, 
-{"read",		8,	do_read,		"read <from> <nand> <block> <page>"}, 
-{"write",		8,	do_write,		"write <to> <nand> <block> <page>"}, 
-{"erase",		8,	do_erase,		"erase <to> <nand> <block> <page>"}, 
-{"reset",		8,	do_reset_cpu,		"reset system"}, 
-{"r",		8,	do_reset_cpu,		"reset system"}, 
-{"db",		8,	do_db,					"db delete all"}, 
+/*命令表*/
+const cmd_list_struct cmd_list[]={
+/*   命令    参数数目    处理函数        帮助信息                         */
+{"help",		0,	do_help,		"help"},
+{"go",			8,	do_go,			"go <yccs>"},
+{"set",			8,	do_set,			"set <print> <1>"},
+{"print",		8,	do_print,		"print <env> "},
+{"read",		8,	do_read,		"read <from> <nand> <block> <page>"},
+{"write",		8,	do_write,		"write <to> <nand> <block> <page>"},
+{"erase",		8,	do_erase,		"erase <to> <nand> <block> <page>"},
+{"reset",		8,	do_reset_cpu,		"reset system"},
+{"r",		8,	do_reset_cpu,		"reset system"},
+{"db",		8,	do_db,					"db delete all"},
 };
 
 s_system_env sys_env;
@@ -51,63 +51,63 @@ void system_env_init (void)
 	sys_env.password = 1573;
 }
 
-/** 
-* 使用SecureCRT串口收发工具,在发送的字符流中可能带有不需要的字符以及控制字符, 
-* 比如退格键,左右移动键等等,在使用命令行工具解析字符流之前,需要将这些无用字符以 
-* 及控制字符去除掉. 
-* 支持的控制字符有: 
-*   上移:1B 5B 41 
-*   下移:1B 5B 42 
-*   右移:1B 5B 43 
-*   左移:1B 5B 44 
-*   回车换行:0D 0A 
-*  Backspace:08 
-*  Delete:7F 
-*/  
-static uint32_t get_true_char_stream(char *dest, const char *src)  
-{  
-   uint32_t dest_count=0;  
-   uint32_t src_count=0;  
-     
-    while(src[src_count] != '\0'){//0x0D && src[src_count+1]!=0x0A)  
-       if(isprint(src[src_count])){  
-           dest[dest_count++]=src[src_count++];  
-       }else{  
-           switch(src[src_count]){  
-                case 0x08:{     
-                    if(dest_count>0){  
-                        dest_count --;  
-                    }  
-                    src_count ++;  
-                }break;  
-                case 0x1B:{  
-                    if(src[src_count+1]==0x5B){  
-                        if(src[src_count+2]==0x41 || src[src_count+2]==0x42){  
-                            src_count +=3;              //上移和下移键键值  
-                        }else if(src[src_count+2]==0x43){  
-                            dest_count++;               //右移键键值  
-                            src_count+=3;  
-                        }else if(src[src_count+2]==0x44){  
-                            if(dest_count >0){//左移键键值  
-                                dest_count --;  
-                            }  
-                           src_count +=3;  
-                        }else{  
-                            src_count +=3;  
-                        }  
-                    }else{  
-                        src_count ++;  
-                    }  
-                }break;  
-                default:{  
-                    src_count++;  
-                }break;  
-           }  
-       }  
-    }  
-   dest[dest_count++]=src[src_count++];   
-    return dest_count;  
-} 
+/**
+* 使用SecureCRT串口收发工具,在发送的字符流中可能带有不需要的字符以及控制字符,
+* 比如退格键,左右移动键等等,在使用命令行工具解析字符流之前,需要将这些无用字符以
+* 及控制字符去除掉.
+* 支持的控制字符有:
+*   上移:1B 5B 41
+*   下移:1B 5B 42
+*   右移:1B 5B 43
+*   左移:1B 5B 44
+*   回车换行:0D 0A
+*  Backspace:08
+*  Delete:7F
+*/
+static uint32_t get_true_char_stream(char *dest, const char *src)
+{
+   uint32_t dest_count=0;
+   uint32_t src_count=0;
+
+    while(src[src_count] != '\0'){//0x0D && src[src_count+1]!=0x0A)
+       if(isprint(src[src_count])){
+           dest[dest_count++]=src[src_count++];
+       }else{
+           switch(src[src_count]){
+                case 0x08:{
+                    if(dest_count>0){
+                        dest_count --;
+                    }
+                    src_count ++;
+                }break;
+                case 0x1B:{
+                    if(src[src_count+1]==0x5B){
+                        if(src[src_count+2]==0x41 || src[src_count+2]==0x42){
+                            src_count +=3;              //上移和下移键键值
+                        }else if(src[src_count+2]==0x43){
+                            dest_count++;               //右移键键值
+                            src_count+=3;
+                        }else if(src[src_count+2]==0x44){
+                            if(dest_count >0){//左移键键值
+                                dest_count --;
+                            }
+                           src_count +=3;
+                        }else{
+                            src_count +=3;
+                        }
+                    }else{
+                        src_count ++;
+                    }
+                }break;
+                default:{
+                    src_count++;
+                }break;
+           }
+       }
+    }
+   dest[dest_count++]=src[src_count++];
+    return dest_count;
+}
 
 
 
@@ -149,114 +149,114 @@ long simple_strtol(const char *cp,char **endp,unsigned int base)
 
 
 
-/*字符串转10/16进制数*/                                                              
-static int32_t string_to_dec(uint8_t *buf)                              
-{                                                                                    
-   uint32_t i=0;                                                                     
-   uint32_t base=10;       //基数                                                    
-   int32_t  neg=1;         //表示正负,1=正数                                         
-   int32_t  result=0;                                                                
-                                                                                     
-    if((buf[0]=='0')&&(buf[1]=='x'))                                                 
-    {                                                                                
-       base=16;                                                                      
-       neg=1;                                                                        
-       i=2;                                                                          
-    }                                                                                
-    else if(buf[0]=='-')                                                             
-    {                                                                                
-       base=10;                                                                      
-       neg=-1;                                                                       
-       i=1;                                                                          
-    }                                                                                
-    for(; buf[i] != 0; i++)                                                                  
-    {                                                                                
-       if(buf[i]==0x20 || buf[i]==0x0D || buf[i] == '\0')    //为空格                                  
-       {                                                                             
-           break;                                                                    
-       }                                                                             
-                                                                                     
-       result *= base;                                                               
-       if(isdigit(buf[i]))                 //是否为0~9                               
-       {                                                                             
-           result += buf[i]-'0';                                                     
-       }                                                                             
-       else if(isxdigit(buf[i]))           //是否为a~f或者A~F                        
-       {                                                                             
-            result+=tolower(buf[i])-87;                                              
-       }                                                                             
-       else                                                                          
-       {                                                                             
-           result += buf[i]-'0';                                                     
-       }                                                                             
-    }                                                                                
-   result *= neg;                                                                    
-                                                                                     
-    return result ;                                                                  
-}           
+/*字符串转10/16进制数*/
+static int32_t string_to_dec(uint8_t *buf)
+{
+   uint32_t i=0;
+   uint32_t base=10;       //基数
+   int32_t  neg=1;         //表示正负,1=正数
+   int32_t  result=0;
+
+    if((buf[0]=='0')&&(buf[1]=='x'))
+    {
+       base=16;
+       neg=1;
+       i=2;
+    }
+    else if(buf[0]=='-')
+    {
+       base=10;
+       neg=-1;
+       i=1;
+    }
+    for(; buf[i] != 0; i++)
+    {
+       if(buf[i]==0x20 || buf[i]==0x0D || buf[i] == '\0')    //为空格
+       {
+           break;
+       }
+
+       result *= base;
+       if(isdigit(buf[i]))                 //是否为0~9
+       {
+           result += buf[i]-'0';
+       }
+       else if(isxdigit(buf[i]))           //是否为a~f或者A~F
+       {
+            result+=tolower(buf[i])-87;
+       }
+       else
+       {
+           result += buf[i]-'0';
+       }
+    }
+   result *= neg;
+
+    return result ;
+}
 
 
 
-/**                                                                                                                            
-* 命令参数分析函数,以空格作为一个参数结束,支持输入十六进制数(如:0x15),支持输入负数(如-15)                                      
-* @param rec_buf   命令参数缓存区                                                                                              
-* @param len       命令的最大可能长度                                                                                          
-* @return -1:       参数个数过多,其它:参数个数                                                                                 
-*/                                                                                                                             
-static int32_t cmd_arg_analyze(const char *rec_buf, unsigned int len)                                                                
-{                                                                                                                              
-   uint32_t i;                                                                                                                 
-   uint32_t blank_space_flag=0;    //空格标志                                                                                  
-   uint32_t arg_num=0;             //参数数目                                                                                  
-   uint32_t index[ARG_NUM];        //有效参数首个数字的数组索引                                                                
-                                                                                                                               
-    /*先做一遍分析,找出参数的数目,以及参数段的首个数字所在rec_buf数组中的下标*/                                                
-    for(i=0;i<len;i++)                                                                                                         
-    {                                                                                                                          
-       if(rec_buf[i]==0x20)        //为空格                                                                                    
-       {                                                                                                                       
-           blank_space_flag=1;                                                                                                 
-           continue;                                                                                                           
-       }                                                                                                                       
-       else if(rec_buf[i]==0x0D || rec_buf[i] == '\0')   //换行                                                                                     
-       {                                                                                                                       
-           break;                                                                                                              
-       }                                                                                                                       
-       else                                                                                                                    
-       {                                                                                                                       
-           if(blank_space_flag==1)                                                                                             
-           {                                                                                                                   
-                blank_space_flag=0;                                                                                            
-                if(arg_num < ARG_NUM)                                                                                          
-                {                                                                                                              
-                   index[arg_num]=i;                                                                                           
-                    arg_num++;                                                                                                 
-                }                                                                                                              
-                else                                                                                                           
-                {                                                                                                              
-                    return -1;      //参数个数太多                                                                             
-                }                                                                                                              
-           }                                                                                                                   
-       }                                                                                                                       
-    }                                                                                                                          
-                                                                                                                               
-    for(i=0;i<arg_num;i++)                                                                                                     
-    {                                                                                                                          
-        cmd_analyze.cmd_arg[i]=string_to_dec((unsigned char *)(rec_buf+index[i]));                            
-    }                                                                                                                          
-    return arg_num;                                                                                                            
-}                                                                                                                              
-  
+/**
+* 命令参数分析函数,以空格作为一个参数结束,支持输入十六进制数(如:0x15),支持输入负数(如-15)
+* @param rec_buf   命令参数缓存区
+* @param len       命令的最大可能长度
+* @return -1:       参数个数过多,其它:参数个数
+*/
+static int32_t cmd_arg_analyze(const char *rec_buf, unsigned int len)
+{
+   uint32_t i;
+   uint32_t blank_space_flag=0;    //空格标志
+   uint32_t arg_num=0;             //参数数目
+   uint32_t index[ARG_NUM];        //有效参数首个数字的数组索引
+
+    /*先做一遍分析,找出参数的数目,以及参数段的首个数字所在rec_buf数组中的下标*/
+    for(i=0;i<len;i++)
+    {
+       if(rec_buf[i]==0x20)        //为空格
+       {
+           blank_space_flag=1;
+           continue;
+       }
+       else if(rec_buf[i]==0x0D || rec_buf[i] == '\0')   //换行
+       {
+           break;
+       }
+       else
+       {
+           if(blank_space_flag==1)
+           {
+                blank_space_flag=0;
+                if(arg_num < ARG_NUM)
+                {
+                   index[arg_num]=i;
+                    arg_num++;
+                }
+                else
+                {
+                    return -1;      //参数个数太多
+                }
+           }
+       }
+    }
+
+    for(i=0;i<arg_num;i++)
+    {
+        cmd_analyze.cmd_arg[i]=string_to_dec((unsigned char *)(rec_buf+index[i]));
+    }
+    return arg_num;
+}
 
 
 
-                                                                         
+
+
 void run_command (char * _cmd_str)
 {
 	int i = 0;
-	
+
 	SetWatchDog(); //看门狗喂狗
-	
+
 	while (*(_cmd_str + i) )
 	{
 		if ( (*(_cmd_str + i) ) == 0x0a)
@@ -271,63 +271,63 @@ void run_command (char * _cmd_str)
 	//cmd_analyze.rec_buf[i + 1] = 0x0A;
 	vTaskCmdAnalyze ();
 }
-	
-	/*命令行分析任务*/  
-void vTaskCmdAnalyze( void )  
-{  
-   uint32_t i;  
-   int32_t rec_arg_num;  
-    char cmd_buf[CMD_LEN];        
-    uint32_t rec_num;     
-	
-                                                                                                                      
-	rec_num=get_true_char_stream(cmd_analyze.processed_buf, cmd_analyze.rec_buf);  
-		
+
+	/*命令行分析任务*/
+void vTaskCmdAnalyze( void )
+{
+   uint32_t i;
+   int32_t rec_arg_num;
+    char cmd_buf[CMD_LEN];
+    uint32_t rec_num;
+
+
+	rec_num=get_true_char_stream(cmd_analyze.processed_buf, cmd_analyze.rec_buf);
+
 	//cy_println ("rec_buf = %s", cmd_analyze.rec_buf);
 	//cy_println ("rec_num = %d", rec_num);
 	//cy_println ("processed_buf = %s", cmd_analyze.processed_buf);
-                                                                                                                                       
-      /*从接收数据中提取命令*/                                                                                                         
-      for(i=0;i<CMD_LEN;i++){                                                                                                                                
-          if((i > 0) && ((cmd_analyze.processed_buf[i]==' ') || (cmd_analyze.processed_buf[i]==0x0D)  || (cmd_analyze.processed_buf[i] == 0) )){                                                                                                                            
-               cmd_buf[i]='\0';        //字符串结束符                                                                                  
-               break;                                                                                                                  
-          }else{                                                                                                                            
-               cmd_buf[i]=cmd_analyze.processed_buf[i];                                                                                
-          }                                                                                                                            
-      }                                                                                                                                
-                                                                                                                                       
-      rec_arg_num=cmd_arg_analyze(&cmd_analyze.processed_buf[i], rec_num);                                                              
-                                                                                                                                       
-      for(i=0;i<sizeof(cmd_list)/sizeof(cmd_list[0]);i++){                                                                                                                                
-          if(!strcmp(cmd_buf,cmd_list[i].cmd_name)){       //字符串相等                                                                 
-                                                                                                                                      
-               if(rec_arg_num<0 || rec_arg_num>cmd_list[i].max_args) {                                                                                                                       
-                   cy_println("Too Much arg\n");                                                                                             
+
+      /*从接收数据中提取命令*/
+      for(i=0;i<CMD_LEN;i++){
+          if((i > 0) && ((cmd_analyze.processed_buf[i]==' ') || (cmd_analyze.processed_buf[i]==0x0D)  || (cmd_analyze.processed_buf[i] == 0) )){
+               cmd_buf[i]='\0';        //字符串结束符
+               break;
+          }else{
+               cmd_buf[i]=cmd_analyze.processed_buf[i];
+          }
+      }
+
+      rec_arg_num=cmd_arg_analyze(&cmd_analyze.processed_buf[i], rec_num);
+
+      for(i=0;i<sizeof(cmd_list)/sizeof(cmd_list[0]);i++){
+          if(!strcmp(cmd_buf,cmd_list[i].cmd_name)){       //字符串相等
+
+               if(rec_arg_num<0 || rec_arg_num>cmd_list[i].max_args) {
+                   cy_println("Too Much arg\n");
                }else {
-					clear_ctrlc	();			   
-					cmd_list[i].handle(rec_arg_num,(void *)cmd_analyze.cmd_arg);  
-					//cy_println ("<End cmd_list[%d].%s>", i, cmd_list[i].cmd_name);	
+					clear_ctrlc	();
+					cmd_list[i].handle(rec_arg_num,(void *)cmd_analyze.cmd_arg);
+					//cy_println ("<End cmd_list[%d].%s>", i, cmd_list[i].cmd_name);
 					cy_println ();
-               }                                                                                                                       
-               break;                                                                                                                  
-          }                                                                                                                            
-                                                                                                                                       
-      }                                                                                                                                
-	if(i>=sizeof(cmd_list)/sizeof(cmd_list[0])){                                                                                                                                
-		//cy_println("Unsurport Cmd: %s", cmd_buf);     
+               }
+               break;
+          }
+
+      }
+	if(i>=sizeof(cmd_list)/sizeof(cmd_list[0])){
+		//cy_println("Unsurport Cmd: %s", cmd_buf);
 		//cmd();
-		strcpy (cmd_buf, cmd_analyze.rec_buf);	
+		strcpy (cmd_buf, cmd_analyze.rec_buf);
 		if (my_run_command (cmd_buf, 0) >= 0){
-		}	
-	}    
-	cmd ();	                                                                                                                            
+		}
+	}
+	cmd ();
 	sys_env.uart0_cmd_flag = 0;
 }
 
-                                                  
-//接收数据                                                                         
-static uint32_t rec_count=0;  
+
+//接收数据
+static uint32_t rec_count=0;
 int len;
 char str[8];
 
@@ -402,7 +402,7 @@ int get_hex_data (char * buf)
 	s_hex_file p_hex;
 	uint16_t func_code = 0;
 	uint16_t para_value = 0;
-	
+
 		if (get_hex_struct (&p_hex, buf)){//文件错误
 			return -1;
 		}
@@ -419,7 +419,7 @@ int get_hex_data (char * buf)
 				break;
 			case 0x04://ex addr
 //				section_addr = (p_hex.data[0]<< 8 | p_hex.data[1]) << 16;
-//				section_addr &= 0xFFFFFFF; 
+//				section_addr &= 0xFFFFFFF;
 //				comscreen(Disp_Indexpic[22],Number_IndexpicB);	 // back to the  picture before alert
 				break;
 			case 0x08://ex func
@@ -589,7 +589,7 @@ u8 auchCRCLo[] =
 0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
 0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
 0x40
-}; 
+};
 
 u16 CRC16(char * _data_buf,int len)
 {
@@ -602,7 +602,7 @@ u16 CRC16(char * _data_buf,int len)
 		uchCRCLo = auchCRCLo[uindex];
 	}
 	return (uchCRCHi<<8|uchCRCLo);
-} 
+}
 
 void update_finish (e_update_flag flag)
 {
@@ -610,7 +610,7 @@ void update_finish (e_update_flag flag)
 	switch (flag)
 	{
 		case UART_UPDATE:
-			if (rec_count > 1){	
+			if (rec_count > 1){
 				crc = CRC16 (iap_code_buf, rec_count - 2);//CRC 校验
 				if (crc == ((iap_code_buf[rec_count - 2] << 8) | iap_code_buf[rec_count - 1])){//最后两个字节是校验码
 					cy_println("OK");//校验通过
@@ -630,7 +630,7 @@ void update_finish (e_update_flag flag)
 			run_command ("write flash");
 			break;
 		case UART_COMMAND:
-			if (rec_count > 1){	
+			if (rec_count > 1){
 				get_hex_data (cmd_analyze.rec_buf);
 				rec_count = 0;
 				sys_env.tty_mode = 0;
@@ -641,8 +641,8 @@ void update_finish (e_update_flag flag)
 	}
 	sys_env.update_flag = NULL_UPDATE;
 }
-/*提供给串口中断服务程序，保存串口接收到的单个字符*/   
-void fill_rec_buf(char data)                                                           
+/*提供给串口中断服务程序，保存串口接收到的单个字符*/
+void fill_rec_buf(char data)
 {
 	if ((data == CTRL_C ) && (sys_env.tty_mode == 0))
 	{
@@ -670,13 +670,13 @@ void fill_rec_buf(char data)
 			cy_print ("\n");
 		}
 		if (rec_count >= CODE_BUF_SIZE){
-			rec_count=0; 
+			rec_count=0;
 			sys_env.tty_mode = 0;
 			cy_println("ERROR");//数组越界，表示接受失败
 		}
 	}else if (sys_env.tty_mode == 0xaa){
 		sys_env.tty_online_ms = TTY_ONLINE_TIME;
-		cmd_analyze.rec_buf[rec_count++] = data; 
+		cmd_analyze.rec_buf[rec_count++] = data;
 	}else if (sys_env.uart0_cmd_flag == 0){
 		if (data == '\b'){
 			if (rec_count > 0){
@@ -696,85 +696,85 @@ void fill_rec_buf(char data)
 		}else if (data == ':'){
 			sys_env.tty_mode = 0xaa;
 			sys_env.update_flag = UART_COMMAND;
-			cmd_analyze.rec_buf[rec_count++] = data; 
+			cmd_analyze.rec_buf[rec_count++] = data;
 			sys_env.tty_online_ms = TTY_ONLINE_TIME;
 		}else{
-			Uart0_sendchar(data);                                              
-			if(0x0D == data){// && 0x0D==cmd_analyze.rec_buf[rec_count-1]) 
-				if (rec_count > 0){				
-					cmd_analyze.rec_buf[rec_count] = '\0';  
-					//cy_println ("rec_count = %d", rec_count);  
-					rec_count=0;    
-				}	  
+			Uart0_sendchar(data);
+			if(0x0D == data){// && 0x0D==cmd_analyze.rec_buf[rec_count-1])
+				if (rec_count > 0){
+					cmd_analyze.rec_buf[rec_count] = '\0';
+					//cy_println ("rec_count = %d", rec_count);
+					rec_count=0;
+				}
 				Uart0_sendchar('\n');
-				sys_env.uart0_cmd_flag = 1; 	
+				sys_env.uart0_cmd_flag = 1;
 				//cy_println ("rec_count = %d", rec_count);
-				//vTaskCmdAnalyze (); 		                          
-			}else{                                    
-				cmd_analyze.rec_buf[rec_count] = data;                                                 
-				rec_count++;                                                                   																   
-			   /*防御性代码，防止数组越界*/                                                    
-			   if(rec_count>=CMD_BUF_LEN) {                                                                               
-				   rec_count=0;                                                                
-			   }                                                                               
-			} 
-		}		
+				//vTaskCmdAnalyze ();
+			}else{
+				cmd_analyze.rec_buf[rec_count] = data;
+				rec_count++;
+			   /*防御性代码，防止数组越界*/
+			   if(rec_count>=CMD_BUF_LEN) {
+				   rec_count=0;
+			   }
+			}
+		}
 	}else{
 		rec_count = 0;
 	}
-}                                                                                      
+}
 void print_ng_data (int16_t index);
-/*打印字符串:Hello world!*/                                    
- void do_help(int32_t argc, void *cmd_arg)              
- {  
+/*打印字符串:Hello world!*/
+ void do_help(int32_t argc, void *cmd_arg)
+ {
 	int i;
-	cy_println("\n----------------------------------------------------");   
+	cy_println("\n----------------------------------------------------");
 	for (i = 0; i < (sizeof (cmd_list) / sizeof (cmd_list_struct)); i++)
 	{
-		cy_println("--%s			%s", cmd_list[i].cmd_name, cmd_list[i].help);     
-	}	
-	cy_println("----------------------------------------------------\n");   	
- }  
+		cy_println("--%s			%s", cmd_list[i].cmd_name, cmd_list[i].help);
+	}
+	cy_println("----------------------------------------------------\n");
+ }
 
 void do_go(int32_t argc, void *cmd_arg)
-{                                                                                
-   int32_t  *arg=(int32_t *)cmd_arg;                                            
-                                                                                   
+{
+   int32_t  *arg=(int32_t *)cmd_arg;
+
 	switch (argc)
 	{
-		case 0:                                          
-			cy_println("There is no arg");    
+		case 0:
+			cy_println("There is no arg");
 			break;
-		case 1:                
+		case 1:
 			if (arg[argc - 1] == string_to_dec((uint8 *)("yccs")))
-			{               
-				cy_println("goto YCCS menu");  
+			{
+				cy_println("goto YCCS menu");
 				comscreen(Disp_Indexpic[YCCS],Number_IndexpicB);	 // 进入调试界面
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("tzcy"))) // 进行特征值采样
 			{
-				cy_println("goto JZTS menu");  
-				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);	 
+				cy_println("goto JZTS menu");
+				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);
 				sys_env.workstep =103;
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("jzts"))) // 进行基准值调试
 			{
-				cy_println("goto JZTS menu");  
-				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);	
+				cy_println("goto JZTS menu");
+				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);
 				sys_env.workstep =100;
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("jsjm"))) // 进入计数界面
 			{
-				cy_println("goto JSJM menu");  
-				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	
+				cy_println("goto JSJM menu");
+				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);
 				sys_env.workstep =60;
 				sys_env.sim_count_flag = 1;
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("tzxx"))) // 进入特征学习
-			{ 
+			{
 				if( adstd_offset() == 1)
 				{
-					cy_println("goto TZBC menu"); 
+					cy_println("goto TZBC menu");
 					comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);
 					coin_maxvalue0 = 0;
 					coin_maxvalue1 = 0;
@@ -782,14 +782,14 @@ void do_go(int32_t argc, void *cmd_arg)
 					coin_minvalue0 = 1024;
 					coin_minvalue1 = 1024;
 					coin_minvalue2 = 1024;
-					
+
 					dgus_tf1word(ADDR_A0MA,coin_maxvalue0);	//	 real time ,pre AD0  max
 					dgus_tf1word(ADDR_A0MI,coin_minvalue0);	//	 real time ,pre AD0  min
-					dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max	
+					dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max
 					dgus_tf1word(ADDR_A1MI,coin_minvalue1);	//	 real time ,pre AD1  min
 					dgus_tf1word(ADDR_A2MA,coin_maxvalue2);	//	 real time ,pre AD2  max
 					dgus_tf1word(ADDR_A2MI,coin_minvalue2);	//	 real time ,pre AD2  min
-					//sys_env.workstep =101;	
+					//sys_env.workstep =101;
 				}
 				else
 				{
@@ -799,8 +799,8 @@ void do_go(int32_t argc, void *cmd_arg)
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("mnjs"))) // 进行模拟计数
 			{
-				cy_println("goto JSJM menu");  
-				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 
+				cy_println("goto JSJM menu");
+				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);
 				sys_env.workstep =102;
 				sys_env.sim_count_flag = 1;
 			}
@@ -810,73 +810,73 @@ void do_go(int32_t argc, void *cmd_arg)
 			}
 			break;
 		case 2:
-			cy_println("2 arg");  
+			cy_println("2 arg");
 			break;
 		case 3:
-			cy_println("3 arg");  
+			cy_println("3 arg");
 			break;
 		default: break;
 	}
-}  	
+}
 
 
 
 
 int32_t get_coin_index (int32_t _coin_name)
 {
-	if (_coin_name == string_to_dec((uint8 *)("cnnm0"))) //                              
-	{ 
+	if (_coin_name == string_to_dec((uint8 *)("cnnm0"))) //
+	{
 		return 0;
-	}  
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm1"))) //                              
-	{ 
+	}
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm1"))) //
+	{
 		return 1;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm2"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm2"))) //
+	{
 		return 2;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm3"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm3"))) //
+	{
 		return 3;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm4"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm4"))) //
+	{
 		return 4;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm5"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm5"))) //
+	{
 		return 5;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm6"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm6"))) //
+	{
 		return 6;
 	}
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm7"))) //                              
-	{ 
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm7"))) //
+	{
 		return 7;
-	}        
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm8"))) //                              
-	{ 
+	}
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm8"))) //
+	{
 		return 8;
-	}        
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm9"))) //                              
-	{ 
+	}
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm9"))) //
+	{
 		return 9;
-	}      
-	else if (_coin_name == string_to_dec((uint8 *)("cnnm10"))) //                              
-	{ 
+	}
+	else if (_coin_name == string_to_dec((uint8 *)("cnnm10"))) //
+	{
 		return 10;
-	}                                                                                                    
-	else                                                                                                             
-	{                                                                                                                
-		cy_println ("coin_name must be cnnm 0 ... %d", COIN_TYPE_NUM - 1);  
+	}
+	else
+	{
+		cy_println ("coin_name must be cnnm 0 ... %d", COIN_TYPE_NUM - 1);
 		return -1;
 	}
 }
 
 void coin_start (void)
-{			
+{
 	if (sys_env.system_delay == 0){
 		prepic_num =JSJM;
 		comscreen(Disp_Indexpic[JSYX],Number_IndexpicB);	 // back to the  picture before alert
@@ -886,18 +886,18 @@ void coin_start (void)
 }
 
 void coin_stop (void)
-{		
+{
 	runstep = 40;   //开始停机
 	dbg("end working %s %d\n", __FILE__, __LINE__);
 }
 
 void coin_clear (void)
-{	
+{
 	counter_clear();
 }
 
 void coin_clear_alarm (void)
-{		
+{
 	prepic_num = prepic_prenum;
 	comscreen(Disp_Indexpic[prepic_num],Number_IndexpicB);	 // back to the  picture before alert
 }
@@ -955,8 +955,8 @@ void set_para_1  (int32_t arg[])
 			return ;
 		}
 		if (coinlearnnumber == 0)
-		{                                                                         
-			dbg ("coinlearnnumber = %d, No data to save arg", coinlearnnumber); 
+		{
+			dbg ("coinlearnnumber = %d, No data to save arg", coinlearnnumber);
 			return;
 		}
 	}else if (arg[0] == string_to_dec((uint8 *)("clear"))){ //force to save
@@ -978,8 +978,8 @@ void set_para_1  (int32_t arg[])
 		refresh_data ();
 		return;
 	}else if (arg[0] == string_to_dec((uint8 *)("save-f"))){ //force to save
-	}else{                                                                                                                
-		cy_println ("set_para_1 arg[0] Error arg");  
+	}else{
+		cy_println ("set_para_1 arg[0] Error arg");
 		return;
 	}
 	pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0 = coin_maxvalue0;
@@ -996,193 +996,193 @@ void set_para_1  (int32_t arg[])
 	coinlearnnumber = 0;
 	prepic_num = TZJM;
 	comscreen(Disp_Indexpic[prepic_num],Number_IndexpicB); //显示
-	dbg ("Save Complete");  
+	dbg ("Save Complete");
 }
 
 
 void set_para_2  (int32_t arg[])
 {
-	if (arg[0] == string_to_dec((uint8 *)("print"))){ //打印开关                                                               
-		if (arg[1] > 0){                                                                                                   
-			cy_println("turn on print wave to pc");                                                                        
-			sys_env.print_wave_to_pc = 1;                                                                                 
-		}else{                                                                                                              
-			cy_println("turn off print wave to pc");                                                                       
-			sys_env.print_wave_to_pc = 0;                                                                                 
-		}                                                                                                              
-	}else if (arg[0] == string_to_dec((uint8 *)("autostop"))){ // 异常自动停止                                                                                                                    
-		if (arg[1] > 0) {                                                                                                 
-			cy_println("turn on auto_stop");                                                                               
-			sys_env.auto_stop = 1;                                                                                        
-		}else{                                                                                                              
-			cy_println("turn off auto_stop");                                                                              
-			sys_env.auto_stop = 0;                                                                                        
-		}                                                                                                              
-	}else if (arg[0] == string_to_dec((uint8 *)("autoclear"))){ // 异常自动停止                                                                                                                                     
-		if (arg[1] > 0){                                                                                                   
-			cy_println("turn on auto_clear");                                                                               
-			sys_env.auto_clear = 1;                                                                                        
-		}else{                                                                                                              
-			cy_println("turn off auto_clear");                                                                              
-			sys_env.auto_clear = 0;                                                                                        
-		}                                                                                                              
-	}                                                                                                             
-	else if (arg[0] == string_to_dec((uint8 *)("save_ng"))){                                                                                                                
-		if (arg[1] > 0){                                                                                                              
-			cy_println("turn on save_ng_data");                                                                                 
-			sys_env.save_ng_data = 1;                                                                                      
-		}else{                                                                                                              
-			cy_println("turn off save_ng_data");                                                                                
-			sys_env.save_ng_data = 0;                                                                                     
-		}                                                                                                              
-	}                                                                                                                   
-	else if (arg[0] == string_to_dec((uint8 *)("save_gd"))){                                                                                                                
-		if (arg[1] > 0){                                                                                                              
-			cy_println("turn on save_good_data");                                                                                 
-			sys_env.save_good_data = 1;                                                                                      
-		}else{                                                                                                              
-			cy_println("turn off save_good_data");                                                                                
-			sys_env.save_good_data = 0;                                                                                     
-		}                                                                                                              
-	}                                                                                                            
-	else if (arg[0] == string_to_dec((uint8 *)("coin_index"))){                                                                                                                
-		if (arg[1] >= 0 && arg[1]  < COIN_TYPE_NUM){                                                                                                              
-			cy_println("set coin_index = %d", arg[1]);                                                              
-			sys_env.coin_index = arg[1] ;  
-			dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//initial addr on zixuexi jiemian coin name tubiao                     
-		}else{                                                                                                              
-			cy_println("coin_index must > 0 and < %d", COIN_TYPE_NUM);  
-			return;                                                     
-		}                                                                                                              
-	}                                                                                                                
-	else if (arg[0] == string_to_dec((uint8 *)("country_index"))){                                                                                                                
-		if (arg[1] >= 0 && arg[1]  < COINCNUM){                                                                                                              
-			cy_println("set country_index = %d", arg[1]);                                                           
-			sys_env.country_index = arg[1] ;                                                                         
-			coinchoose = sys_env.country_index;                                                                           
-		}else{                                                                                                              
-			cy_println("coin_index must > 0 and < %d", COINCNUM);   
-			return;                                                       
-		}                                                                                                              
-	}else if (arg[0] == string_to_dec((uint8 *)("stop"))){                                                                                                                        
-		cy_println("set sys_env.workstep = %d", arg[1]);                                                          
-		sys_env.workstep = arg[1];                                                                                                                    
-	}else if (arg[0] == string_to_dec((uint8 *)("run"))){                                                                                                                    
-		cy_println("set sys_env.workstep = %d", arg[1]);                                                     
-		sys_env.workstep = arg[1];                                                                                                                   
-	}else if (arg[0] == string_to_dec((uint8 *)("kick-start1"))){                                                                                                                    
-		cy_println("set kick_start_delay_time1 = %d", arg[1]);                                                     
-		para_set_value.data.kick_start_delay_t1 = arg[1];     
+	if (arg[0] == string_to_dec((uint8 *)("print"))){ //打印开关
+		if (arg[1] > 0){
+			cy_println("turn on print wave to pc");
+			sys_env.print_wave_to_pc = 1;
+		}else{
+			cy_println("turn off print wave to pc");
+			sys_env.print_wave_to_pc = 0;
+		}
+	}else if (arg[0] == string_to_dec((uint8 *)("autostop"))){ // 异常自动停止
+		if (arg[1] > 0) {
+			cy_println("turn on auto_stop");
+			sys_env.auto_stop = 1;
+		}else{
+			cy_println("turn off auto_stop");
+			sys_env.auto_stop = 0;
+		}
+	}else if (arg[0] == string_to_dec((uint8 *)("autoclear"))){ // 异常自动停止
+		if (arg[1] > 0){
+			cy_println("turn on auto_clear");
+			sys_env.auto_clear = 1;
+		}else{
+			cy_println("turn off auto_clear");
+			sys_env.auto_clear = 0;
+		}
+	}
+	else if (arg[0] == string_to_dec((uint8 *)("save_ng"))){
+		if (arg[1] > 0){
+			cy_println("turn on save_ng_data");
+			sys_env.save_ng_data = 1;
+		}else{
+			cy_println("turn off save_ng_data");
+			sys_env.save_ng_data = 0;
+		}
+	}
+	else if (arg[0] == string_to_dec((uint8 *)("save_gd"))){
+		if (arg[1] > 0){
+			cy_println("turn on save_good_data");
+			sys_env.save_good_data = 1;
+		}else{
+			cy_println("turn off save_good_data");
+			sys_env.save_good_data = 0;
+		}
+	}
+	else if (arg[0] == string_to_dec((uint8 *)("coin_index"))){
+		if (arg[1] >= 0 && arg[1]  < COIN_TYPE_NUM){
+			cy_println("set coin_index = %d", arg[1]);
+			sys_env.coin_index = arg[1] ;
+			dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//initial addr on zixuexi jiemian coin name tubiao
+		}else{
+			cy_println("coin_index must > 0 and < %d", COIN_TYPE_NUM);
+			return;
+		}
+	}
+	else if (arg[0] == string_to_dec((uint8 *)("country_index"))){
+		if (arg[1] >= 0 && arg[1]  < COINCNUM){
+			cy_println("set country_index = %d", arg[1]);
+			sys_env.country_index = arg[1] ;
+			coinchoose = sys_env.country_index;
+		}else{
+			cy_println("coin_index must > 0 and < %d", COINCNUM);
+			return;
+		}
+	}else if (arg[0] == string_to_dec((uint8 *)("stop"))){
+		cy_println("set sys_env.workstep = %d", arg[1]);
+		sys_env.workstep = arg[1];
+	}else if (arg[0] == string_to_dec((uint8 *)("run"))){
+		cy_println("set sys_env.workstep = %d", arg[1]);
+		sys_env.workstep = arg[1];
+	}else if (arg[0] == string_to_dec((uint8 *)("kick-start1"))){
+		cy_println("set kick_start_delay_time1 = %d", arg[1]);
+		para_set_value.data.kick_start_delay_t1 = arg[1];
 		write_para ();
-	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep1"))){                                                                                                                    
-		cy_println("set kick_keep_time1 = %d", arg[1]);                                                     
-		para_set_value.data.kick_keep_t1 = arg[1];   
-		write_para ();   
-	}else if (arg[0] == string_to_dec((uint8 *)("boot-delay"))){                                                                                                                    
-		cy_println("set system_boot_delay = %d", arg[1]);                                                     
-		para_set_value.data.system_boot_delay = arg[1];   
-		write_para ();                                                                                                                
-	}else if (arg[0] == string_to_dec((uint8 *)("kick-start2"))){                                                                                                                    
-		cy_println("set kick_start_delay_time2 = %d", arg[1]);                                                     
-		para_set_value.data.kick_start_delay_t2 = arg[1];     
+	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep1"))){
+		cy_println("set kick_keep_time1 = %d", arg[1]);
+		para_set_value.data.kick_keep_t1 = arg[1];
 		write_para ();
-	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep2"))){                                                                                                                    
-		cy_println("set kick_keep_time2 = %d", arg[1]);                                                     
-		para_set_value.data.kick_keep_t2 = arg[1];   
-		write_para ();    
-	}else if (arg[0] == string_to_dec((uint8 *)("coin-size"))){                                                                                                                    
-		cy_println("set coin_size = %d", arg[1]);                                                     
-		para_set_value.data.coin_size = arg[1];   
-		write_para ();			
-	}else if (arg[0] == string_to_dec((uint8 *)("coin-push-size"))){                                                                                                                    
-		cy_println("set coin-push-size = %d", arg[1]);                                                     
-		para_set_value.data.coin_push_size = arg[1];   
-		write_para ();			
-	}else if (arg[0] == string_to_dec((uint8 *)("coin-h"))){                                                                                                                    
-		cy_println("set coin_h = %d", arg[1]);                                                     
-		para_set_value.data.coin_h = arg[1];   
-		write_para ();			
-	}else if (arg[0] == string_to_dec((uint8 *)("motor-dir"))){                                                                                                                     
-		cy_println("set motor-dir = %d", arg[1]);  
+	}else if (arg[0] == string_to_dec((uint8 *)("boot-delay"))){
+		cy_println("set system_boot_delay = %d", arg[1]);
+		para_set_value.data.system_boot_delay = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("kick-start2"))){
+		cy_println("set kick_start_delay_time2 = %d", arg[1]);
+		para_set_value.data.kick_start_delay_t2 = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("kick-keep2"))){
+		cy_println("set kick_keep_time2 = %d", arg[1]);
+		para_set_value.data.kick_keep_t2 = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-size"))){
+		cy_println("set coin_size = %d", arg[1]);
+		para_set_value.data.coin_size = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-push-size"))){
+		cy_println("set coin-push-size = %d", arg[1]);
+		para_set_value.data.coin_push_size = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-h"))){
+		cy_println("set coin_h = %d", arg[1]);
+		para_set_value.data.coin_h = arg[1];
+		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("motor-dir"))){
+		cy_println("set motor-dir = %d", arg[1]);
 		if (arg[1] == 1){
 			STORAGE_DIR_N();
 		}else if (arg[1] == 0){
 			STORAGE_DIR_P();
-		}			                                                                                                                                       
-	}else if (arg[0] == string_to_dec((uint8 *)("adj-offset"))){                                                                              
-		cy_println("set adj_offset_position = %d", arg[1]);  
+		}
+	}else if (arg[0] == string_to_dec((uint8 *)("adj-offset"))){
+		cy_println("set adj_offset_position = %d", arg[1]);
 		if (arg[1] < 6000){
 			arg[1] = 6000;
 		}
-		para_set_value.data.adj_offset_position = arg[1];   
-		write_para ();                                                                                                                
-	}else{                                                                                                                
-		cy_println ("set_para_2 arg[0] Error arg");  
+		para_set_value.data.adj_offset_position = arg[1];
+		write_para ();
+	}else{
+		cy_println ("set_para_2 arg[0] Error arg");
 		return;
-	}  
+	}
 	print_system_env_info ();
-}	
-	
+}
+
 
 
 void write_to_flash (int32_t _country_index, int32_t _coin_index)
-{    
-	write_para ();                                                                             
-	cy_println ("write_to_flash _country_index = %d _coin_index = %d", _country_index, _coin_index);                                                                                                                                                                                                                                                                                                                        
-	disp_preselflearn(pre_value.country[coinchoose].coin[_coin_index].data.max0,pre_value.country[coinchoose].coin[_coin_index].data.min0,                                              
-					  pre_value.country[coinchoose].coin[_coin_index].data.max1,pre_value.country[coinchoose].coin[_coin_index].data.min1,                                                      
-					  pre_value.country[coinchoose].coin[_coin_index].data.max2,pre_value.country[coinchoose].coin[_coin_index].data.min2);		                                                                          		                                                   
+{
+	write_para ();
+	cy_println ("write_to_flash _country_index = %d _coin_index = %d", _country_index, _coin_index);
+	disp_preselflearn(pre_value.country[coinchoose].coin[_coin_index].data.max0,pre_value.country[coinchoose].coin[_coin_index].data.min0,
+					  pre_value.country[coinchoose].coin[_coin_index].data.max1,pre_value.country[coinchoose].coin[_coin_index].data.min1,
+					  pre_value.country[coinchoose].coin[_coin_index].data.max2,pre_value.country[coinchoose].coin[_coin_index].data.min2);
 	if (_country_index == coinchoose)
 	{
-		dgus_tf1word(ADDR_CNTB, _coin_index);	//initial addr on zixuexi jiemian coin name tubiao  
-		comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);	 // back to the  picture before alert  
-	}		
+		dgus_tf1word(ADDR_CNTB, _coin_index);	//initial addr on zixuexi jiemian coin name tubiao
+		comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);	 // back to the  picture before alert
+	}
 	else
 	{
-		cy_println ("Note !!! Current coinchoose is %d, and set coinchoose is %d", coinchoose, _country_index); 
+		cy_println ("Note !!! Current coinchoose is %d, and set coinchoose is %d", coinchoose, _country_index);
 	}
 }
 
 void save_prevalue_coin (int32_t _country_index, int32_t _coin_index, int32_t _value_index, int32_t _value)
 {
-	//nick add begin********************************************************************  
-	//read_coin_value (_coin_index);	
+	//nick add begin********************************************************************
+	//read_coin_value (_coin_index);
 	switch (_value_index)
 	{
-		case 0 :pre_value.country[coinchoose].coin[_coin_index].data.max0 = _value; break;                                                                                                         
-		case 1 :pre_value.country[coinchoose].coin[_coin_index].data.min0 = _value; break;                                                                                                            
-		case 2 :pre_value.country[coinchoose].coin[_coin_index].data.max1 = _value; break;                                                                                                         
-		case 3 :pre_value.country[coinchoose].coin[_coin_index].data.min1 = _value; break;                                                                                                            
-		case 4 :pre_value.country[coinchoose].coin[_coin_index].data.max2 = _value; break;                                                                                                                 
-		case 5 :pre_value.country[coinchoose].coin[_coin_index].data.min2 = _value; break;                                                                                                                  
-		case 6 :pre_value.country[coinchoose].coin[_coin_index].data.std0 = _value; break;                                                                                                                   
-		case 8 :pre_value.country[coinchoose].coin[_coin_index].data.std1 = _value; break;                                                                                                                   
-		case 10:pre_value.country[coinchoose].coin[_coin_index].data.std2 = _value; break;                                                                                                                  
-		case 12:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0 = _value; break;                                                                                                                  
-		case 13:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0 = _value; break;                                                                                                                  
-		case 14:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1 = _value; break;                                                                                                                  
-		case 15:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1 = _value; break;                                                                                                                  
-		case 16:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax2 = _value; break;                                                                                                                  
-		case 17:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2 = _value; break;  
+		case 0 :pre_value.country[coinchoose].coin[_coin_index].data.max0 = _value; break;
+		case 1 :pre_value.country[coinchoose].coin[_coin_index].data.min0 = _value; break;
+		case 2 :pre_value.country[coinchoose].coin[_coin_index].data.max1 = _value; break;
+		case 3 :pre_value.country[coinchoose].coin[_coin_index].data.min1 = _value; break;
+		case 4 :pre_value.country[coinchoose].coin[_coin_index].data.max2 = _value; break;
+		case 5 :pre_value.country[coinchoose].coin[_coin_index].data.min2 = _value; break;
+		case 6 :pre_value.country[coinchoose].coin[_coin_index].data.std0 = _value; break;
+		case 8 :pre_value.country[coinchoose].coin[_coin_index].data.std1 = _value; break;
+		case 10:pre_value.country[coinchoose].coin[_coin_index].data.std2 = _value; break;
+		case 12:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0 = _value; break;
+		case 13:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0 = _value; break;
+		case 14:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1 = _value; break;
+		case 15:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1 = _value; break;
+		case 16:pre_value.country[coinchoose].coin[_coin_index].data.offsetmax2 = _value; break;
+		case 17:pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2 = _value; break;
 		default:return;
-	}     
+	}
 	write_para ();
-	//nick add end**************************************************************---------                                                                               
-	                                                                                                                                                                                                                                                                                                                            
-	disp_preselflearn(pre_value.country[coinchoose].coin[_coin_index].data.max0,pre_value.country[coinchoose].coin[_coin_index].data.min0,                                              
-					  pre_value.country[coinchoose].coin[_coin_index].data.max1,pre_value.country[coinchoose].coin[_coin_index].data.min1,                                                      
-					  pre_value.country[coinchoose].coin[_coin_index].data.max2,pre_value.country[coinchoose].coin[_coin_index].data.min2);			                                                   
+	//nick add end**************************************************************---------
+
+	disp_preselflearn(pre_value.country[coinchoose].coin[_coin_index].data.max0,pre_value.country[coinchoose].coin[_coin_index].data.min0,
+					  pre_value.country[coinchoose].coin[_coin_index].data.max1,pre_value.country[coinchoose].coin[_coin_index].data.min1,
+					  pre_value.country[coinchoose].coin[_coin_index].data.max2,pre_value.country[coinchoose].coin[_coin_index].data.min2);
 	if (_country_index == coinchoose)
-		comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);	 // back to the  picture before alert    
+		comscreen(Disp_Indexpic[TZJM],Number_IndexpicB);	 // back to the  picture before alert
 	else
-		cy_println ("Note !!! Current coinchoose is %d, and set coinchoose is %d", coinchoose, _country_index); 
+		cy_println ("Note !!! Current coinchoose is %d, and set coinchoose is %d", coinchoose, _country_index);
 
 }
 
 
 void save_all_prevalue_coin (int32_t _country_index, int32_t _coin_index, int32_t _value_buf[])
 {
-	
+
 	//cy_println ("_country_index = %d _coin_index = %d _value_buf[0] = %d", _country_index, _coin_index,  _value_buf[0]);
 	pre_value.country[coinchoose].coin[_coin_index].data.max0 = _value_buf[0];
 	pre_value.country[coinchoose].coin[_coin_index].data.min0 = _value_buf[1];
@@ -1190,12 +1190,12 @@ void save_all_prevalue_coin (int32_t _country_index, int32_t _coin_index, int32_
 	pre_value.country[coinchoose].coin[_coin_index].data.min1 = _value_buf[3];
 	pre_value.country[coinchoose].coin[_coin_index].data.max2 = _value_buf[4];
 	pre_value.country[coinchoose].coin[_coin_index].data.min2 = _value_buf[5];
-	
+
 	write_to_flash (_country_index, _coin_index);
 }
 void save_all_offsetvalue_coin (int32_t _country_index, int32_t _coin_index, int32_t _value_buf[])
 {
-	
+
 	//cy_println ("_country_index = %d _coin_index = %d _value_buf[0] = %d", _country_index, _coin_index,  _value_buf[0]);
 	pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0 = _value_buf[0];
 	pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0 = _value_buf[1];
@@ -1203,7 +1203,7 @@ void save_all_offsetvalue_coin (int32_t _country_index, int32_t _coin_index, int
 	pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1 = _value_buf[3];
 	pre_value.country[coinchoose].coin[_coin_index].data.offsetmax2 = _value_buf[4];
 	pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2 = _value_buf[5];
-	
+
 	write_to_flash (_country_index, _coin_index);
 }
 void save_all_stdvalue_coin (int32_t _country_index, int32_t _coin_index, int32_t _value_buf[])
@@ -1212,7 +1212,7 @@ void save_all_stdvalue_coin (int32_t _country_index, int32_t _coin_index, int32_
 	pre_value.country[coinchoose].coin[_coin_index].data.std0 = _value_buf[0];
 	pre_value.country[coinchoose].coin[_coin_index].data.std1 = _value_buf[1];
 	pre_value.country[coinchoose].coin[_coin_index].data.std2 = _value_buf[2];
-	
+
 	write_to_flash (_country_index, _coin_index);
 }
 
@@ -1223,9 +1223,9 @@ int32_t run_step_motor (int32_t arg[])
 	int32_t motor_id, step, motor_speed;
 	motor_id = arg[0];
 	step = arg[1];
-	motor_speed = arg[2]; 
+	motor_speed = arg[2];
 	repeate = arg[3];
-	do{ 
+	do{
 		if (step < 0){
 			motor_dir = 0;
 			motor_step = step*(-1);
@@ -1235,7 +1235,7 @@ int32_t run_step_motor (int32_t arg[])
 		}else{
 			motor_dir ^= 1;
 		}
-		cy_println("run motor:[id = %d, step = %d, pwm_width = %d, dir = %d]", motor_id, motor_step, motor_speed, motor_dir);  
+		cy_println("run motor:[id = %d, step = %d, pwm_width = %d, dir = %d]", motor_id, motor_step, motor_speed, motor_dir);
 		step = 0;
 		set_motor_dir (motor_id, motor_dir);
 		if (start_motor (motor_id, motor_step, motor_speed) < 0){
@@ -1245,7 +1245,7 @@ int32_t run_step_motor (int32_t arg[])
 			return -1;
 		}
 	}while (repeate == 1);
-	
+
 	return 0;
 }
 
@@ -1254,102 +1254,102 @@ void set_para_3  (int32_t arg[])
 	#define VALUE_SIZE 6 + 3 + 6
 	int32_t coin_index_temp = 0;
 	int32_t value_temp_buf[VALUE_SIZE];
-	int i; 
-	
-	coin_index_temp = get_coin_index (arg[0]);   
+	int i;
+
+	coin_index_temp = get_coin_index (arg[0]);
 	if (coin_index_temp < 0)
-		return;	
-	
-	if (arg[1] == string_to_dec((uint8 *)("all"))) //                              
-	{        
+		return;
+
+	if (arg[1] == string_to_dec((uint8 *)("all"))) //
+	{
 		for (i = 0; i < VALUE_SIZE; i++)
 		{
 			value_temp_buf[i] = arg[2];
 		}
-		save_all_prevalue_coin (coinchoose, coin_index_temp, value_temp_buf); 
-		cy_println ("save all prevalue_coin op successfull"); 
-		save_all_stdvalue_coin (coinchoose, coin_index_temp, &value_temp_buf[6]);  
-		cy_println ("save all stdvalue_coin op successfull");   
-		save_all_offsetvalue_coin (coinchoose, coin_index_temp, &value_temp_buf[9]);  
-		cy_println ("save all offsetvalue_coin op successfull");    
-	}  
-	else if (arg[1] == string_to_dec((uint8 *)("pre"))) //                              
-	{        
+		save_all_prevalue_coin (coinchoose, coin_index_temp, value_temp_buf);
+		cy_println ("save all prevalue_coin op successfull");
+		save_all_stdvalue_coin (coinchoose, coin_index_temp, &value_temp_buf[6]);
+		cy_println ("save all stdvalue_coin op successfull");
+		save_all_offsetvalue_coin (coinchoose, coin_index_temp, &value_temp_buf[9]);
+		cy_println ("save all offsetvalue_coin op successfull");
+	}
+	else if (arg[1] == string_to_dec((uint8 *)("pre"))) //
+	{
 		for (i = 0; i < 6; i++)
 		{
 			value_temp_buf[i] = arg[2];
-		}       
-		save_all_prevalue_coin (coinchoose, coin_index_temp, value_temp_buf); 
-		cy_println ("save all prevalue_coin op successfull");                                                                                                                                     
-	} 
-	else if (arg[1] == string_to_dec((uint8 *)("std"))) //                              
-	{      
+		}
+		save_all_prevalue_coin (coinchoose, coin_index_temp, value_temp_buf);
+		cy_println ("save all prevalue_coin op successfull");
+	}
+	else if (arg[1] == string_to_dec((uint8 *)("std"))) //
+	{
 		for (i = 0; i < 3; i++)
 		{
 			value_temp_buf[i] = arg[2];
-		} 
-		save_all_stdvalue_coin (coinchoose, coin_index_temp, value_temp_buf); 
-		cy_println ("save all stdvalue_coin op successfull");                                                                                                                                             
-	}  
-	else if (arg[1] == string_to_dec((uint8 *)("offset"))) //                              
-	{      
+		}
+		save_all_stdvalue_coin (coinchoose, coin_index_temp, value_temp_buf);
+		cy_println ("save all stdvalue_coin op successfull");
+	}
+	else if (arg[1] == string_to_dec((uint8 *)("offset"))) //
+	{
 		for (i = 0; i < 6; i++)
 		{
 			if (i % 2 == 0)
 				value_temp_buf[i] = arg[2];
 			else
 				value_temp_buf[i] = -1 * arg[2];
-		} 
-		save_all_offsetvalue_coin (coinchoose, coin_index_temp, value_temp_buf); 
-		cy_println ("save all offsetvalue_coin op successfull");                                                                                                                                             
-	}                                                                                                        
-	else                                                                                                             
-	{                                                                                                                
-		cy_println ("set_para_3 Error arg");  
+		}
+		save_all_offsetvalue_coin (coinchoose, coin_index_temp, value_temp_buf);
+		cy_println ("save all offsetvalue_coin op successfull");
+	}
+	else
+	{
+		cy_println ("set_para_3 Error arg");
 		return;
-	}               
-	print_ng_data (coin_index_temp);   
+	}
+	print_ng_data (coin_index_temp);
 }
 void set_para_4 (int32_t arg[])
 {
 	int32_t coin_index_temp = 0;
 	int32_t value_index_temp = 0;
 	int32_t value_temp = arg[3];
-	
-	coin_index_temp = get_coin_index (arg[0]);   
+
+	coin_index_temp = get_coin_index (arg[0]);
 	if (coin_index_temp < 0)
-		return;	
-	
-	if (arg[1]  == string_to_dec((uint8 *)("max")))                                                        
-	{                                                                                                    
-		value_index_temp = 0;	                                                                             
-	}                                                                                                    
-	else if (arg[1]  == string_to_dec((uint8 *)("min")))                                                   
-	{                                                                                                    
-		value_index_temp = 1;	                                                                             
-	}                                                                                                    
-	else if (arg[1]  == string_to_dec((uint8 *)("std")))                                                   
-	{                                                                                                    
-		value_index_temp = 6;	                                                                             
-	}                                                                                                  
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("value index must be max or min or std");                                                    
-		return;                                                          
-	}                                                                                                    
-	                                                                                                     
-	if (arg[2] >= 0 && arg[2] < 3)                                                                           
-	{                                                                                                    
-		value_index_temp += arg[2] * 2;                                                                          
-	}                                                                                                    
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("chanel value must be 1 or 2 or 3");                                                     
-		return;                                                                                            
-	}  
-                                                
-	save_prevalue_coin (coinchoose, coin_index_temp, value_index_temp, value_temp); 
-	cy_println ("save op successfull");                   
+		return;
+
+	if (arg[1]  == string_to_dec((uint8 *)("max")))
+	{
+		value_index_temp = 0;
+	}
+	else if (arg[1]  == string_to_dec((uint8 *)("min")))
+	{
+		value_index_temp = 1;
+	}
+	else if (arg[1]  == string_to_dec((uint8 *)("std")))
+	{
+		value_index_temp = 6;
+	}
+	else
+	{
+		cy_println ("value index must be max or min or std");
+		return;
+	}
+
+	if (arg[2] >= 0 && arg[2] < 3)
+	{
+		value_index_temp += arg[2] * 2;
+	}
+	else
+	{
+		cy_println ("chanel value must be 1 or 2 or 3");
+		return;
+	}
+
+	save_prevalue_coin (coinchoose, coin_index_temp, value_index_temp, value_temp);
+	cy_println ("save op successfull");
 	print_ng_data (coin_index_temp);
 }
 
@@ -1358,53 +1358,53 @@ void set_para_5 (int32_t arg[])
 	int32_t coin_index_temp = 0;
 	int32_t value_index_temp = 0;
 	int32_t value_temp;
-	
-	coin_index_temp = get_coin_index (arg[0]);   
+
+	coin_index_temp = get_coin_index (arg[0]);
 	if (coin_index_temp < 0)
-		return;	
-	
-	if (arg[1]  == string_to_dec((uint8 *)("std")))                                                        
-	{  
-		cy_println ("save stdvalue_coin %4d %4d %4d", arg[2], arg[3], arg[4]);  		                                                                                            
-		save_all_stdvalue_coin (coinchoose, coin_index_temp, &arg[2]); 
-		cy_println ("save stdvalue_coin op successfull");  
-	}    
-	else if (arg[1]  == string_to_dec((uint8 *)("offset")))                                                        
-	{  
-			
-		if (arg[2]  == string_to_dec((uint8 *)("max")))                                                        
-		{                                                                                                    
-			value_index_temp = 12;	                                                                             
-		}                                                                                                    
-		else if (arg[2]  == string_to_dec((uint8 *)("min")))                                                   
-		{                                                                                                    
-			value_index_temp = 13;	                                                                             
-		}                                                                                                   
-		else                                                                                                 
-		{                                                                                                    
-			cy_println ("arg[2] value index must be max or min");                                                    
-			return;                                                          
-		}           
-		
-		if (arg[3] >= 0 && arg[3] < 3)                                                                           
-		{                                                                                                    
-			value_index_temp += arg[3] * 2;                                                                          
-		}                                                                                                    
-		else                                                                                                 
-		{                                                                                                    
-			cy_println ("arg[3] chanel value must be 1 or 2 or 3");                                                     
-			return;                                                                                            
-		}    
-		value_temp = arg[4];		
-		save_prevalue_coin (coinchoose, coin_index_temp, value_index_temp, value_temp); 
-		cy_println ("save offset value op successfull");                                                                                                 			
-	}                                                                                                   
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("arg[1] value index must be std or offset");                                                    
-		return;                                                          
-	}                                                                                                    
-	                                                                    
+		return;
+
+	if (arg[1]  == string_to_dec((uint8 *)("std")))
+	{
+		cy_println ("save stdvalue_coin %4d %4d %4d", arg[2], arg[3], arg[4]);
+		save_all_stdvalue_coin (coinchoose, coin_index_temp, &arg[2]);
+		cy_println ("save stdvalue_coin op successfull");
+	}
+	else if (arg[1]  == string_to_dec((uint8 *)("offset")))
+	{
+
+		if (arg[2]  == string_to_dec((uint8 *)("max")))
+		{
+			value_index_temp = 12;
+		}
+		else if (arg[2]  == string_to_dec((uint8 *)("min")))
+		{
+			value_index_temp = 13;
+		}
+		else
+		{
+			cy_println ("arg[2] value index must be max or min");
+			return;
+		}
+
+		if (arg[3] >= 0 && arg[3] < 3)
+		{
+			value_index_temp += arg[3] * 2;
+		}
+		else
+		{
+			cy_println ("arg[3] chanel value must be 1 or 2 or 3");
+			return;
+		}
+		value_temp = arg[4];
+		save_prevalue_coin (coinchoose, coin_index_temp, value_index_temp, value_temp);
+		cy_println ("save offset value op successfull");
+	}
+	else
+	{
+		cy_println ("arg[1] value index must be std or offset");
+		return;
+	}
+
 	print_ng_data (coin_index_temp);
 }
 
@@ -1412,10 +1412,10 @@ void set_para_5 (int32_t arg[])
 void set_para_7 (int32_t arg[])
 {
 	int32_t coin_index_temp = 0;
-	coin_index_temp = get_coin_index (arg[0]);   
+	coin_index_temp = get_coin_index (arg[0]);
 	if (coin_index_temp < 0)
 		return;
-	
+
 	coin_maxvalue0 = arg[1];
 	coin_minvalue0 = arg[2];
 	coin_maxvalue1 = arg[3];
@@ -1426,37 +1426,37 @@ void set_para_7 (int32_t arg[])
 	{
 		return;
 	}
-	save_all_prevalue_coin (coinchoose, coin_index_temp, &arg[1]); 
-	cy_println ("save all pre op successfull");                   
+	save_all_prevalue_coin (coinchoose, coin_index_temp, &arg[1]);
+	cy_println ("save all pre op successfull");
 	print_ng_data (coin_index_temp);
 }
 void set_para_8 (int32_t arg[])
 {
 	int32_t coin_index_temp = 0;
-	coin_index_temp = get_coin_index (arg[0]);   
+	coin_index_temp = get_coin_index (arg[0]);
 	if (coin_index_temp < 0)
 		return;
-	if (arg[1]  == string_to_dec((uint8 *)("offset")))    
-	{		
+	if (arg[1]  == string_to_dec((uint8 *)("offset")))
+	{
 	}
 	else
 	{
-		cy_println ("arg[1] value index must be offset");   
+		cy_println ("arg[1] value index must be offset");
 		return;
-	}		
-	save_all_offsetvalue_coin (coinchoose, coin_index_temp, &arg[2]); 
-	cy_println ("save all offset op successfull");                   
+	}
+	save_all_offsetvalue_coin (coinchoose, coin_index_temp, &arg[2]);
+	cy_println ("save all offset op successfull");
 	print_ng_data (coin_index_temp);
 }
 
 void do_set(int32_t argc, void *cmd_arg)
-{                                                                                                                    
+{
 	switch (argc)
 	{
-		case 1:                
+		case 1:
 			set_para_1 ((int32_t *)cmd_arg);
 			break;
-		case 2:        
+		case 2:
 			set_para_2 ((int32_t *)cmd_arg);
 			break;
 		case 3:
@@ -1477,57 +1477,57 @@ void do_set(int32_t argc, void *cmd_arg)
 		default:
 			cy_println("%d arg", argc); break;
 	}
-} 
+}
 
-void print_system_env_info (void) 
-{                  
-	cy_println("\n----------------------------------------------------");   
+void print_system_env_info (void)
+{
+	cy_println("\n----------------------------------------------------");
 	PRINT_VERSION();
-	cy_println("----------------print system env info---------------");        
-	cy_println ("print_wave_to_pc       = %d", sys_env.print_wave_to_pc);             
-	//cy_println ("auto_stop            = %d", sys_env.auto_stop);                  
-	cy_println ("auto_clear             = %d", sys_env.auto_clear);                     
-	cy_println ("save_ng_data           = %d", sys_env.save_ng_data);             
-	cy_println ("save_good_data         = %d", sys_env.save_good_data);              
-	cy_println ("coin_index             = %d", sys_env.coin_index);            
-	cy_println ("country_index          = %d", sys_env.country_index);        
-	cy_println ("workstep               = %d", sys_env.workstep);         
-	cy_println ("system_boot_delay      = %d", para_set_value.data.system_boot_delay);   
-	cy_println ("system_mode            = %d", para_set_value.data.system_mode);               
-	cy_println ("coin_cross_time        = %d", sys_env.coin_cross_time);   
-	cy_println("----------------------------------------------------");       
-	cy_println ("kick_start_delay_time1 = %d", para_set_value.data.kick_start_delay_t1);         
-	cy_println ("kick_keep_time1        = %d", para_set_value.data.kick_keep_t1);             
-	cy_println("----------------------------------------------------");        
-	cy_println ("kick_start_delay_time2 = %d", para_set_value.data.kick_start_delay_t2);         
-	cy_println ("kick_keep_time2        = %d", para_set_value.data.kick_keep_t2);             
-	cy_println("----------------------------------------------------");           
-	cy_println ("pre_count_stop_n       = %d", para_set_value.data.pre_count_stop_n);    
-	cy_println ("coin_full_rej_pos      = %d", para_set_value.data.coin_full_rej_pos);        
-	cy_println("----------------------------------------------------");  
-	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t); 
-	cy_println ("coin_size              = %d", para_set_value.data.coin_size);    
-	cy_println ("coin_push_size         = %d", para_set_value.data.coin_push_size);   
-	cy_println ("coin_h                 = %d", para_set_value.data.coin_h);           
+	cy_println("----------------print system env info---------------");
+	cy_println ("print_wave_to_pc       = %d", sys_env.print_wave_to_pc);
+	//cy_println ("auto_stop            = %d", sys_env.auto_stop);
+	cy_println ("auto_clear             = %d", sys_env.auto_clear);
+	cy_println ("save_ng_data           = %d", sys_env.save_ng_data);
+	cy_println ("save_good_data         = %d", sys_env.save_good_data);
+	cy_println ("coin_index             = %d", sys_env.coin_index);
+	cy_println ("country_index          = %d", sys_env.country_index);
+	cy_println ("workstep               = %d", sys_env.workstep);
+	cy_println ("system_boot_delay      = %d", para_set_value.data.system_boot_delay);
+	cy_println ("system_mode            = %d", para_set_value.data.system_mode);
+	cy_println ("coin_cross_time        = %d", sys_env.coin_cross_time);
 	cy_println("----------------------------------------------------");
-}   
+	cy_println ("kick_start_delay_time1 = %d", para_set_value.data.kick_start_delay_t1);
+	cy_println ("kick_keep_time1        = %d", para_set_value.data.kick_keep_t1);
+	cy_println("----------------------------------------------------");
+	cy_println ("kick_start_delay_time2 = %d", para_set_value.data.kick_start_delay_t2);
+	cy_println ("kick_keep_time2        = %d", para_set_value.data.kick_keep_t2);
+	cy_println("----------------------------------------------------");
+	cy_println ("pre_count_stop_n       = %d", para_set_value.data.pre_count_stop_n);
+	cy_println ("coin_full_rej_pos      = %d", para_set_value.data.coin_full_rej_pos);
+	cy_println("----------------------------------------------------");
+	cy_println ("motor_idle_t           = %d", para_set_value.data.motor_idle_t);
+	cy_println ("coin_size              = %d", para_set_value.data.coin_size);
+	cy_println ("coin_push_size         = %d", para_set_value.data.coin_push_size);
+	cy_println ("coin_h                 = %d", para_set_value.data.coin_h);
+	cy_println("----------------------------------------------------");
+}
 
 void print_coin_env_info (void)
-{                                                                       
-	cy_println("-----------------print coin env info----------------");        
-	cy_println ("ad0_averaged_value    = %d", coin_env.ad0_averaged_value / ADSAMPNUM0);             
-	cy_println ("ad1_averaged_value    = %d", coin_env.ad1_averaged_value / ADSAMPNUM0);                    
-	cy_println ("ad2_averaged_value    = %d", coin_env.ad2_averaged_value / ADSAMPNUM0);               
-	cy_println ("std_down_value0       = %d", coin_env.std_down_value0);             
-	cy_println ("std_up_value0         = %d", coin_env.std_up_value0);              
-	cy_println ("ad0_step              = %d", coin_env.ad0_step);            
-	cy_println ("ad1_step              = %d", coin_env.ad1_step);        
-	cy_println ("ad2_step              = %d", coin_env.ad2_step);           
-	cy_println("----------------------------------------------------");         
-	cy_println ("runstep               = %d", runstep);             
-	cy_println ("coin_env.kick_Q_index = %d", coin_env.kick_Q_index);         
-	cy_println ("ccstep                = %d", ccstep);                           
-	cy_println("----------------------------------------------------");    
+{
+	cy_println("-----------------print coin env info----------------");
+	cy_println ("ad0_averaged_value    = %d", coin_env.ad0_averaged_value / ADSAMPNUM0);
+	cy_println ("ad1_averaged_value    = %d", coin_env.ad1_averaged_value / ADSAMPNUM0);
+	cy_println ("ad2_averaged_value    = %d", coin_env.ad2_averaged_value / ADSAMPNUM0);
+	cy_println ("std_down_value0       = %d", coin_env.std_down_value0);
+	cy_println ("std_up_value0         = %d", coin_env.std_up_value0);
+	cy_println ("ad0_step              = %d", coin_env.ad0_step);
+	cy_println ("ad1_step              = %d", coin_env.ad1_step);
+	cy_println ("ad2_step              = %d", coin_env.ad2_step);
+	cy_println("----------------------------------------------------");
+	cy_println ("runstep               = %d", runstep);
+	cy_println ("coin_env.kick_Q_index = %d", coin_env.kick_Q_index);
+	cy_println ("ccstep                = %d", ccstep);
+	cy_println("----------------------------------------------------");
 }
 
 
@@ -1535,92 +1535,92 @@ void print_coin_env_info (void)
 void print_cmp_data (int16_t _coin_index)
 {
 	cy_println ("ad std offset complete");
-	cy_println ("----------------------------------------------------------------------");   	
-	cy_println ("----------print country %d coin %2d cmp data----------------------------", sys_env.country_index, _coin_index);   
-	cy_println ("----------------------------------------------------------------------");  
+	cy_println ("----------------------------------------------------------------------");
+	cy_println ("----------print country %d coin %2d cmp data----------------------------", sys_env.country_index, _coin_index);
+	cy_println ("----------------------------------------------------------------------");
 //	if (adstd_offset () != 1){
 //		cy_println("ad std offset error");
 //		return;
 //	}
 	cy_println ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
-	cy_println ("----------------------------------------------------------------------");   
+	cy_println ("----------------------------------------------------------------------");
 	cy_println ("save     std0 = %4d          std1 = %4d     std2 = %4d",
 			pre_value.country[coinchoose].coin[_coin_index].data.std0,
 			pre_value.country[coinchoose].coin[_coin_index].data.std1,
 			pre_value.country[coinchoose].coin[_coin_index].data.std2);
-	
-	cy_println ("offset   max0 = %4d          max1 = %4d     max2 = %4d", 
-			pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0, 
-			pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1, 
+
+	cy_println ("offset   max0 = %4d          max1 = %4d     max2 = %4d",
+			pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0,
+			pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1,
 			pre_value.country[coinchoose].coin[_coin_index].data.offsetmax2);
-	cy_println ("original max0 = %4d          max1 = %4d     max2 = %4d", 
-			pre_value.country[coinchoose].coin[_coin_index].data.max0, 
-			pre_value.country[coinchoose].coin[_coin_index].data.max1, 
+	cy_println ("original max0 = %4d          max1 = %4d     max2 = %4d",
+			pre_value.country[coinchoose].coin[_coin_index].data.max0,
+			pre_value.country[coinchoose].coin[_coin_index].data.max1,
 			pre_value.country[coinchoose].coin[_coin_index].data.max2);
-	cy_println ("offset   min0 = %4d          min1 = %4d     min2 = %4d", 
-			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0, 
-			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1, 
-			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2);    
-	cy_println ("original min0 = %4d          min1 = %4d     min2 = %4d", 
-			pre_value.country[coinchoose].coin[_coin_index].data.min0, 
-			pre_value.country[coinchoose].coin[_coin_index].data.min1, 
-			pre_value.country[coinchoose].coin[_coin_index].data.min2);                                                  
-	cy_println("----------------------------------------------------------------------");    
+	cy_println ("offset   min0 = %4d          min1 = %4d     min2 = %4d",
+			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0,
+			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1,
+			pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2);
+	cy_println ("original min0 = %4d          min1 = %4d     min2 = %4d",
+			pre_value.country[coinchoose].coin[_coin_index].data.min0,
+			pre_value.country[coinchoose].coin[_coin_index].data.min1,
+			pre_value.country[coinchoose].coin[_coin_index].data.min2);
+	cy_println("----------------------------------------------------------------------");
 #ifdef SAMPLE_METHOD_0
-	cy_println ("                  H                     M-H                    L-M"); 
-#endif 
-#ifdef SAMPLE_METHOD_1
-	cy_println ("                  H                      M                      L "); 
+	cy_println ("                  H                     M-H                    L-M");
 #endif
-	cy_println ("compare_max0  = %4d    compare_max1 = %4d    compare_max2 = %4d", 
-				coin_cmp_value[_coin_index].compare_max0, 
-				coin_cmp_value[_coin_index].compare_max1, 
+#ifdef SAMPLE_METHOD_1
+	cy_println ("                  H                      M                      L ");
+#endif
+	cy_println ("compare_max0  = %4d    compare_max1 = %4d    compare_max2 = %4d",
+				coin_cmp_value[_coin_index].compare_max0,
+				coin_cmp_value[_coin_index].compare_max1,
 				coin_cmp_value[_coin_index].compare_max2);
-	cy_println ("compare_min0  = %4d    compare_min1 = %4d    compare_min2 = %4d", 
-				coin_cmp_value[_coin_index].compare_min0, 
-				coin_cmp_value[_coin_index].compare_min1, 
-				coin_cmp_value[_coin_index].compare_min2);                                                      
-	cy_println("----------------------------------------------------------------------");                   
+	cy_println ("compare_min0  = %4d    compare_min1 = %4d    compare_min2 = %4d",
+				coin_cmp_value[_coin_index].compare_min0,
+				coin_cmp_value[_coin_index].compare_min1,
+				coin_cmp_value[_coin_index].compare_min2);
+	cy_println("----------------------------------------------------------------------");
 }
-	
+
 void print_ng_data (int16_t index)
-{	
-	int	i;  
+{
+	int	i;
 	if (ng_info_echo_off)
 		return;
-	print_cmp_data (index);                                                                                                                     
-	cy_println("-------------------print %6d ng data-------------------------------", ng_value_index);                                               
-	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                                  
-	cy_println ("   index   ad_index         H             M             L");                                                                   
-	for (i = 0; i < ng_value_index; i++)                                                                                                      
-	{                                                                                                                                          
-		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].ad_index, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);                   
-	}                                                                                                                                        
-	cy_println("----------------------------------------------------------------------");                                                                        
+	print_cmp_data (index);
+	cy_println("-------------------print %6d ng data-------------------------------", ng_value_index);
+	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");
+	cy_println ("   index   ad_index         H             M             L");
+	for (i = 0; i < ng_value_index; i++)
+	{
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].ad_index, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);
+	}
+	cy_println("----------------------------------------------------------------------");
 }
 
 void print_good_data (int16_t index)
-{	
-	int	i;  
-	
-	print_cmp_data (index);                                                                                                                                      
-	cy_println("-------------------print %6d good data-----------------------------", good_value_index);                                                 
-	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");                                                               
-	cy_println ("   index   ad_index         H             M             L");                                                          
-	for (i = 0; i < good_value_index; i++)                                                                                                      
-	{                                                                                                                                        
-		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].ad_index, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);                      
-	}                                                                                                                                        
-	cy_println("---------------------------------------------------------------------");                                                                        
+{
+	int	i;
+
+	print_cmp_data (index);
+	cy_println("-------------------print %6d good data-----------------------------", good_value_index);
+	//cy_println ("   index   ad_index    coin_value0   coin_value1   coin_value2");
+	cy_println ("   index   ad_index         H             M             L");
+	for (i = 0; i < good_value_index; i++)
+	{
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].ad_index, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);
+	}
+	cy_println("---------------------------------------------------------------------");
 }
 
 
 void print_coin_pre_value (int16_t index)
-{	 
+{
 	int i = index;
-	cy_println("--------------------print country %2d coin value---------------------", coinchoose);                                      
-	cy_println (" coin  min0        max0        min1        max1        min2        max2 ");     
-	cy_println ("   %2d (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)", 
+	cy_println("--------------------print country %2d coin value---------------------", coinchoose);
+	cy_println (" coin  min0        max0        min1        max1        min2        max2 ");
+	cy_println ("   %2d (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)",
 								i,
 								pre_value.country[coinchoose].coin[i].data.min0,
 								pre_value.country[coinchoose].coin[i].data.offsetmin0,
@@ -1634,18 +1634,18 @@ void print_coin_pre_value (int16_t index)
 								pre_value.country[coinchoose].coin[i].data.offsetmin2,
 								pre_value.country[coinchoose].coin[i].data.max2,
 								pre_value.country[coinchoose].coin[i].data.offsetmax2
-								);     
-	cy_println("---------------------------------------------------------------------");                                                                          
+								);
+	cy_println("---------------------------------------------------------------------");
 }
 
 void print_all_coin_pre_value (void)
-{	
-	int16_t i;                                                                                                                                 
-	cy_println("--------------------print country %2d coin value---------------------", coinchoose);                                      
-	cy_println (" coin  min0        max0        min1        max1        min2        max2 ");     
+{
+	int16_t i;
+	cy_println("--------------------print country %2d coin value---------------------", coinchoose);
+	cy_println (" coin  min0        max0        min1        max1        min2        max2 ");
 	for (i = 0; i < COIN_TYPE_NUM; i++)
 	{
-		cy_println ("   %2d (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)", 
+		cy_println ("   %2d (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)  (%4d %3d)",
 								i,
 								pre_value.country[coinchoose].coin[i].data.min0,
 								pre_value.country[coinchoose].coin[i].data.offsetmin0,
@@ -1659,9 +1659,9 @@ void print_all_coin_pre_value (void)
 								pre_value.country[coinchoose].coin[i].data.offsetmin2,
 								pre_value.country[coinchoose].coin[i].data.max2,
 								pre_value.country[coinchoose].coin[i].data.offsetmax2
-								);       
-	}		
-	cy_println("---------------------------------------------------------------------");                                                                        
+								);
+	}
+	cy_println("---------------------------------------------------------------------");
 }
 
 void print_all_country_pre_value (void)
@@ -1670,40 +1670,40 @@ void print_all_country_pre_value (void)
 
 void print_coin_pre_value_info (int32_t arg[])
 {
-	if (arg[1]  == string_to_dec((uint8 *)("all")))                                                        
-	{  
+	if (arg[1]  == string_to_dec((uint8 *)("all")))
+	{
 		print_all_coin_pre_value ();
-	} 
+	}
 	else if (arg[1] >= 0 && arg[1] < COIN_TYPE_NUM)
 	{
 		print_coin_pre_value (arg[1]);
 	}
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("arg Error!");                                                    
-		return;                                                          
-	}  
+	else
+	{
+		cy_println ("arg Error!");
+		return;
+	}
 }
 
 void print_pre_count_set_value (void)
 {
-	int16_t i;                                                                                                                                 
-	cy_println("----------------------print pre_count_set value----------------------", coinchoose);    
+	int16_t i;
+	cy_println("----------------------print pre_count_set value----------------------", coinchoose);
 	for (i = 0; i < 9; i++)
 	{
-		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_set));          
-	}		
-	cy_println("---------------------------------------------------------------------");   
+		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_set));
+	}
+	cy_println("---------------------------------------------------------------------");
 }
 void print_pre_count_current (void)
 {
-	int16_t i;                                                                                                                                 
-	cy_println("--------------------print pre_count_current value--------------------", coinchoose);    
+	int16_t i;
+	cy_println("--------------------print pre_count_current value--------------------", coinchoose);
 	for (i = 0; i < 9; i++)
 	{
-		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_cur));          
-	}		
-	cy_println("---------------------------------------------------------------------");   
+		cy_println ("   %d      %6d", i, *(pre_value.country[coinchoose].coin[i].data.p_pre_count_cur));
+	}
+	cy_println("---------------------------------------------------------------------");
 }
 void print_speed (void)
 {
@@ -1713,12 +1713,12 @@ void print_speed (void)
 		cy_print("   总数:     %d + %d = %d 枚\n",processed_coin_info.total_good, processed_coin_info.total_ng, processed_coin_info.total_coin);
 		cy_print("   异币:     %d 枚\n",processed_coin_info.total_ng);
 		cy_print("   金额:     %d.%d%d 元\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
-		cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), sys_env.coin_speed);	
+		cy_print("   本次清分耗时: %d Sec 速度: %d 枚/ Min\n", (sys_env.sys_runing_time_total / 10000), sys_env.coin_speed);
 	}
 }
 
 void print_input_status (void)
-{		
+{
 	while (1){
 		cy_print ("IN0:%d ", A0IN0);
 		cy_print ("IN1:%d ", A0IN1);
@@ -1729,7 +1729,7 @@ void print_input_status (void)
 		cy_print ("IN6:%d ", A0IN6);
 		cy_print ("IN7:%d ", A0IN7);
 		cy_println ();
-		OSTimeDly(500); // LED3 1000ms闪烁void 
+		OSTimeDly(500); // LED3 1000ms闪烁void
 		if (had_ctrlc ()){
 			return;
 		}
@@ -1737,45 +1737,45 @@ void print_input_status (void)
 }
 
 void do_print(int32_t argc, void *cmd_arg)
-{                                                                                
-	int32_t  *arg=(int32_t *)cmd_arg;   
-                                                                                   
+{
+	int32_t  *arg=(int32_t *)cmd_arg;
+
 	switch (argc)
 	{
-		case 1:     
-			if (arg[argc - 1] == string_to_dec((uint8 *)("ng"))){      
+		case 1:
+			if (arg[argc - 1] == string_to_dec((uint8 *)("ng"))){
 				print_ng_data (sys_env.coin_index);
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("input"))){ // 进行特征值采样
 				print_input_status ();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("gd"))){ // 进行特征值采样
 				print_good_data (sys_env.coin_index);
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("env-s"))){ // 进行特征值采样
-				print_system_env_info(); 
+				print_system_env_info();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("speed"))){
 				print_speed ();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("env-c"))){ // 进行特征值采样
-				print_coin_env_info(); 
+				print_coin_env_info();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-set"))){ // 进行特征值采样
-				print_pre_count_set_value (); 
+				print_pre_count_set_value ();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("pre-current"))){ // 进行特征值采样
-				print_pre_count_current (); 
+				print_pre_count_current ();
 			}else if (arg[argc - 1] == string_to_dec((uint8 *)("password"))){ // 进行特征值采样
 				cy_println ("%d", sys_env.password);
 			}else{
 				cy_println ("Error %d arg", argc);
 			}
-			break;            
-		case 2:           
+			break;
+		case 2:
 			if (arg[argc - 2] == string_to_dec((uint8 *)("ng")))
-			{      
+			{
 				print_ng_data (arg[argc - 1]);
-			}       
+			}
 			else if (arg[argc - 2] == string_to_dec((uint8 *)("gd")))
-			{      
+			{
 				print_good_data (arg[argc - 1]);
 			}
 			else if (arg[argc - 2] == string_to_dec((uint8 *)("coin"))) // 进行特征值采样
-			{        
+			{
 				print_coin_pre_value_info ((int32_t *)cmd_arg);
 			}
 			else
@@ -1783,10 +1783,10 @@ void do_print(int32_t argc, void *cmd_arg)
 				cy_println ("Error %d arg", argc);
 			}
 			break;
-		default: 
+		default:
 				cy_println ("Error %d arg", argc);break;
 	}
-}  
+}
 
 #define BUFF_SIZE 512
 void read_para_1(int32_t arg[])
@@ -1794,32 +1794,32 @@ void read_para_1(int32_t arg[])
 	int i;
 	FATFS fs;
 	FIL file;
-	FRESULT Res;	
+	FRESULT Res;
 	char buf[BUFF_SIZE];
-	
-	if (arg[0]  == string_to_dec((uint8 *)("coin-config")))                                                   
-	{     
-	}                                                                                                  
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("arg1 must be coin-config");                                                    
-		return;                                                          
-	} 
-	
-	Res = f_mount(&fs, "" , 0);	
-	
-	cy_print("f_mount Res = %d, ", Res);	
-	
+
+	if (arg[0]  == string_to_dec((uint8 *)("coin-config")))
+	{
+	}
+	else
+	{
+		cy_println ("arg1 must be coin-config");
+		return;
+	}
+
+	Res = f_mount(&fs, "" , 0);
+
+	cy_print("f_mount Res = %d, ", Res);
+
 	Res =  f_open(&file, "coin-config.txt", FA_READ | FA_OPEN_EXISTING);
-	
+
 	if (Res != FR_OK) {
-		cy_print("Open file failed ");	
+		cy_print("Open file failed ");
 		cy_println("Res = %d", Res);
 		return;
 	}
 	//Res = f_read(&file, buf, BUFF_SIZE, &ByteRead);
-	cy_println("Read coin-config.txt:");	
-	cmd ();	  
+	cy_println("Read coin-config.txt:");
+	cmd ();
 	ng_info_echo_off = 1; //turn off display ng info for a moment
 	for (i = 0; i <1024; i++)
 	{
@@ -1831,10 +1831,10 @@ void read_para_1(int32_t arg[])
 			//cy_println ("NULL");
 			continue;
 		}
-		cy_print("%s", buf);	
+		cy_print("%s", buf);
 		run_command (buf);
 	}
-	cy_println("exec coin-config.txt done");	
+	cy_println("exec coin-config.txt done");
 	ng_info_echo_off = 0; //turn on display ng info for a moment
 	f_close(&file);
 }
@@ -1844,18 +1844,18 @@ void read_para_2(int32_t arg[])
 	U8 read_page_buf[2048];
 	int i, j;
 	U8 r_code;
-	if (arg[0]  == string_to_dec((uint8 *)("nand")))                                                   
-	{     
-	}                                                                                                  
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("device must be nand or sd");                                                    
-		return;                                                          
-	} 
+	if (arg[0]  == string_to_dec((uint8 *)("nand")))
+	{
+	}
+	else
+	{
+		cy_println ("device must be nand or sd");
+		return;
+	}
 	r_code = Nand_ReadPage (arg[1], 0, read_page_buf);
 	if (r_code == 0)
 	{
-		cy_println ("Read nand block %d page 0", arg[1]);  
+		cy_println ("Read nand block %d page 0", arg[1]);
 		for(i = 0; i < 16; i++)
 		{
 			for(j = 0; j < 16; j++)
@@ -1867,33 +1867,33 @@ void read_para_2(int32_t arg[])
 	}
 	else if (r_code == 1)
 	{
-		cy_println (" Parameter Error, Buf must be not null!!!");  
+		cy_println (" Parameter Error, Buf must be not null!!!");
 	}
 	else if (r_code == 2)
 	{
-		cy_println ("ECC Error, Read Op failed!!!");  
+		cy_println ("ECC Error, Read Op failed!!!");
 	}
 }
 
 void read_para_3 (int32_t arg[])
 {
-	uint32_t nand_addr;	
+	uint32_t nand_addr;
 	U8 read_page_buf[2048];
 	U8 r_code;
 	int i, j;
-	if (arg[0]  == string_to_dec((uint8 *)("nand")))                                                   
+	if (arg[0]  == string_to_dec((uint8 *)("nand")))
 	{     					  //block * 2048 * 64 +   page * 2048
 		nand_addr = (uint32_t)(arg[1] * 2048 * 64 + arg[2] * 2048);
-	}                                                                                                  
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("device must be nand or ddr");                                                    
-		return;                                                          
-	} 
+	}
+	else
+	{
+		cy_println ("device must be nand or ddr");
+		return;
+	}
 	r_code = Nand_ReadSkipBad (nand_addr, read_page_buf, 2048);
 	if (r_code == 0)
 	{
-		cy_println ("Read nand block %d page %d", arg[1], arg[2]);  
+		cy_println ("Read nand block %d page %d", arg[1], arg[2]);
 		for(i = 0; i < 16; i++)
 		{
 			for(j = 0; j < 16; j++)
@@ -1905,18 +1905,18 @@ void read_para_3 (int32_t arg[])
 	}
 	else if (r_code == 1)
 	{
-		cy_println (" Parameter Error, Buf must be not null!!!");  
+		cy_println (" Parameter Error, Buf must be not null!!!");
 	}
 	else if (r_code == 2)
 	{
-		cy_println ("ECC Error, Read Op failed!!!");  
+		cy_println ("ECC Error, Read Op failed!!!");
 	}
 }
 
 void do_read(int32_t argc, void *cmd_arg)
-{	
+{
 	switch (argc)
-	{    
+	{
 		case 1:
 			read_para_1 ((int32_t *)cmd_arg);
 			break;
@@ -1926,31 +1926,31 @@ void do_read(int32_t argc, void *cmd_arg)
 		case 3:
 			read_para_3 ((int32_t *)cmd_arg);
 			break;
-		default: 
+		default:
 			cy_println("%d arg", argc); break;
 	}
 }
 
 void write_sd_coin_coinfig (void)
-{	
+{
 	int i;
 	FATFS fs;
 	FIL file;
-	FRESULT Res;	
+	FRESULT Res;
 
-	Res = f_mount(&fs, "" , 0);	
-	
-	cy_print("f_mount Res = %d, ", Res);	
-	
+	Res = f_mount(&fs, "" , 0);
+
+	cy_print("f_mount Res = %d, ", Res);
+
 	Res =  f_open(&file, "coin-config.txt", FA_WRITE | FA_CREATE_ALWAYS);
-	
+
 	if (Res != FR_OK) {
-		cy_println("Open file failed");	
+		cy_println("Open file failed");
 		cy_println("Res = %d", Res);
 		return;
 	}
 	//Res = f_read(&file, buf, BUFF_SIZE, &ByteRead);
-	cy_println("Write coin-config.txt:");	
+	cy_println("Write coin-config.txt:");
 	for (i = 0; i < COIN_TYPE_NUM; i++)
 	{
 		f_printf (&file, "set cnnm%d %d %d %d %d %d %d\n", i, pre_value.country[coinchoose].coin[i].data.max0,
@@ -1978,18 +1978,18 @@ void write_sd_coin_coinfig (void)
 void write_para_1 (int32_t arg[])
 {
 	U8 r_code;
-	if (arg[0] == string_to_dec((uint8 *)("code"))){ 
+	if (arg[0] == string_to_dec((uint8 *)("code"))){
 		r_code = WriteCodeToNand ();
 		if (r_code == 0)
-			cy_println ("write code to nand flash block 0 page 0 nand addr 0 completed");   
+			cy_println ("write code to nand flash block 0 page 0 nand addr 0 completed");
 		else
-			cy_println ("write code to nand flash block 0 page 0 nand addr 0 failed");  
+			cy_println ("write code to nand flash block 0 page 0 nand addr 0 failed");
 	}else if (arg[0] == string_to_dec((uint8 *)("reset"))){
 		sys_env.tty_mode = 0;
-		rec_count = 0; 
+		rec_count = 0;
 		memset (iap_code_buf, 0, sizeof(iap_code_buf));
 	}else if (arg[0] == string_to_dec((uint8 *)("start"))){
-		comscreen(Disp_Indexpic[22],Number_IndexpicB);	 
+		comscreen(Disp_Indexpic[22],Number_IndexpicB);
 		sys_env.tty_mode = 0x55;
 		sys_env.update_flag = UART_UPDATE;
 		rec_count = 0;
@@ -1998,18 +1998,18 @@ void write_para_1 (int32_t arg[])
 		if (*magic_num == PROGRAM_MAGIC_NUM){
 			r_code = WriteAppToAppSpace ((uint32_t)&iap_code_buf, sizeof(iap_code_buf));
 			if (r_code == 0)
-				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 completed");   
+				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 completed");
 			else
-				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 failed"); 
-			comscreen(Disp_Indexpic[23],Number_IndexpicB);	//触摸屏跳转到更新完成界面 
+				cy_println ("write iap_code_buf to nand flash block 10 page 0 nand addr 0 failed");
+			comscreen(Disp_Indexpic[23],Number_IndexpicB);	//触摸屏跳转到更新完成界面
 		}else{
-			cy_println ("The app was not valid!!!"); 
+			cy_println ("The app was not valid!!!");
 		}
-	}else if (arg[0] == string_to_dec((uint8 *)("coin-config"))){ 
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-config"))){
 		write_sd_coin_coinfig ();
-	}else{                                                                                                    
-		cy_println ("write_para_1 arg Error!");                                                    
-		return;                                                          
+	}else{
+		cy_println ("write_para_1 arg Error!");
+		return;
 	}
 }
 
@@ -2017,55 +2017,55 @@ void write_para_1 (int32_t arg[])
 void write_para_3 (int32_t arg[])
 {
 	U8 r_code;
-	r_code = Nand_WritePage (arg[1], 0, (U8 *)&arg[2]);                          
+	r_code = Nand_WritePage (arg[1], 0, (U8 *)&arg[2]);
 	if (r_code == 0)
 	{
-		cy_println ("write data %d to nand block %d page 0 completed", arg[2], arg[1]);    
+		cy_println ("write data %d to nand block %d page 0 completed", arg[2], arg[1]);
 	}
 	else if (r_code == 1)
 	{
-		cy_println (" Parameter Error, Buf must be not null!!!");  
+		cy_println (" Parameter Error, Buf must be not null!!!");
 	}
 	else if (r_code == 2)
 	{
-		cy_println ("ECC Error, Read Op failed!!!");  
+		cy_println ("ECC Error, Read Op failed!!!");
 	}
 }
 
 void write_para_4 (int32_t arg[])
 {
-	uint32_t nand_addr;	
+	uint32_t nand_addr;
 	U8 write_page_buf[2048], r_code;
 	int i;
-	
+
 	for (i = 0; i < 2048; i++)
 	{
 		write_page_buf[i] = arg[3];
 	}
-	
-	if (arg[0] == string_to_dec((uint8 *)("nand")))                                                   
-	{     
+
+	if (arg[0] == string_to_dec((uint8 *)("nand")))
+	{
 							  //block * 2048 * 64 +   page * 2048
 		nand_addr = (uint32_t)(arg[1] * 2048 * 64 + arg[2] * 2048);
-	}                                                                                                  
-	else                                                                                                 
-	{                                                                                                    
-		cy_println ("device must be nand or ddr");                                                    
-		return;                                                          
-	} 
+	}
+	else
+	{
+		cy_println ("device must be nand or ddr");
+		return;
+	}
 	//nand flash 必须以块为单位擦除，所以写特定页时要先保存不需要更改的页数据
-	r_code = Nand_WritePage (arg[1], arg[2], write_page_buf);        
+	r_code = Nand_WritePage (arg[1], arg[2], write_page_buf);
 	if (r_code == 0)
 	{
-		cy_println ("write block %d page %d nand addr %d completed", arg[1], arg[2], nand_addr);   
+		cy_println ("write block %d page %d nand addr %d completed", arg[1], arg[2], nand_addr);
 	}
 	else if (r_code == 1)
 	{
-		cy_println (" Parameter Error, Buf must be not null!!!");  
+		cy_println (" Parameter Error, Buf must be not null!!!");
 	}
 	else if (r_code == 2)
 	{
-		cy_println ("ECC Error, Read Op failed!!!");  
+		cy_println ("ECC Error, Read Op failed!!!");
 	}
 }
 void do_write(int32_t argc, void *cmd_arg)
@@ -2087,19 +2087,19 @@ void do_write(int32_t argc, void *cmd_arg)
 }
 
 void erase_para_2 (int32_t arg[])
-{	
+{
 	if (arg[0]  == string_to_dec((uint8 *)("nand")))
 	{
 	}
 	else
-	{                                                                                                    
-		cy_println ("device must be nand or ddr");                                                    
+	{
+		cy_println ("device must be nand or ddr");
 		return;
-	} 
-	if (arg[1] < 20){                         
+	}
+	if (arg[1] < 20){
 		cy_println ("can not erase program block %d", arg[1]);
 	}else{
-		Nand_EraseBlock (arg[1]);                                                    
+		Nand_EraseBlock (arg[1]);
 		cy_println ("erase block %d completed", arg[1]);
 	}
 }
@@ -2138,7 +2138,7 @@ void do_reset_cpu(int32_t argc, void *cmd_arg)
 void delete_db_all (void)
 {
 	cy_println ("Delete History Data");
-//	para_set_value.data.db_total_item_num = 0;			
+//	para_set_value.data.db_total_item_num = 0;
 //	para_set_value.data.total_money = 0;
 //	para_set_value.data.total_good = 0;
 //	para_set_value.data.total_ng = 0;
@@ -2148,7 +2148,7 @@ void delete_db_all (void)
 
 void db_para_2 (int32_t arg[])
 {
-	
+
 	if (arg[0]  == string_to_dec((uint8 *)("delete")))
 	{
 	}
@@ -2172,14 +2172,14 @@ void db_para_2 (int32_t arg[])
 void do_db(int32_t argc, void *cmd_arg)
 {
 	switch (argc)
-	{          
+	{
 		case 2:
 			db_para_2 ((int32_t *)cmd_arg);
 			break;
-		default: 
+		default:
 			cy_println("%d arg", argc); break;
 	}
-} 
+}
 
 
 
@@ -2187,41 +2187,41 @@ int16_t is_repeate (int16_t _coin_index)
 {
 	int16_t ei, i;
 	ei = 0;
-	
+
 	int16_t temp_coin_maxvalue0;
 	int16_t temp_coin_minvalue0;
 	int16_t temp_coin_maxvalue1;
 	int16_t temp_coin_minvalue1;
 	int16_t temp_coin_maxvalue2;
 	int16_t temp_coin_minvalue2;
-	
+
 	temp_coin_maxvalue0 = coin_maxvalue0 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmax0;
 	temp_coin_minvalue0 = coin_minvalue0 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmin0;
 	temp_coin_maxvalue1 = coin_maxvalue1 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmax1;
 	temp_coin_minvalue1 = coin_minvalue1 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmin1;
 	temp_coin_maxvalue2 = coin_maxvalue2 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmax2;
 	temp_coin_minvalue2 = coin_minvalue2 + pre_value.country[coinchoose].coin[_coin_index].data.offsetmin2;
-	
+
 	for (i = 0; i < COIN_TYPE_NUM; i++){
 		if ( _coin_index != i){
 			if (ng_info_echo_off != 1)
 				cy_println ("Compare with Coin %d", i);
-			if( 
+			if(
 				(
 					((temp_coin_maxvalue0 >= coin_cmp_value[i].compare_max0) && (temp_coin_minvalue0 <= coin_cmp_value[i].compare_min0)) || //与1元   通道0比
-					((temp_coin_maxvalue0 <= coin_cmp_value[i].compare_max0) && (temp_coin_maxvalue0 >= coin_cmp_value[i].compare_min0)) || 
+					((temp_coin_maxvalue0 <= coin_cmp_value[i].compare_max0) && (temp_coin_maxvalue0 >= coin_cmp_value[i].compare_min0)) ||
 					((temp_coin_minvalue0 <= coin_cmp_value[i].compare_max0) && (temp_coin_minvalue0 >= coin_cmp_value[i].compare_min0))
 				) && (pre_value.country[coinchoose].coin[i].data.max0 > pre_value.country[coinchoose].coin[i].data.min0) &&
 				(
 					((temp_coin_maxvalue1 >= coin_cmp_value[i].compare_max1) && (temp_coin_minvalue1 <= coin_cmp_value[i].compare_min1)) || //与1元   通道0比
-					((temp_coin_maxvalue1 <= coin_cmp_value[i].compare_max1) && (temp_coin_maxvalue1 >= coin_cmp_value[i].compare_min1)) || 
+					((temp_coin_maxvalue1 <= coin_cmp_value[i].compare_max1) && (temp_coin_maxvalue1 >= coin_cmp_value[i].compare_min1)) ||
 					((temp_coin_minvalue1 <= coin_cmp_value[i].compare_max1) && (temp_coin_minvalue1 >= coin_cmp_value[i].compare_min1))
 				) && (pre_value.country[coinchoose].coin[i].data.max1 > pre_value.country[coinchoose].coin[i].data.min1) &&
 				(
 					((temp_coin_maxvalue2 >= coin_cmp_value[i].compare_max2) && (temp_coin_minvalue2 <= coin_cmp_value[i].compare_min2)) || //与1元   通道0比
-					((temp_coin_maxvalue2 <= coin_cmp_value[i].compare_max2) && (temp_coin_maxvalue2 >= coin_cmp_value[i].compare_min2)) || 
+					((temp_coin_maxvalue2 <= coin_cmp_value[i].compare_max2) && (temp_coin_maxvalue2 >= coin_cmp_value[i].compare_min2)) ||
 					((temp_coin_minvalue2 <= coin_cmp_value[i].compare_max2) && (temp_coin_minvalue2 >= coin_cmp_value[i].compare_min2))
-				) && (pre_value.country[coinchoose].coin[i].data.max2 > pre_value.country[coinchoose].coin[i].data.min2) 
+				) && (pre_value.country[coinchoose].coin[i].data.max2 > pre_value.country[coinchoose].coin[i].data.min2)
 			   ){
 				cy_println ("Note!!! value Repeat with Coin %d please comfirm !!!", i);
 				cy_println ("coin %d value is:", _coin_index);
@@ -2280,10 +2280,10 @@ MY_CMD(
 
 
 int do_print_version  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	
+{
 	cy_println("\n----------------------------------------------------");
 	PRINT_VERSION()
-	cy_println("----------------------------------------------------");   
+	cy_println("----------------------------------------------------");
 	return 0;
 }
 MY_CMD(
@@ -2294,7 +2294,7 @@ MY_CMD(
 
 
 int do_motor  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	int32_t arg[4];
 	switch (argc) {
 	case 2:
@@ -2342,7 +2342,7 @@ MY_CMD(
 );
 
 int do_1  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_size, 2, MOTOR_WATCH_NONE);
 	return 0;
 }
@@ -2352,7 +2352,7 @@ MY_CMD(
 	"1 - run step 1\n"
 );
 int do_2  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (0, MOTOR_DIR_DOWN, 600000, MOTOR_0_SPEED, MOTOR_WATCH_POS2);
 	return 0;
 }
@@ -2362,7 +2362,7 @@ MY_CMD(
 	"2 - run step 2\n"
 );
 int do_3  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (1, MOTOR_DIR_CLOSE, para_set_value.data.coin_push_size, 2, MOTOR_WATCH_NONE);
 	return 0;
 }
@@ -2372,7 +2372,7 @@ MY_CMD(
 	"3 - run step 1\n"
 );
 int do_4  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (0, MOTOR_DIR_DOWN, 600000, MOTOR_0_SPEED, MOTOR_WATCH_POS3);
 	return 0;
 }
@@ -2382,7 +2382,7 @@ MY_CMD(
 	"4 - run step 4\n"
 );
 int do_5  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (2, MOTOR_DIR_NONE, 400, MOTOR_2_SPEED, MOTOR_WATCH_NONE);
 	return 0;
 }
@@ -2392,7 +2392,7 @@ MY_CMD(
 	"5 - run step 5\n"
 );
 int do_6  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	set_motor (1, MOTOR_DIR_OPEN, 600000, MOTOR_1_SPEED, MOTOR_WATCH_POS1);
 	return 0;
 }
@@ -2402,7 +2402,7 @@ MY_CMD(
 	"6 - run step 6\n"
 );
 int do_7  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	  
+{
 	set_motor (2, MOTOR_DIR_NONE, 400, MOTOR_2_SPEED, MOTOR_WATCH_NONE);
 	return 0;
 }
@@ -2412,7 +2412,7 @@ MY_CMD(
 	"7 - run step 7\n"
 );
 int do_8  (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
-{	 
+{
 	//set_motor (2, MOTOR_DIR_DOWN, 400, 4, MOTOR_WATCH_NONE);
 	return 0;
 }
@@ -2931,7 +2931,7 @@ int my_run_command (const char *cmd, int flag)
 }
 
 
-                                                                
+
 
 
 

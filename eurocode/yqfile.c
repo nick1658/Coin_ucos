@@ -10,18 +10,18 @@
 **********************************/
 
 /*************
-	PRINTER  打印 
+	PRINTER  打印
 ***************/
 
 
 void test_print (void)
 {
-	
-	while(1){     // read time 
+
+	while(1){     // read time
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
 			if (touchnum[7]>0){
-				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], 29);
+				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], touchnum[12]);
 				touch_flag = 0;
 				break;
 			}else{
@@ -61,8 +61,8 @@ void test_print (void)
 	//		Uart1_Printf("    异币:        %d 枚\r\n",processed_coin_info.total_ng);//85, 8, 0);//
 			Uart1_Printf("   总金额:     %d.%d%d 元\n",45, 7, 0);//(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
 			Uart1_Printf("   总  数:     %d 枚\r\n",processed_coin_info.total_good);//858);
-			Uart1_Printf("   结束时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-1,33);
-			Uart1_Printf("   开始时间:20%02d-%02d-%02d %02x:%02x:%02d\r\n",18,4,25,touchnum[10],touchnum[11]-2,31);
+			Uart1_Printf("   结束时间:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11]-1,touchnum[12]);
+			Uart1_Printf("   开始时间:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11]-2,touchnum[12]);
 			Uart1_Printf("   本次清分:\r\n");
 			Uart1_Printf("   广州畅阳电子科技有限公司\r\n\r\n");
 			Uart1_Printf("\r\n");
@@ -72,7 +72,7 @@ void test_print (void)
 }
 #define PINTNUM 60
 U8 dgus_readt[6]= {0xA5,0x5A,0x03,0x81,0x20, 0x10};  // only need y-m-d w h:m:s  读时间
-void print_func(void)     // 打印 
+void print_func(void)     // 打印
 {
 	uart1_init();
 	Uart1_Printf("\r\n");
@@ -81,11 +81,11 @@ void print_func(void)     // 打印
 //	test_print ();
 //	return;
 	if(coinchoose == CN0){    //中文
-		while(1){     // read time 
+		while(1){     // read time
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
 			if (touchnum[7]>0){
-				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], 16);
+				Uart1_Printf(" 打印日期:20%02x-%02x-%02x %02x:%02x:%02d\r\n",touchnum[6],touchnum[7],touchnum[8],touchnum[10],touchnum[11], touchnum[12]);
 				touch_flag = 0;
 				break;
 			}else{
@@ -142,7 +142,7 @@ void print_func(void)     // 打印
 /*
 	else if(coinchoose == CN1)//其他语种1 例如英文
 	{
-		while(1)     // read time 
+		while(1)     // read time
 		{
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
@@ -173,14 +173,14 @@ void print_func(void)     // 打印
 		Uart1_Printf("    Money:   %d.%d%d EURO\n",(processed_coin_info.total_money/100),((processed_coin_info.total_money%100)/10),((processed_coin_info.total_money%100)%10));
 		Uart1_Printf("    Amount:       %d Pcs\n",processed_coin_info.total_good);
 		Uart1_Printf("    Current Count:\r\n");
-	
+
 
 
 	}
-		
+
 	else if(coinchoose == CN2)//其他语种2
 	{
-		while(1)     // read time 
+		while(1)     // read time
 		{
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
@@ -212,11 +212,11 @@ void print_func(void)     // 打印
 
 		Uart1_Printf("\r\n");
 
-		
+
 	}
 	else if(coinchoose == CN3)//其他语种2
 	{
-		while(1)     // read time 
+		while(1)     // read time
 		{
 			comscreen(dgus_readt,6);	//read time
 			while(touch_flag ==0){;}
@@ -259,8 +259,8 @@ void print_func(void)     // 打印
 	Uart1_Printf("\r\n");
 	Uart1_Printf("\r\n");
 	Uart1_Printf("\r\n");
-	dbg("finished print");	
-}				
+	dbg("finished print");
+}
 
 
 

@@ -10,7 +10,9 @@
       <TargetName>S3C2416</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pArmCC>5060750::V5.06 update 6 (build 750)::ARMCC</pArmCC>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>S3C2416</Device>
@@ -358,13 +360,14 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>0</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -434,11 +437,6 @@
               <FilePath>..\Apps\RTC.c</FilePath>
             </File>
             <File>
-              <FileName>httpd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Apps\httpd.c</FilePath>
-            </File>
-            <File>
               <FileName>tftputils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Apps\tftputils.c</FilePath>
@@ -457,6 +455,11 @@
               <FileName>httpserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Apps\httpserver.c</FilePath>
+            </File>
+            <File>
+              <FileName>httpd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Apps\httpd.c</FilePath>
             </File>
           </Files>
         </Group>

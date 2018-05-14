@@ -5,11 +5,11 @@ unsigned short int runstep = 0;   //  部件动作步骤号
 volatile uint32_t time = 0;   // //部件测试时踢币电磁铁用的计时变量
 
 
-void deviceinit(void)	//开机先把通道上的币挡下去 
+void deviceinit(void)	//开机先把通道上的币挡下去
 {
 	int i = 0;
 	int good_coin;
-	
+
 	processed_coin_info.total_coin_old = processed_coin_info.total_coin;
 	//cy_println("begin init full coin num %d ...", coin_env.full_stack_num);
 	for (i = 0; i < coin_env.full_stack_num; i++){//预置计数模式时，当某种硬币的计数值达到预置值，就可以清零该硬币的计数
@@ -20,30 +20,30 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 			*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 0;
 		}
 	}
-	//cy_println("finish init = %d", i);	
+	//cy_println("finish init = %d", i);
 	disp_allcount();
 	coin_env.full_stack_num = 0;
 	ch0_count =0;
-	coin_env.ad0_step = 0;		
+	coin_env.ad0_step = 0;
 	coin_env.ad1_step = 0;
 	coin_env.ad2_step = 0;
 	//sys_env.AD_buf_index = 0;
 	//Detect_AD_Value_buf_p = Detect_AD_Value_buf[sys_env.AD_buf_index];
 	ccstep = 0;
-	
+
 	for (i = 0; i < COIN_Q_LEN; i++){//初始化硬币队列
 		coin_env.coin_Q[i] = FREE_Q_FLAG;
 	}
 	coin_env.coin_Q_index = 0;
 	coin_env.coin_Q_remain = 0;
-	
+
 	processed_coin_info.coinnumber = 0;
 	blockflag = ADBLOCKT;
 	sys_env.stop_flag = 0;
 	STORAGE_DIR_P();//正转
-	runstep =0; //正常工作步骤号	
+	runstep =0; //正常工作步骤号
 	sys_env.sys_runing_time = 0;
-	//cy_println("finish init coin_env");		
+	//cy_println("finish init coin_env");
 }
 
 void IR_detect_func(void)
@@ -69,7 +69,7 @@ void IR_detect_func(void)
 				}else if(coin_env.coin_Q[coin_env.coin_Q_index] == COIN_NG_FLAG){ //异币漏踢错误
 					SEND_ERROR(COINNGKICKERROR);
 					dbg ("异币漏踢错误 alertflag = %d %s, %d", COINNGKICKERROR,  __FILE__, __LINE__);
-				}		
+				}
 				coin_env.coin_Q[coin_env.coin_Q_index] = FREE_Q_FLAG;
 				coin_env.coin_Q_index++;
 				coin_env.coin_Q_index %= COIN_Q_LEN;

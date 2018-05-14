@@ -10,18 +10,18 @@ void comscreen(U8* str,short int length);  //发送 指令至液晶屏
 extern volatile uint16_t touch_flag;
 extern volatile uint16_t uartcount;  // 串口2接收 字节 计数
 
-void touchget_from_uart0(void);     //receive the touch from dgus at real time 
-void touchget_from_uart2(void);     //receive the touch from dgus at real time 
+void touchget_from_uart0(void);     //receive the touch from dgus at real time
+void touchget_from_uart2(void);     //receive the touch from dgus at real time
 //int dgus_rtc(char str[]);  // read back the RTC
 #define TIMEBP1 50     //beep time  for  kai ji
 #define TIMEBP2 100     //beep time  for  alert
 void dgus_tfbeep(int bztime); 			 	 //uart1,dgus deep control
 void dgus_chinese(uint16_t addr,S8 str[],uint16_t strnum);    // dgus  chinese
-void dgus_tf2word(int addr,long name);  	  //transfer 2word data variables to specify address 
-void dgus_tf1word(int addr,long data);  	  //transfer 1word data variables to specify address 
+void dgus_tf2word(int addr,long name);  	  //transfer 2word data variables to specify address
+void dgus_tf1word(int addr,long data);  	  //transfer 1word data variables to specify address
 void disp_KJAmount(void); // initial addr on zhu jiemian ze zs forge
 void disp_data(int addr1,int addr2,int addr3); 	 //pre picture ,specify address display data variable
-void disp_preselflearn(int max0,int min0,int max1,int min1,int max2,int min2);    //pre coin admax admin when self learning 
+void disp_preselflearn(int max0,int min0,int max1,int min1,int max2,int min2);    //pre coin admax admin when self learning
 void counter_clear (void); //
 
 
@@ -31,11 +31,11 @@ void counter_clear (void); //
 #define	ADDR_CPZS 	0x0002 	 // 数据变量显示   计数界面 数量
 #define	ADDR_CPFG 	0x0004 	 // 数据变量显示  计数界面 异币
 
-#define ADDR_CRUN    0x06  	 // 按键值返回 计数界面  启动按钮 
+#define ADDR_CRUN    0x06  	 // 按键值返回 计数界面  启动按钮
 #define ADDR_PGH1	0x07  	 // 按键值返回   工号
 #define	ADDR_TZBC 	0x08  	//  按键值返回
-#define	ADDR_DBDATA 0x09  	//  按键值返回 
-#define	ADDR_BJZX 	0x0A  	//  按键值返回  bujian zhixing jiemian 
+#define	ADDR_DBDATA 0x09  	//  按键值返回
+#define	ADDR_BJZX 	0x0A  	//  按键值返回  bujian zhixing jiemian
 
 #define	ADDR_XD10 	0x000B  	// 数据变量显示  详单  jiemian 1
 #define	ADDR_XD5 	0x000D  	// 数据变量显示  详单   jiemian 0.5
@@ -49,7 +49,7 @@ void counter_clear (void); //
 #define	ADDR_XD1000 	0x001B  	// 数据变量显示   详单  jiemian 纪念币10元
 #define	ADDR_XD500 	0x001D  	// 数据变量显示   详单  jiemian 纪念币5元
 
-#define	ADDR_XDZS 	ADDR_CPZS 	// 数据变量显示  详单  jiemian ZS 
+#define	ADDR_XDZS 	ADDR_CPZS 	// 数据变量显示  详单  jiemian ZS
 #define	ADDR_XDFG 	ADDR_CPFG 	// 数据变量显示  详单  jiemian FORGE
 //详单   加币种  可以使用的地址  001B -001C  001D- 001E
 #define ADDR_YZ_RESET  0x1F   		// 按键值返回   预置,	mianzhi  coin name
@@ -92,14 +92,14 @@ void counter_clear (void); //
 #define ADDR_ZXLD	0x004B   //  图标变量显示  bujian zhixing jiemian, three  motor run together
 
 
-#define ADDR_ZXD1	0x004C   //  数据变量显示 不需要初始化  bujian zhixing jiemian, detector 
-#define ADDR_ZXD2	0x004D   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector 
-#define ADDR_ZXD3	0x004E   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector 
-#define ADDR_ZXD4	0x004F   //   数据变量显示   不需要初始化  bujian zhixing jiemian, detector 
-#define ADDR_ZXD5	0x0050   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector 
-#define ADDR_ZXD6	0x0051   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector 
-#define ADDR_ZXD7	0x0052   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector 
-#define ADDR_ZXD8	0x005C   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector 
+#define ADDR_ZXD1	0x004C   //  数据变量显示 不需要初始化  bujian zhixing jiemian, detector
+#define ADDR_ZXD2	0x004D   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
+#define ADDR_ZXD3	0x004E   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
+#define ADDR_ZXD4	0x004F   //   数据变量显示   不需要初始化  bujian zhixing jiemian, detector
+#define ADDR_ZXD5	0x0050   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
+#define ADDR_ZXD6	0x0051   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
+#define ADDR_ZXD7	0x0052   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
+#define ADDR_ZXD8	0x005C   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
 //0052
 #define	ADDR_STDH 	0x0053  //  数据变量显示   不需要初始化  jizhun tiaoshi jiemian h frequence std display,	data variable
 #define	ADDR_STDM 	0x0054  //  数据变量显示    不需要初始化 jizhun tiaoshi jiemian m frequence std display,	data variable
@@ -111,7 +111,7 @@ void counter_clear (void); //
 #define	ADDR_KICK_DELAY_T2 	0x0058  //  数据变量显示 修改币种 不需要初始化      canshu shezhi jiemian , pan motor blocked detector delay time
 #define	ADDR_KICK_KEEP_T2 	0x0059  //  数据变量显示  修改币种 不需要初始化     canshu shezhi jiemian , STORE motor blocked detector delay time
 #define	ADDR_MOTOR_IDLE_T	0x005A 	//        canshu shezhi jiemian , STORE motor blocked detector delay time
-#define	ADDR_PRE_COUNT_STOP_N 0x005B 	//        canshu shezhi jiemian 
+#define	ADDR_PRE_COUNT_STOP_N 0x005B 	//        canshu shezhi jiemian
 
 
 //5E --5F
@@ -121,7 +121,7 @@ void counter_clear (void); //
 #define	ADDR_ZLH 	0x0066  // 数据变量显示   zhu jiemian leiji history number display,	data variable       NINTIAL  REALTIME  KEEPIN
 //68-6d
 #define	ADDR_CNCH 	0x006F  //  图标变量显示 币种 图标
-#define	ADDR_CNCH1 	0x6F 	//  按键值返回  , 币种 图标     
+#define	ADDR_CNCH1 	0x6F 	//  按键值返回  , 币种 图标
 
 
 #define ADDR_LEVEL100 	0x200   // 1元硬币的清分等级设置
@@ -137,7 +137,7 @@ void counter_clear (void); //
 #define ADDR_PASSWORD 0x302 //password
 #define ADDR_RESET 0x304 //reset
 
-//报错 函数  
+//报错 函数
 #define ALERT_MSG(TIPS,MSG) { \
 	dgus_tfbeep(TIMEBP2); \
 	prepic_prenum = prepic_num; \
@@ -154,14 +154,14 @@ void counter_clear (void); //
 
 extern volatile U8 scrdis[5][50];  //根据币种 确定图片
 #define KJWC	scrdis[coinchoose][0]    //开机完成  10
-#define KJYE1	scrdis[coinchoose][1]    //开机预热2  6 
+#define KJYE1	scrdis[coinchoose][1]    //开机预热2  6
 #define KJYE2	scrdis[coinchoose][2]    //开机预热2  7
 #define KJYE3	scrdis[coinchoose][3]    //开机预热3  8
 #define KJYE4	scrdis[coinchoose][4]    //开机预热4  9
 
 #define	JSJM	scrdis[coinchoose][5]    //计数界面11 13 15 133
-#define JSYX	scrdis[coinchoose][6]    //计数运行17 19 21 135 
-#define YCCS	scrdis[coinchoose][7]   //隐藏测试29 31 33 139 
+#define JSYX	scrdis[coinchoose][6]    //计数运行17 19 21 135
+#define YCCS	scrdis[coinchoose][7]   //隐藏测试29 31 33 139
 #define XDJM	scrdis[coinchoose][8]   //详单界面35 37 39  141
 #define YZJS	scrdis[coinchoose][9]   //预置计数41 43 45  143
 #define YZYX    scrdis[coinchoose][10]   //预置运行47 49 51   145
@@ -172,16 +172,16 @@ extern volatile U8 scrdis[5][50];  //根据币种 确定图片
 #define BJJM	scrdis[coinchoose][15]   //报警界面 83 85 87 157
 #define BJCS	scrdis[coinchoose][16]   //部件测试89 91 93  159
 #define JZTS	scrdis[coinchoose][17]   //基准调试95 97 99 161
-#define LJXS	scrdis[coinchoose][18]    //累计显示107 109 111 165 
-#define XTSZ	scrdis[coinchoose][19]   //系统设置113 115 117  167  
+#define LJXS	scrdis[coinchoose][18]    //累计显示107 109 111 165
+#define XTSZ	scrdis[coinchoose][19]   //系统设置113 115 117  167
 
-#define Number_IndexpicA   255 
-#define Number_IndexpicB  7 
+#define Number_IndexpicA   255
+#define Number_IndexpicB  7
 extern U8 Disp1_Indexpic[Number_IndexpicB];         //MCU控制图片寄存器数据  切换 屏图片 指令数组
 extern U8 Disp_Indexpic[Number_IndexpicA][Number_IndexpicB];         //MCU控制图片寄存器数据  切换 屏图片 指令数组
 
 extern volatile uint16_t prepic_num; 	//记录当前的 图片号 所显示的
-int16_t test_repete(void);   
+int16_t test_repete(void);
 
 #define TSGET_NUM 32 //触摸屏数据帧最大长度
 extern volatile U8 touchnum[TSGET_NUM];
@@ -191,26 +191,26 @@ void  disp_allcount(void);	  // 取出界面 显示	 当前计数  详单
 void disp_allcount_to_pc (void);
 
 
-#define PRECOIN0  0   //用于   预置计数	 
+#define PRECOIN0  0   //用于   预置计数
 #define PRECOIN1  1
 #define PRECOIN2  2
 #define PRECOIN3  3
 #define PRECOIN4  4
-#define PRECOIN5  5 
-#define PRECOIN6  6 
-#define PRECOIN7  7 
-#define PRECOIN8  8 
-#define PRECOIN9  9 
-#define PRECOIN10  10 
+#define PRECOIN5  5
+#define PRECOIN6  6
+#define PRECOIN7  7
+#define PRECOIN8  8
+#define PRECOIN9  9
+#define PRECOIN10  10
 
-struct precoin_num 	 //用于   预置计数	 
+struct precoin_num 	 //用于   预置计数
 {
 	uint32_t pre_count_cur;
 	uint32_t pre_count_set;
 	uint32_t coinval; //卷数
 	uint32_t full_flag;
 };
-extern struct precoin_num count_coin_temp[11];   //用于   预置计数	 
+extern struct precoin_num count_coin_temp[11];   //用于   预置计数
 
 extern struct disp_count_buf disp_buf;
 
@@ -239,6 +239,6 @@ void change_coin_mode (uint16_t value);
 #define PRESETMAX 999999   // 6  表示  只能设到7位   9999999   7位表示能设到8位
 #define PRESLA  8
 #define PRESLB  21
-#define PREKICKMAX 99 
+#define PREKICKMAX 99
 
 #endif

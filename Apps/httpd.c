@@ -4,23 +4,70 @@
 #ifndef HTTPD_DEBUG
 #define HTTPD_DEBUG         LWIP_DBG_OFF
 #endif
-
+  
 struct http_state {
 	uint8_t *pbuffer;
 	uint32_t left;
 };
 
-const static char http_html[] = "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n"
-"<html><head><title>CY-CS-803</title></head>"
-"<body>"
-"<h1><p align=\"center\">CY-CS-803</p></h1>"
-"<h1><p align=\"center\">Bootloader Version V 1.0</p></h1>"
-"</body></html>";
+const char http_record_head[] = 
+	"<html xmlns=\"http://www.w3.org/1999/xhtml\"> \
+	<head> \
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=GBK\"> \
+		<!--meta http-equiv=\"refresh\" content=\"1\"--> \
+		<title>历史清分记录</title> \
+	</head> \
+	<body class=\"bodystyle\"> \
+	<div style=\"background-color:#FFFFFF;\"> \
+		<div align=\"center\" style=\"background-color:#0066CC;color:#fff;margin-top:30px; \"> \
+			<h3> \
+				<span>历史清分记录</span> \
+			</h3> \
+		</div> \
+		<div align=\"center\"> \
+			<table border=\"1\" cellpadding=\"5\"> \
+				<tbody> \
+					<tr> \
+					  <td align=\"center\" width=\"50\">索引值</td> \
+					  <td align=\"center\" width=\"130\">清分时间</td> \
+					  <td align=\"center\" width=\"80\">1元</td> \
+					  <td align=\"center\" width=\"80\">5角</td> \
+					  <td align=\"center\" width=\"80\">1角</td> \
+					  <td align=\"center\" width=\"80\">大1角</td> \
+					  <td align=\"center\" width=\"80\">10元</td> \
+					  <td align=\"center\" width=\"80\">5元</td> \
+					  <td align=\"center\" width=\"80\">总金额</td> \
+					  <td align=\"center\" width=\"80\">总枚数</td> \
+					  <td align=\"center\" width=\"80\">异币数</td> \
+					</tr>";
+
+char http_html[8192];
+const char http_record_tail[] = 
+"</tbody> \
+			</table> \
+			<a href=\"/prepage\"> \
+				<button>上一页</button> \
+			</a> \
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp \
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp \
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp \
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp \
+			<a href=\"/nextpage\"> \
+				<button>下一页</button> \
+			</a> \
+		</div> \
+	</div> \
+	</body> \
+</html>";
+
+char http_data_temp[7*1024];
+char *str_p = http_data_temp;
+char str_temp[256];
 
 static void http_err(void *arg, err_t err)
 {
 	struct http_state *hs;
-	
+
 	LWIP_DEBUGF(HTTPD_DEBUG, ("http_err: %s", lwip_strerr(err)));
 	hs = (struct http_state *)arg;
 	if (hs != NULL) {
@@ -32,14 +79,14 @@ static void http_close_conn(struct tcp_pcb *pcb, struct http_state *hs)
 {
 	err_t err;
 	LWIP_DEBUGF(HTTPD_DEBUG, ("Closing connection %p\n", (void*)pcb));
-	
+
 	tcp_arg(pcb, NULL);
 	tcp_sent(pcb, NULL);
 	tcp_recv(pcb, NULL);
 	tcp_err(pcb, NULL);
 	tcp_poll(pcb, NULL, 0);
 	mem_free(hs);
-  
+
 	err = tcp_close(pcb);
 	if (err != ERR_OK) {
 		LWIP_DEBUGF(HTTPD_DEBUG, ("Error %d closing %p\n", err, (void*)pcb));
@@ -50,7 +97,7 @@ static err_t http_write(struct tcp_pcb *pcb, void *arg)
 {
 	struct http_state *hs;
 	uint16_t len;
-	err_t err;	
+	err_t err;
 	hs = (struct http_state *)arg;
 	if ((hs == NULL) || (hs->pbuffer==NULL)) {
 		return ERR_BUF;
@@ -74,10 +121,10 @@ static err_t http_poll(void *arg, struct tcp_pcb *pcb)
 {
 	struct http_state *hs;
 	hs = (struct http_state *)arg;
-	
+
 	LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_poll: pcb=%p hs=%p pcb_state=%s\n",
-	(void*)pcb, (void*)hs, tcp_debug_state_str(pcb->state)));	
-	
+	(void*)pcb, (void*)hs, tcp_debug_state_str(pcb->state)));
+
 	if (hs == NULL) {
 		/* arg is null, close. */
 		LWIP_DEBUGF(HTTPD_DEBUG, ("http_poll: arg is NULL, close\n"));
@@ -97,13 +144,13 @@ static err_t http_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
 {
 	struct http_state *hs;
 
-	LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_sent %p\n", (void*)pcb));	
-	
+	LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_sent %p\n", (void*)pcb));
+
 	hs = (struct http_state *)arg;
 	if (hs == NULL) {
 		return ERR_OK;
 	}
-	if (hs->left > 0) {		
+	if (hs->left > 0) {
 		http_write(pcb, hs);
 	} else {
 		http_close_conn(pcb, hs);
@@ -111,15 +158,40 @@ static err_t http_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
 
 	return ERR_OK;
 }
+
+
+void fill_http_data (s_db_item_info * db_item_info_temp)
+{		
+	S8 str_db[20];	
+	sprintf(str_db,"20%02x-%02x-%02x %02x:%02x:%02x",
+	db_item_info_temp->time[0],
+	db_item_info_temp->time[1],
+	db_item_info_temp->time[2],
+	db_item_info_temp->time[3],
+	db_item_info_temp->time[4],
+	db_item_info_temp->time[5]);   //read time
+	HTTP_INSERT ("<tr><td align=\"center\" width=\"50\">%d</td>", db_item_info_temp->index+1);
+	HTTP_INSERT ("<td align=\"center\" width=\"180\">%s</td>", str_db);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1yuan);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5jiao);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao_big);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_10yuan);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5yuan);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->total_money);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->total_good);
+	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->total_ng);
+}
+
 /*-----------------------------------------------------------------------------------*/
 static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
-{  
+{
 	uint8_t *pBuffer;
 	struct http_state *hs = (struct http_state *)arg;
-	
+
 	LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_recv: pcb=%p pbuf=%p err=%s\n", (void*)pcb,
 	(void*)p, lwip_strerr(err)));
-	
+
 	if ((err != ERR_OK) || (p == NULL) || (hs == NULL)) {
 	  /* error or closed by other side? */
 		if (p != NULL) {
@@ -133,22 +205,44 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 		}
 		http_close_conn(pcb, hs);
 		return ERR_OK;
-	}  
+	}
 	/* Inform TCP that we have taken the data. */
-	tcp_recved(pcb, p->tot_len);  
-   
+	tcp_recved(pcb, p->tot_len);
+
 	/* Is this an HTTP GET command? (only check the first 5 chars, since
 	there are other formats for GET, and we're keeping it very simple )*/
 	pBuffer = p->payload;
-	if (strncmp((const char *)pBuffer, "GET /", 5) == 0) {
+	if (strncmp((const char *)pBuffer, "GET /prepage", 12) == 0) {
 		pbuf_free(p);
-		/* Send the HTML header 
+		/* Send the HTML header
 		* subtract 1 from the size, since we dont send the \0 in the string
 		* NETCONN_NOCOPY: our data is const static, so no need to copy it
 		*/
 		hs->pbuffer = (uint8_t *)http_html;
-		hs->left =  sizeof(http_html)-1;
-		http_write(pcb, hs);	  
+	  yqsql_exec(DBDISPLAY);	  //
+		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
+		http_write(pcb, hs);
+	}else if (strncmp((const char *)pBuffer, "GET /nextpage", 13) == 0) {
+		pbuf_free(p);
+		/* Send the HTML header
+		* subtract 1 from the size, since we dont send the \0 in the string
+		* NETCONN_NOCOPY: our data is const static, so no need to copy it
+		*/
+		hs->pbuffer = (uint8_t *)http_html;
+		yqsql_exec(DBDISPLAYBACK);
+		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
+		http_write(pcb, hs);
+	}else if (strncmp((const char *)pBuffer, "GET /", 5) == 0) {
+		pbuf_free(p);
+		/* Send the HTML header
+		* subtract 1 from the size, since we dont send the \0 in the string
+		* NETCONN_NOCOPY: our data is const static, so no need to copy it
+		*/
+		hs->pbuffer = (uint8_t *)http_html;
+		db_id = para_set_value.data.db_total_item_num;
+	  yqsql_exec(DBDISPLAY);	  //
+		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
+		http_write(pcb, hs);
 	} else {
 		pbuf_free(p);
 		http_close_conn(pcb, hs);
@@ -157,10 +251,10 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 }
 
 static err_t http_accept(void *arg, struct tcp_pcb *pcb, err_t err)
-{	
+{
 	struct http_state *hs;
 	struct tcp_pcb_listen *lpcb = (struct tcp_pcb_listen*)arg;
-	
+
 	LWIP_DEBUGF(HTTPD_DEBUG, ("http_accept %p / %p\n", (void*)pcb, arg));
 	/* Decrease the listen backlog counter */
 	tcp_accepted(lpcb);
@@ -187,11 +281,11 @@ static err_t http_accept(void *arg, struct tcp_pcb *pcb, err_t err)
 	tcp_poll(pcb, http_poll, 10);
 	tcp_sent(pcb, http_sent);
 
-	return ERR_OK;	
+	return ERR_OK;
 }
 
 void httpd_init(void)
-{	
+{
 	struct tcp_pcb *pcb;
 	err_t err;
 
@@ -207,6 +301,6 @@ void httpd_init(void)
 	LWIP_ASSERT("httpd_init: tcp_listen failed", pcb != NULL);
 	/* initialize callback arg and accept callback */
 	tcp_arg(pcb, pcb);
-	tcp_accept(pcb, http_accept);	
+	tcp_accept(pcb, http_accept);
 }
 

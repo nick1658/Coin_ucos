@@ -29,7 +29,7 @@ uint16_t coine[COINCNUM][COIN_TYPE_NUM]=     // 由币种决定
 
 
 void prepare_coin_cmp_value (void)
-{		
+{
 	if (ad0_min > 0){
 		coin_env.cmp_use_index = 0;
 	}else if ( ad1_min > 0){
@@ -38,7 +38,7 @@ void prepare_coin_cmp_value (void)
 		coin_env.cmp_use_index = 2;
 	}else{
 		coin_env.cmp_use_index = 0;
-	}	
+	}
 	coin_env.ad_index = coin_env.AD_min_index[coin_env.cmp_use_index];
 #ifdef SAMPLE_METHOD_0
 	coin_value0 = Detect_AD_Value_buf_p[coin_env.ad_index].AD0;
@@ -75,7 +75,7 @@ int16_t is_good_coin (void)
 					good_value_index = 0;
 			}
 			return i;
-		}	
+		}
 	}
 	if (sys_env.save_ng_data){
 		NG_value_buf[ng_value_index].AD0 = coin_value0;
@@ -95,15 +95,15 @@ void cy_precoincount(void)
 {
 	int16_t good_coin = -1;
 	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
-		ch0_pre_count = ch0_count;		
-		processed_coin_info.coinnumber++;	
-		prepare_coin_cmp_value ();				
+		ch0_pre_count = ch0_count;
+		processed_coin_info.coinnumber++;
+		prepare_coin_cmp_value ();
 		good_coin = is_good_coin ();
 		if (sys_env.stop_flag != 1){//如果不在反转状态
 			sys_env.stop_flag = 0;
 			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 		}
-		if ((good_coin < 0) ||  ((para_set_value.data.coin_full_rej_pos == 1) && 
+		if ((good_coin < 0) ||  ((para_set_value.data.coin_full_rej_pos == 1) &&
 								 ((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
 			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
@@ -152,7 +152,7 @@ void cy_precoincount(void)
 			sys_env.sys_runing_time = 1;
 		}
 	}
-}		
+}
 
 
 
@@ -160,12 +160,12 @@ void cy_precoincount(void)
 // 根据AD值 计数并取 AD 最大值最小值
 uint32_t coinlearnnumber = 0;   //count the coin number all proceed
 void cy_coinlearn(void)
-{			
+{
 	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
 		ch0_pre_count = ch0_count;
 		processed_coin_info.coinnumber++;
-		coinlearnnumber++;					
-		prepare_coin_cmp_value ();		
+		coinlearnnumber++;
+		prepare_coin_cmp_value ();
 		if( ( coin_value0 > coin_maxvalue0)){     //0
 			coin_maxvalue0 = coin_value0;
 		}
@@ -177,36 +177,36 @@ void cy_coinlearn(void)
 		}
 		if( ( coin_value1 < coin_minvalue1)){
 			coin_minvalue1 = coin_value1;
-		}	
+		}
 		if( ( coin_value2 > coin_maxvalue2)) {  //  2
 			coin_maxvalue2 = coin_value2;
 		}
 		if( ( coin_value2 < coin_minvalue2)){
 			coin_minvalue2 = coin_value2;
 		}
-		sys_env.coin_over = 1;	
+		sys_env.coin_over = 1;
 	}
 }
 /*************************
 **************************/
 void detect_read(void)
-{	
+{
 	if(COIN_DETECT == IR_DETECT_ON)    // 红外对射传感器
-		dgus_tf1word(ADDR_DETCET1,1);	//被遮挡 
+		dgus_tf1word(ADDR_DETCET1,1);	//被遮挡
 	else
-		dgus_tf1word(ADDR_DETCET1,0);	//未被遮挡	
+		dgus_tf1word(ADDR_DETCET1,0);	//未被遮挡
 }
 
 #define TIPS_SIZE 9
 const char *coin_tips [] = {"一元", "五角", "五角", "大一角", "一角", "一角", "五分", "两分", "一分", "纪念币10元", "纪念币5元"};
 
- uint16_t prepic_prenum =0;      // 用于记录 报错前的界面 
+ uint16_t prepic_prenum =0;      // 用于记录 报错前的界面
 void alertfuc(uint16_t errorflag) //报错
 {
 	char str_buf[256];
 	dbg ("alert flag is %d", errorflag);
 	switch(errorflag)
-	{	
+	{
 		case COINNGKICKERROR:
 			ALERT_MSG ("提示", "漏踢错误，请注意检查！");
 			break;
@@ -218,16 +218,16 @@ void alertfuc(uint16_t errorflag) //报错
 			break;
 		case KICK1COINERROR:
 			ALERT_MSG ("提示", "第一个剔除工位剔除错误！");
-			break;	
+			break;
 		case KICK2COINERROR:
 			ALERT_MSG ("提示", "第二个剔除工位剔除错误！");
-			break;		
+			break;
 		case PRESSMLOCKED:
 			ALERT_MSG ("提示", "轨道堵币！请检查轨道或传感器。再次启动前请先清零！");
-			break;	
+			break;
 		case ADSTDEEROR:
 			ALERT_MSG ("提示", "传感器异常，请检查传感器下面是否卡有硬币或者调整基准值，然后重试！");
-			break;	
+			break;
 		case COUNT_FINISHED:
 			switch (coin_env.full_stack_num){
 				case 1:
@@ -238,33 +238,33 @@ void alertfuc(uint16_t errorflag) //报错
 					}
 					break;
 				case 2:
-					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[1] < TIPS_SIZE)){
-						sprintf (str_buf, "请更换%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]], 
+						sprintf (str_buf, "请更换%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]],
 																	coin_tips[coin_env.full_coin_stack[1]]);
 					}else{
 						sprintf (str_buf, "数组越界: %d, %d", coin_env.full_coin_stack[0], coin_env.full_coin_stack[1]);
 					}
 					break;
 				case 3:
-					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[1] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[2] < TIPS_SIZE)){
-						sprintf (str_buf, "请更换%s、%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]], 
-																		coin_tips[coin_env.full_coin_stack[1]], 
+						sprintf (str_buf, "请更换%s、%s和%s的纸筒。", 	coin_tips[coin_env.full_coin_stack[0]],
+																		coin_tips[coin_env.full_coin_stack[1]],
 																		coin_tips[coin_env.full_coin_stack[2]]);
 					}else{
 						sprintf (str_buf, "数组越界: %d, %d, %d", coin_env.full_coin_stack[0], coin_env.full_coin_stack[1], coin_env.full_coin_stack[2]);
 					}
 					break;
 				case 4:
-					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) && 
+					if ((coin_env.full_coin_stack[0] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[1] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[2] < TIPS_SIZE) &&
 						(coin_env.full_coin_stack[3] < TIPS_SIZE)){
-						sprintf (str_buf, "请更换%s、%s、%s和%s的纸筒。", coin_tips[coin_env.full_coin_stack[0]], 
-																		coin_tips[coin_env.full_coin_stack[1]], 
-																		coin_tips[coin_env.full_coin_stack[2]], 
+						sprintf (str_buf, "请更换%s、%s、%s和%s的纸筒。", coin_tips[coin_env.full_coin_stack[0]],
+																		coin_tips[coin_env.full_coin_stack[1]],
+																		coin_tips[coin_env.full_coin_stack[2]],
 																		coin_tips[coin_env.full_coin_stack[3]]);
 					}else{
 						sprintf (str_buf, "数组越界: %d, %d, %d, %d", coin_env.full_coin_stack[0], coin_env.full_coin_stack[1], coin_env.full_coin_stack[2], coin_env.full_coin_stack[3]);
@@ -273,7 +273,7 @@ void alertfuc(uint16_t errorflag) //报错
 				default:sprintf (str_buf, "ERROR: 1001");break;
 			}
 			ALERT_MSG ("提示", str_buf);
-			break;	
+			break;
 		case COMPLETE_UPDATE:
 			ALERT_MSG ("提示", "程序更新完成，请断电重新启动");
 			break;
@@ -283,6 +283,6 @@ void alertfuc(uint16_t errorflag) //报错
 	}
 	return;
 }
-	
+
 
 

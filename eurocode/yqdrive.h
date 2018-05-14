@@ -13,13 +13,13 @@
 ////////////////////////////////////new pcb open this
 //////////////////////////
 
-	
+
 #define OUT7(x)		(rGPGDAT = (rGPGDAT & (~0x8)) |(x<<3))	//EINT11/GPG3
 #define OUT6(x) 	(rGPBDAT = (rGPBDAT & (~0x2)) |(x<<1))	 	//TOUT1/GPB1
 #define OUT5(x) 	(rGPBDAT = (rGPBDAT & (~0x1)) |(x))	 	//TOUT0/GPB0
-#define OUT4(x) 	(rGPHDAT = (rGPHDAT & (~0x2000)) |(x<<13))	//CLKOUT0/GPH13	
-#define OUT3(x) 	(rGPHDAT = (rGPHDAT & (~0x4000)) |(x<<14))	//CLKOUT1/GPH14	
-#define OUT2(x) 	(rGPGDAT = (rGPGDAT & (~0x80)) |(x<<7))	//EINT15/GPG7 
+#define OUT4(x) 	(rGPHDAT = (rGPHDAT & (~0x2000)) |(x<<13))	//CLKOUT0/GPH13
+#define OUT3(x) 	(rGPHDAT = (rGPHDAT & (~0x4000)) |(x<<14))	//CLKOUT1/GPH14
+#define OUT2(x) 	(rGPGDAT = (rGPGDAT & (~0x80)) |(x<<7))	//EINT15/GPG7
 #define OUT1(x) 	(rGPFDAT = (rGPFDAT & (~0x2)) |(x<<1))	//EINT1/GPF1/sd0_CDN
 #define OUT0(x) 	(rGPEDAT = (rGPEDAT & (~0x20)) |(x<<5))	//SD0_CLK/GPE5
 
@@ -27,14 +27,14 @@
 #define PAYOUT1(x)		OUT7(X)
 #define PAYOUT2(x)		(rGPFDAT = (rGPFDAT & (~(0x01<<5))) |(x<<5))	//EINT5/GPF5
 #define PAYOUT3(x)		(rGPFDAT = (rGPFDAT & (~(0x01<<6))) |(x<<6))	//EINT6/GPF6
-				  
+
 #define  PAN_MOTOR_LEFT(x) 	 OUT7(x)			//P2^0; 	//EINT11/GPG3 //  转盘反转
 #define  PAN_MOTOR_RIGHT(x)  OUT6(x)			//P2^1; TOUT1/GPB1  //  转盘正转 PAN_MOTOR_RIGHT(x)
 #define  PRESS_MOTOR(x) 	 OUT5(x)			//P2^2; TOUT0/GPB0  //压币电机
 
 #define  STORAGE_MOTOR(x) 	 OUT0(x)			//P2^3; CLKOUT0/GPH13  //斗送入电机
 #define  STORAGE_DIR(x) 	 OUT1(x)			//P2^3; CLKOUT0/GPH13  //斗送入电机转向
-#define  EMKICK1(x) 		 OUT3(x)			//P2^4; CLKOUT1/GPH14      // kick out 
+#define  EMKICK1(x) 		 OUT3(x)			//P2^4; CLKOUT1/GPH14      // kick out
 #define  EMKICK2(x) 		 OUT2(x)			//P2^5; //EINT15/GPG7   //kick back
 
 
@@ -74,18 +74,18 @@
 
 
 #ifdef _MY_DEBUG_NO_DOOR_CHECK_
-	#define COIN_DETECT      1	//P0^0;  //转盘槽型传感器       EINT12/GPG4  	
-	#define PANCOIN_OVER  0	//P0^1;  //转盘满币对射传感器   EINT13/GPG5 
-	#define DC_COINOVER   1	//P0^2;  // 清分 满币 传感器    EINT14/GPG6 
+	#define COIN_DETECT      1	//P0^0;  //转盘槽型传感器       EINT12/GPG4
+	#define PANCOIN_OVER  0	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
+	#define DC_COINOVER   1	//P0^2;  // 清分 满币 传感器    EINT14/GPG6
 	#define DOOR_MAG      0	//P0^3;  //压币带门 传感器      SD0_DAT3/GPE10
 	#define DOOR_PAN      0	//P0^4;  //转盘门 传感器  	    SD0_DAT2/GPE9
 	#define PRESS_MICROSW 0	//P0^5; //压币带压合传感器   	SD0_DAT1/GPE8
 	#define DT_METAL      1	//P0^6; //真假币金属传感器   	SD0_DAT0/GPE7
 	#define DT_NOMETAL    1	//P0^7 ;  // 间隙金属传感器  	SD0_CMD/GPE6
 #else
-	#define PANCOIN_OVER      A0IN0	//P0^0;  //转盘槽型传感器       EINT12/GPG4  	
-	#define COIN_DETECT   A0IN1	//P0^1;  //转盘满币对射传感器   EINT13/GPG5 
-	#define DC_COINOVER   A0IN2	//P0^2;  // 清分 满币 传感器    EINT14/GPG6 
+	#define PANCOIN_OVER      A0IN0	//P0^0;  //转盘槽型传感器       EINT12/GPG4
+	#define COIN_DETECT   A0IN1	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
+	#define DC_COINOVER   A0IN2	//P0^2;  // 清分 满币 传感器    EINT14/GPG6
 	#define DOOR_MAG      A0IN3	//P0^3;  //压币带门 传感器      SD0_DAT3/GPE10
 	#define DOOR_PAN      A0IN4	//P0^4;  //转盘门 传感器  	    SD0_DAT2/GPE9
 	#define PRESS_MICROSW A0IN5	//P0^5; //压币带压合传感器   	SD0_DAT1/GPE8
@@ -93,7 +93,7 @@
 	#define MOTOR_NG      A0IN7	//P0^7 ;  // 间隙金属传感器  	SD0_CMD/GPE6
 #endif
 
-#define  IR_DETECT_ON   0	//  //红外对射传感器 0 表示有遮挡 
+#define  IR_DETECT_ON   0	//  //红外对射传感器 0 表示有遮挡
 
 ////////////////////////////
 void deviceinit(void);	//开机前初始化

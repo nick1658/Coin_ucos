@@ -23,8 +23,8 @@
 #define PAGE_ITEM_NUM_SIZE (PAGE_BYTE_SIZE / ITEM_SIZE) //一页中记录的条数
 
 
-						//条数				//日期					   //工号 //金额				//数量				//异币		
-/////////////////////////(BLOCK * (64 * 2048) + PAGE)	
+						//条数				//日期					   //工号 //金额				//数量				//异币
+/////////////////////////(BLOCK * (64 * 2048) + PAGE)
 #define PUBULIC_DATA_START_BLOCK_NUM 20
 #define PUBULIC_DATA_START_PAGE_NUM 0
 #define HISTORY_START_BLOCK_NUM (PUBULIC_DATA_START_BLOCK_NUM + 1)
@@ -65,7 +65,7 @@
 
 typedef struct
 {
-	U8  time[8];
+	U8  time[6];
 	uint16_t	index;
 	uint16_t ID;
 	uint16_t m_1yuan;
@@ -191,7 +191,7 @@ typedef struct
 
 extern s_country_coin pre_value;
 
-extern volatile char dbsave[HISTORYSAVANUM]; 
+extern volatile char dbsave[HISTORYSAVANUM];
 
 
 
@@ -214,7 +214,7 @@ void ini_screen (void);
 
 void initial_nandflash(void);    //nandflash
 
-void yqsql_exec(uint16_t chos);    
+void yqsql_exec(uint16_t chos);
 
 
 int16_t test_read_r_code (int16_t r_code);

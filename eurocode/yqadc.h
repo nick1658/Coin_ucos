@@ -57,7 +57,7 @@ typedef struct
 	uint16_t full_kick_keep_t2;
 	uint16_t full_kick_Q[KICK_Q_LEN];//剔除队列
 	uint16_t full_kick_Q_index;
-	
+
 	uint16_t coin_Q[COIN_Q_LEN];//硬币经过队列
 	uint16_t coin_Q_index;
 	uint16_t coin_Q_remain;
@@ -71,12 +71,12 @@ typedef struct
 #define ADOFFSET  40
 
 
-#define ADSAMPNUM0  10    //every ad channel sample number for getting average value 2  8 
-#define ADSAMPNUM  50    //every ad channel sample number for getting average value 2  8 
+#define ADSAMPNUM0  10    //every ad channel sample number for getting average value 2  8
+#define ADSAMPNUM  50    //every ad channel sample number for getting average value 2  8
 
 #define  WAVE_DOWN_TO_STD_N  32   //1  //8确认波形下降 次数  4
 #define  WAVE_GO_UP_N  32 //1  //8 15   //确认波形峰值  次数 50 40   65     20
-#define  WAVE_UP_TO_STD_N 32 //2 //15  //波形落回到参考值以下的计数20 
+#define  WAVE_UP_TO_STD_N 32 //2 //15  //波形落回到参考值以下的计数20
 #define  WAVE_DOWN_TWO_N  32  //3 //4//8   // 确认双波峰  方法一 确认波形上升  次数   10 4      求导法  3
 
 #define WAVE_DOWN_VALUE 50
@@ -99,12 +99,12 @@ extern  uint16_t ad2_min;     //贮存每枚硬币过去后的 最大值
 extern volatile uint16_t blockflag;      //堵币标志变量
 extern volatile uint32_t adtime;
 
-extern uint32_t ch0_count;  //通道0 通过的硬币计数 
+extern uint32_t ch0_count;  //通道0 通过的硬币计数
 
 extern uint32_t ch0_coin_come;  //通道 来硬币 标记
 extern uint32_t coin_cross_time;
-extern uint32_t ch0_pre_count;  //通道0 有硬币经过 标记 
-		
+extern uint32_t ch0_pre_count;  //通道0 有硬币经过 标记
+
 extern  uint16_t std_ad0;
 extern  uint16_t std_ad1;
 extern  uint16_t std_ad2;
@@ -116,7 +116,7 @@ void ad0_valueget(void);  //adc function   get value
 
 extern  int temperstd;   //20度  20*10 +600  = 800MV;  800/3300 *1024 = 248.24  // 传感器输出电压公式 VO = (10mV/C * T) + 600
 uint16_t adstd_test(void);   //只有在电压值在标准状态时才可以启动所有的电机与AD转换  本程序值控制在 1010左右吧
-uint16_t adstd_sample(void);    //基准值调试  
+uint16_t adstd_sample(void);    //基准值调试
 uint16_t cy_adstd_adj (void);
 void print_std_value(void);
 void coin_env_init (void);

@@ -30,7 +30,6 @@ void LwIP_Periodic_Handle(uint32_t localtime)
 		TftpTrm250ms();
 	}
 }
-
 //主函数
 
 void coin_init (void)
@@ -39,28 +38,28 @@ void coin_init (void)
 	rWTCON = 0;	// 关闭开门狗
 	system_env_init ();
 	coin_env_init ();
-	//////////////  
+	//////////////
 	alertflag = 0; 		 //报错标志位
 
 	coinchoose = CN0;   // 币种选择 国家级别的
-	touch_flag =0;   // 串口2接收 标志位 
-	uartcount = 0;  // 串口2接收 字节 计数 
-	sys_env.coin_index = 0;   //当前  学习 币种 名称 
+	touch_flag =0;   // 串口2接收 标志位
+	uartcount = 0;  // 串口2接收 字节 计数
+	sys_env.coin_index = 0;   //当前  学习 币种 名称
 	tscount = 0;
 	blockflag = ADBLOCKT; //此变量在yqadc.c文件中定义
 	adtime = 0;    //定时中断里 计时
-	
-	
+
+
 //	db_id = 0;   //历史数据 表格已经显示 数
-	
+
 	ch0_count = 0;
-	
+
 	ch0_coin_come = 0;;
-	
+
 	coinlearnnumber =0;  //自学习 数量
-	prepic_prenum = 0;     // 用于记录 报错前的界面 
+	prepic_prenum = 0;     // 用于记录 报错前的界面
 	db_id = 0;   //历史数据 表格已经显示 数
-	
+
 	coin_maxvalue0 = AD0STDSET;
 	coin_minvalue0 = AD0STDSET;
 	coin_maxvalue1 = AD1STDSET;
@@ -72,7 +71,7 @@ void coin_init (void)
 	std_ad1 = AD1STDSET;
 	std_ad2 = AD2STDSET;
 
-	for(i = 0;i<TSGET_NUM;i++) 
+	for(i = 0;i<TSGET_NUM;i++)
 	{
 		touchnum[i] = 0;
 	}
@@ -83,62 +82,60 @@ void coin_init (void)
 	cy_println ("\n#####    Program For YQ ##### ");
 	i = 1;
 	watchdog_reset();/*初始化看门狗,T = WTCNT * t_watchdog*/
-	adc_init();    //初始化ADC 	
+	adc_init();    //初始化ADC
 	Timer_Init ();
-	
+
 	//init RTC************************************************************
 	RTC_Time Time = {
 		2017, 6, 28, 3, 12, 0, 0
-	};	
-	
+	};
+
 
 //	init_Iic();
 //	yqi2c_init();
     rNF_Init();
 	initial_nandflash();    //nandflash
-	
+
 	Hsmmc_Init ();//SD卡
 	cy_println ("Hsmmc_init_flag is %d", Hsmmc_exist ());
-	
+
 	ini_picaddr();	 //初始化触摸屏变量
 	/*下面把触摸屏上的一些变量初始化*/
 	ini_screen ();
 	prepic_num = JSJM;
 	prepic_prenum = JSJM;
 	cy_println ("Coin Detector System start");
-	if (code_flag == 0x55555555){//如果是JTAG下载启动，就更新程序到Flash		
+	if (code_flag == 0x55555555){//如果是JTAG下载启动，就更新程序到Flash
 		U8 r_code;
 		extern unsigned int __CodeAddr__;
-		extern unsigned int __CodeSize__;	
+		extern unsigned int __CodeSize__;
 	#if 1
 		cy_println ("Code_flag = 0x%x, Begin Write code to flash...", code_flag);
 		r_code = WriteAppToAppSpace ((uint32_t)__CodeAddr__, __CodeSize__);
 		if (r_code == 0)
-			cy_println ("write code to nand flash block 10 page 0 nand addr 0 completed");   
+			cy_println ("write code to nand flash block 10 page 0 nand addr 0 completed");
 		else
-			cy_println ("write code to nand flash block 10 page 0 nand addr 0 failed");  
+			cy_println ("write code to nand flash block 10 page 0 nand addr 0 failed");
 	#endif
 		code_flag = 0;
 	}else{
 		cy_println ("Code_flag = 0x%x, No Need Update code!", code_flag);
 	}
-	
 	//begin init RTC************************************************************
-	while(1) {    // read time 
+	while(1) {    // read time
 		comscreen(dgus_readt,6);	//read time
 		tscount = 50;//1000ms 延时
 		while(touch_flag == 0 ){if (tscount == 0) break;}//1秒后还没收到触摸屏的信息，有可能没有接屏，直接跳过
-		Time.Year 	= HEX_TO_DEC (touchnum[6]) + 2000;	
-		Time.Month 	= HEX_TO_DEC (touchnum[7]);	
-		Time.Day 	= HEX_TO_DEC (touchnum[8]);	
-		Time.Week 	= HEX_TO_DEC (touchnum[9]);	
-		Time.Hour 	= HEX_TO_DEC (touchnum[10]);	
-		Time.Min 	= HEX_TO_DEC (touchnum[11]);	
+		Time.Year 	= HEX_TO_DEC (touchnum[6]) + 2000;
+		Time.Month 	= HEX_TO_DEC (touchnum[7]);
+		Time.Day 	= HEX_TO_DEC (touchnum[8]);
+		Time.Week 	= HEX_TO_DEC (touchnum[9]);
+		Time.Hour 	= HEX_TO_DEC (touchnum[10]);
+		Time.Min 	= HEX_TO_DEC (touchnum[11]);
 		Time.Sec 	= HEX_TO_DEC (touchnum[12]);
 		touch_flag = 0;
 		break;
 	}
-	
 	RTC_Init(&Time);
 	RTC_GetTime(&Time);
 	cy_println("Time: %4d/%02d/%02d %02d:%02d:%02d", Time.Year,
@@ -146,16 +143,16 @@ void coin_init (void)
 	//end init RTC************************************************************
 
 	LED1_ON;
-	
+
  	sys_env.workstep = 0; //停机状态
 	print_system_env_info ();//串口打印编译信息和系统环境变量，便于调试。
 //	setStdValue	();//设置鉴伪基准值，后面每次启动之前都会设置一次，因为鉴伪基准值会随温度在一定范围内变化
 //	adstd_offset ();//设置补偿值，后面每次启动之前都会补偿一次，因为鉴伪基准值会随温度在一定范围内变化
-	
+
 	comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	  // 跳转到主界面
 	sys_env.system_delay = para_set_value.data.system_boot_delay;
 	/*开机预热，如果时间不够，可适当延长*/
-	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发	 
+	//delay_ms(ELECTRICTIME);    //开机 延时 这些时间再给 单片机发
 }
 //int print_ad0, print_ad1, print_ad2;
 void main_task(void)
@@ -204,17 +201,17 @@ void main_task(void)
 
 
 
-//NET处理 任务 
+//NET处理 任务
 //#define NET_MSG_SIZE 32
 //OS_EVENT * net_msg;			//串口消息队列
 //void * netMsgGrp[NET_MSG_SIZE];			//消息队列存储地址,最大支持32个消息
 void Task3(void *pdata)
 {
-//	u8 err;	
+//	u8 err;
 	(void)pdata;
 	while (1) {
 		if (sys_env.update_flag != NET_UPDATEING){
-			OSTimeDly(20); 
+			OSTimeDly(20);
 		}
 		if (sys_env.workstep != 1){//待机状态下才能联网更新
 			continue;
@@ -233,7 +230,7 @@ void Task2(void *pdata)
 	(void)pdata;
 	while (1) {
 		//LED1_NOT;
-		OSTimeDly(20); // 
+		OSTimeDly(20); //
 		if( touch_flag ==1){
 			touchresult();//判断触摸 状态的函数
 			touch_flag =0;
@@ -248,7 +245,7 @@ void Task2(void *pdata)
 		}
 		if (sys_env.net_task == 1){
 			sys_env.net_task = 0;
-			OSTimeDly(500); 
+			OSTimeDly(500);
 			run_command ("reset");
 		}
 	}
@@ -258,7 +255,7 @@ void Task1(void *pdata)
 	(void)pdata;
 	while (1) {
 		LED2_NOT;
-		OSTimeDly(500); // LED3 1000ms闪烁void 
+		OSTimeDly(500); // LED3 1000ms闪烁void
 //		cy_print ("IN0:%d ", A0IN0);
 //		cy_print ("IN1:%d ", A0IN1);
 //		cy_print ("IN2:%d ", A0IN2);
@@ -274,14 +271,14 @@ void Task1(void *pdata)
 //	while(rADCCON & 0x1);							//check if Enable_start is low
 //	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
 //	print_ad0 = ((int)rADCDAT0 & 0x3ff);
-//	
+//
 //	//Read AD 1 ////////////////////////////////////////////////////////////////////////////////////////
 //	rADCMUX = 0x01;		//setup channel
 //	rADCCON|=0x1;									//start ADC
 //	while(rADCCON & 0x1);							//check if Enable_start is low
 //	while(!(rADCCON & 0x8000));						//check if EC(End of Conversion) flag is high
 //	print_ad1 = ((int)rADCDAT0 & 0x3ff);
-//	
+//
 //	//Read AD 2 ////////////////////////////////////////////////////////////////////////////////////////
 //	rADCMUX = 0x02;		//setup channel
 //	rADCCON|=0x1;									//start ADC
@@ -290,10 +287,10 @@ void Task1(void *pdata)
 //	print_ad2 = ((int)rADCDAT0 & 0x3ff);
 
 //		cy_println ("AD0:	%d,	AD1:	%d,	AD2:	%d", print_ad0,
-//																						 print_ad1, 
+//																						 print_ad1,
 //																						 print_ad2);
-		//cy_print(" OSIdleCtrRun: %ld  OSIdleCtrMax: %ld  \n", OSIdleCtrRun, OSIdleCtrMax);  
-		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);  
+		//cy_print(" OSIdleCtrRun: %ld  OSIdleCtrMax: %ld  \n", OSIdleCtrRun, OSIdleCtrMax);
+		//cy_print(" CPU Usage: %02d%%\n",OSCPUUsage);
 		//dgus_tf1word(ADDR_CPU_USAGE, OSCPUUsage);	//清分等级，暂时没有设置
 		//cy_println ("***********************task 1***********************");
 //		if((sys_env.workstep == 10) && (sys_env.print_wave_to_pc == 0)){
@@ -315,16 +312,16 @@ void TaskStart(void *pdata)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 	(void)pdata;
-	OSStatInit(); //开启统计任务 
+	OSStatInit(); //开启统计任务
 	coin_init ();
 	// Initilaize the LwIP stack
-	lwip_init();	
+	lwip_init();
 	// ip address 192, 168, 1, 20
-	ethernetif_config();	
-	httpd_init();	
+	ethernetif_config();
+	httpd_init();
 	//IAP_httpd_init ();
 	tftp_init ();
-	
+
 	cy_println ("[Please press ENTER to activate this console]");
 
 	//创建NET消息队列
@@ -332,13 +329,13 @@ void TaskStart(void *pdata)
 	OSTaskCreate(Task1, (void *)0, &Task1Stk[TASK1_STK_SIZE - 1], Task1Prio);
 	OSTaskCreate(Task2, (void *)0, &Task2Stk[TASK2_STK_SIZE - 1], Task2Prio);
 	OSTaskCreate(Task3, (void *)0, &Task3Stk[TASK3_STK_SIZE - 1], Task3Prio);
-	
+
 	while (1) {
-		OSTimeDly(10); // LED2 500ms闪烁	
-		
+		OSTimeDly(10); // LED2 500ms闪烁
+
 		switch (sys_env.workstep)
 		{
-			case 0:{ 
+			case 0:{
 				ALL_STOP();//停掉所有的输出
 				if (sys_env.sys_runing_time_total > 0){
 					sys_env.coin_speed = ((processed_coin_info.total_coin - processed_coin_info.total_coin_old) * 60) / (sys_env.sys_runing_time_total / 10000);
@@ -351,11 +348,11 @@ void TaskStart(void *pdata)
 			case 1://待机状态
 				break;
 			case 3:{  //清分启动
-				sys_env.workstep = 6;  //主函数 步骤号		
+				sys_env.workstep = 6;  //主函数 步骤号
 				deviceinit();//初始化变量
 				break;
 			}
-			case 6: {    
+			case 6: {
 				if( adstd_offset() == 1){//  检测基准值，并进行补偿
 				setStdValue	();//设置鉴伪基准值
 				//if (1) {//  检测基准值，并进行补偿
@@ -375,7 +372,7 @@ void TaskStart(void *pdata)
 						good_value_index = 0;
 						ng_value_index = 0;
 						disp_allcount();
-						disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//when counting pre ze zs foege data variable 
+						disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//when counting pre ze zs foege data variable
 					}
 				}else{
 					SEND_ERROR(ADSTDEEROR);   //传感器下有币
@@ -389,7 +386,7 @@ void TaskStart(void *pdata)
 					SEND_ERROR(PRESSMLOCKED);
 				}
 				if (sys_env.coin_over == 1){
-					sys_env.coin_over = 0;	
+					sys_env.coin_over = 0;
 					disp_allcount ();
 				}
 				if (sys_env.stop_time == 0){
@@ -405,7 +402,7 @@ void TaskStart(void *pdata)
 						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间2秒
 					}else if (sys_env.stop_flag == 4){
 						comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
-						sys_env.workstep =0;	
+						sys_env.workstep =0;
 					}
 				}
 				if (sys_env.print_wave_to_pc == 1){
@@ -418,7 +415,7 @@ void TaskStart(void *pdata)
 			}
 			/////////////////
 			case 13: {//特征学习
-				sys_env.workstep = 20;  //主函数 步骤号		
+				sys_env.workstep = 20;  //主函数 步骤号
 				deviceinit();
 				break;
 			}
@@ -434,24 +431,24 @@ void TaskStart(void *pdata)
 			case 22:{
 				runfunction();	 //转盘动作函数
 				if (sys_env.coin_over == 1){
-					sys_env.coin_over = 0;	
+					sys_env.coin_over = 0;
 					dgus_tf1word(ADDR_A0MA,coin_maxvalue0);	//	 real time ,pre AD0  max
 					dgus_tf1word(ADDR_A0MI,coin_minvalue0);	//	 real time ,pre AD0  min
-					dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max	
+					dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max
 					dgus_tf1word(ADDR_A1MI,coin_minvalue1);	//	 real time ,pre AD1  min
 					dgus_tf1word(ADDR_A2MA,coin_maxvalue2);	//	 real time ,pre AD2  max
 					dgus_tf1word(ADDR_A2MI,coin_minvalue2);	//	 real time ,pre AD2  min
 				}
-				
+
 				if(blockflag == 0){//堵币
 					SEND_ERROR(PRESSMLOCKED);
 				}
 				break;
 			}
-			case 88:{//报错	
+			case 88:{//报错
 				ALL_STOP();
 				alertfuc(alertflag);
-				sys_env.workstep = 0; 
+				sys_env.workstep = 0;
 				break;
 			}
 			case 100:{////基准调试
