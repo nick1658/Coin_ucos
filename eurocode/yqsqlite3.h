@@ -65,7 +65,7 @@
 
 typedef struct
 {
-	U8  time[6];
+	U8  time[20];
 	uint16_t	index;
 	uint16_t ID;
 	uint16_t m_1yuan;
@@ -216,6 +216,7 @@ void initial_nandflash(void);    //nandflash
 
 void yqsql_exec(uint16_t chos);
 
+void export_record (void);
 
 int16_t test_read_r_code (int16_t r_code);
 int16_t test_write_r_code (int16_t r_code);

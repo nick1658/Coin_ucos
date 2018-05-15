@@ -251,7 +251,7 @@ void rrq_recv_callback(void *_args, struct udp_pcb *upcb, struct pbuf *pkt_buf,
   if (args->data_len < TFTP_DATA_LEN_MAX)
   {
     tftptimeoutEnable=0;//关闭TFTP超时定时器
-	tftptimeout=0;
+		tftptimeout=0;
     /* Clean the connection*/
     tftp_cleanup_rd(upcb, args);
 
@@ -271,50 +271,50 @@ int tftp_process_read(struct udp_pcb *upcb, struct ip_addr *to, int to_port, cha
   /* If Could not open the file which will be transmitted  */
 //  if (file_fopen(&file_SD, &efs1.myFs, FileName, 'r') != 0)
 //  {
-    tftp_send_error_message(upcb, to, to_port, TFTP_ERR_FILE_NOT_FOUND);
+//    tftp_send_error_message(upcb, to, to_port, TFTP_ERR_FILE_NOT_FOUND);
 
-    tftp_cleanup_rd(upcb, args);
+//    tftp_cleanup_rd(upcb, args);
 
-    return 0;
+//    return 0;
 //  }
 
   /* This function is called from a callback,
    * therefore, interrupts are disabled,
    * therefore, we can use regular malloc. */
 
-//  args = mem_malloc(sizeof *args);
-//  /* If we aren't able to allocate memory for a "tftp_connection_args" */
-//  if (!args)
-//  {
-//    /* unable to allocate memory for tftp args  */
-//    tftp_send_error_message(upcb, to, to_port, TFTP_ERR_NOTDEFINED);
+  args = mem_malloc(sizeof *args);
+  /* If we aren't able to allocate memory for a "tftp_connection_args" */
+  if (!args)
+  {
+    /* unable to allocate memory for tftp args  */
+    tftp_send_error_message(upcb, to, to_port, TFTP_ERR_NOTDEFINED);
 
-//    /* no need to use tftp_cleanup_rd because no "tftp_connection_args" struct has been malloc'd   */
-//    tftp_cleanup_rd(upcb, args);
+    /* no need to use tftp_cleanup_rd because no "tftp_connection_args" struct has been malloc'd   */
+    tftp_cleanup_rd(upcb, args);
 
-//    return 0;
-//  }
+    return 0;
+  }
 
-//   Timeoutargs=	args;//记录下当前的args
-//  /* initialize connection structure  */
-//  args->op = TFTP_RRQ;
-//  args->to_ip.addr = to->addr;
-//  args->to_port = to_port;
-//  args->block = 1; /* block number starts at 1 (not 0) according to RFC1350  */
-//  args->tot_bytes = 0;
+   Timeoutargs=	args;//记录下当前的args
+  /* initialize connection structure  */
+  args->op = TFTP_RRQ;
+  args->to_ip.addr = to->addr;
+  args->to_port = to_port;
+  args->block = 1; /* block number starts at 1 (not 0) according to RFC1350  */
+  args->tot_bytes = 0;
 
 
-//  /* set callback for receives on this UDP PCB (Protocol Control Block) */
-//  udp_recv(upcb, rrq_recv_callback, args);
-//  Timeoutupcb =upcb;//记录下当前建立用于传输的udp控制块准备超时释放用
-//  
-//  /* initiate the transaction by sending the first block of data
-//   * further blocks will be sent when ACKs are received
-//   *   - the receive callbacks need to get the proper state    */
-//  tftptimeoutEnable=1;//开启TFTP超时定时器
-//  tftp_send_next_block(upcb, args, to, to_port);
+  /* set callback for receives on this UDP PCB (Protocol Control Block) */
+  udp_recv(upcb, rrq_recv_callback, args);
+  Timeoutupcb =upcb;//记录下当前建立用于传输的udp控制块准备超时释放用
+  
+  /* initiate the transaction by sending the first block of data
+   * further blocks will be sent when ACKs are received
+   *   - the receive callbacks need to get the proper state    */
+  tftptimeoutEnable=1;//开启TFTP超时定时器
+  tftp_send_next_block(upcb, args, to, to_port);
 
-//  return 1;
+  return 1;
 }
 
 void wrq_recv_callback(void *_args, struct udp_pcb *upcb, struct pbuf *pkt_buf, struct ip_addr *addr, u16_t port)

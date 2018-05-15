@@ -21,11 +21,19 @@ const char http_record_head[] =
 	<div style=\"background-color:#FFFFFF;\"> \
 		<div align=\"center\" style=\"background-color:#0066CC;color:#fff;margin-top:30px; \"> \
 			<h3> \
-				<span>历史清分记录</span> \
+				<span>广州畅阳电子科技有限公司</span> \
+			</h3> \
+			<h3> \
+				<span>硬币清分机历史清分记录</span> \
 			</h3> \
 		</div> \
+		<div align=\"center\" style = \"margin-bottom:10px;\"> \
+			<a href=\"/record.txt\"> \
+				<button>导出TXT格式</button> \
+			</a> \
+		</div> \
 		<div align=\"center\"> \
-			<table border=\"1\" cellpadding=\"5\"> \
+			<table border=\"1\" cellpadding=\"5\" style=\"background-color:#0066CC;color:#fff;\"> \
 				<tbody> \
 					<tr> \
 					  <td align=\"center\" width=\"50\">索引值</td> \
@@ -41,9 +49,9 @@ const char http_record_head[] =
 					  <td align=\"center\" width=\"80\">异币数</td> \
 					</tr>";
 
-char http_html[8192];
+char http_html[HTTP_BUF_SIZE];
 const char http_record_tail[] = 
-"</tbody> \
+			"</tbody> \
 			</table> \
 			<a href=\"/prepage\"> \
 				<button>上一页</button> \
@@ -60,7 +68,7 @@ const char http_record_tail[] =
 	</body> \
 </html>";
 
-char http_data_temp[7*1024];
+char http_data_temp[HTTP_BUF_SIZE-1024];
 char *str_p = http_data_temp;
 char str_temp[256];
 
@@ -162,16 +170,8 @@ static err_t http_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
 
 void fill_http_data (s_db_item_info * db_item_info_temp)
 {		
-	S8 str_db[20];	
-	sprintf(str_db,"20%02x-%02x-%02x %02x:%02x:%02x",
-	db_item_info_temp->time[0],
-	db_item_info_temp->time[1],
-	db_item_info_temp->time[2],
-	db_item_info_temp->time[3],
-	db_item_info_temp->time[4],
-	db_item_info_temp->time[5]);   //read time
 	HTTP_INSERT ("<tr><td align=\"center\" width=\"50\">%d</td>", db_item_info_temp->index+1);
-	HTTP_INSERT ("<td align=\"center\" width=\"180\">%s</td>", str_db);
+	HTTP_INSERT ("<td align=\"center\" width=\"180\">%s</td>", db_item_info_temp->time);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1yuan);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5jiao);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao);
@@ -183,6 +183,76 @@ void fill_http_data (s_db_item_info * db_item_info_temp)
 																((db_item_info_temp->total_money%100)%10));
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->total_good);
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->total_ng);
+}
+
+void fill_http_txt_data (s_db_item_info * db_item_info_temp)
+{
+	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT("%5d", db_item_info_temp->index+1);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT("   %s", db_item_info_temp->time);
+	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT("     %6d", db_item_info_temp->m_1yuan);
+	HTTP_INSERT("     %6d", db_item_info_temp->m_5jiao);
+	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao);
+	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao_big);
+	HTTP_INSERT("     %6d", db_item_info_temp->m_10yuan);
+	HTTP_INSERT("     %6d", db_item_info_temp->m_5yuan);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT("     %6d.%d%d", (db_item_info_temp->total_money/100),((db_item_info_temp->total_money%100)/10),((db_item_info_temp->total_money%100)%10));
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT("     %6d", db_item_info_temp->total_good);
+	HTTP_INSERT("     %6d", db_item_info_temp->total_ng);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HTTP_INSERT ("\r\n");
+	//HTTP_INSERT ("\r\n|-----|-------------------|----|--------------|----------------|-----------|\r\n");
+}
+U8 page_buf[PAGE_BYTE_SIZE];
+void gen_http_txt (void)
+{
+	U8 r_code;
+	uint16_t i,j;
+	uint16_t record_num = para_set_value.data.db_total_item_num;
+	uint16_t record_id = 0;
+	s_db_item_info * db_item_info_temp;
+	s_db_item_block * db_item_block_temp;
+	if (record_num > 0){
+		i = 0;
+		HTTP_START();
+		HTTP_INSERT ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
+		HTTP_INSERT ("                                                         硬币清分机历史清分记录\r\n\r\n");
+		//HTTP_INSERT ("|-----|-------------------|------|--------------|----------------|-----------|\r\n");
+		HTTP_INSERT (" 索引              清分时间      1元(枚)    5角(枚)    1角(枚)  大1角(枚)   10元(枚)    5元(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
+		//HTTP_INSERT ("|-----|-------------------|------|--------------|----------------|-----------|\r\n");
+		while (record_id < record_num){
+			cy_print ("---------------------------------------------------------------------------------------\n");
+			cy_print ("Display pre page data, db_total_item_num = %d\n", para_set_value.data.db_total_item_num);
+			cy_print("Block = %d page = %d addr = %d db_id = %d item_index = %d\n",
+				YQNDHISTORY_DB_ID_PAGE_ADDR / BLOCK_BYTE_SIZE,
+				(YQNDHISTORY_DB_ID_PAGE_ADDR - YQNDHISTORYBLOCK),
+				YQNDHISTORY_DB_ID_PAGE_ADDR,
+				record_id+1,
+				record_id % PAGE_ITEM_NUM_SIZE);
+			//r_code = Nand_ReadPage(HISTORY_START_BLOCK_NUM, HISTORY_START_PAGE_NUM + (record_id * ITEM_SIZE / PAGE_BYTE_SIZE), yqnddata);
+			r_code = Nand_ReadPage(HISTORY_START_BLOCK_NUM, HISTORY_START_PAGE_NUM + (record_id * ITEM_SIZE / PAGE_BYTE_SIZE), page_buf);
+			if (r_code == 0){
+				cy_println ("record_id = %d, Read Nand Page %d OK,", record_id, record_id/PAGE_ITEM_NUM_SIZE);
+				j = 0;
+				db_item_block_temp = (s_db_item_block *)page_buf;
+				while ((i < record_num) && (j < 32)){
+					db_item_info_temp = (s_db_item_info *)&(db_item_block_temp->item_info_array[j % PAGE_ITEM_NUM_SIZE]);
+					fill_http_txt_data (db_item_info_temp);
+					j++;
+					i++;
+				}
+			}else{
+				cy_println ("Nand Error");
+				HTTP_INSERT ("Nand Error");
+			}
+			record_id += PAGE_ITEM_NUM_SIZE;
+		}
+		HTTP_FIN();
+	}
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -242,6 +312,22 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
 			HTTP_END();
 		}
 		yqsql_exec(DBDISPLAYBACK);
+		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
+		http_write(pcb, hs);
+	}else if (strncmp((const char *)pBuffer, "GET /record.txt", 15) == 0) {
+		pbuf_free(p);
+		/* Send the HTML header
+		* subtract 1 from the size, since we dont send the \0 in the string
+		* NETCONN_NOCOPY: our data is const static, so no need to copy it
+		*/
+		hs->pbuffer = (uint8_t *)http_html;
+		if (para_set_value.data.db_total_item_num == 0){
+			HTTP_START();
+				HTTP_INSERT ("暂无清分记录\r\n");
+			HTTP_FIN();
+		}else{
+			gen_http_txt();
+		}
 		hs->left =  strlen (http_html) - 1;//sizeof(http_html)-1;
 		http_write(pcb, hs);
 	}else if (strncmp((const char *)pBuffer, "GET /", 5) == 0) {

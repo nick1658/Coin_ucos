@@ -373,13 +373,18 @@ void yqsql_exec(uint16_t chos)
 					db_item_info_temp->time[5] = touchnum[12];
 					touch_flag = 0;
 					break;
-				}
-				else
-				{
+				}else{
 					touch_flag = 0;
 				}
 			}
-
+		sprintf(db_item_info_temp->time,"20%02x-%02x-%02x %02x:%02x:%02x",
+						db_item_info_temp->time[0],
+						db_item_info_temp->time[1],
+						db_item_info_temp->time[2],
+						db_item_info_temp->time[3],
+						db_item_info_temp->time[4],
+						db_item_info_temp->time[5]);   //read time
+			
 			db_item_info_temp->ID = para_set_value.data.coin_full_rej_pos;
 			//db_item_info_temp->money = processed_coin_info.total_money;
 			//db_item_info_temp->total_good = processed_coin_info.total_good;
@@ -495,23 +500,8 @@ void yqsql_exec(uint16_t chos)
 						sprintf(str_db,"%05d",temp);
 						cy_print("|%s", str_db);
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x:%02x",
-							db_item_info_temp->time[0],
-							db_item_info_temp->time[1],
-							db_item_info_temp->time[2],
-							db_item_info_temp->time[3],
-							db_item_info_temp->time[4],
-							db_item_info_temp->time[5]);   //read time
-
-						cy_print("|%s", str_db);
-						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x",
-							db_item_info_temp->time[0],
-							db_item_info_temp->time[1],
-							db_item_info_temp->time[2],
-							db_item_info_temp->time[3],
-							db_item_info_temp->time[4],
-							db_item_info_temp->time[5]);   //read time
-						dgus_chinese(str_addr[num][0],str_db,strlen(str_db));	 // dgus  chinese  time
+						cy_print("|%s", db_item_info_temp->time);
+						dgus_chinese(str_addr[num][0],db_item_info_temp->time,strlen(db_item_info_temp->time));	 // dgus  chinese  time
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp = db_item_info_temp->ID;
 						sprintf(str_db,"%04d",temp);
@@ -643,23 +633,8 @@ void yqsql_exec(uint16_t chos)
 						sprintf(str_db,"%05d",temp);
 						cy_print("|%s", str_db);
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x:%02x",
-							db_item_info_temp->time[0],
-							db_item_info_temp->time[1],
-							db_item_info_temp->time[2],
-							db_item_info_temp->time[3],
-							db_item_info_temp->time[4],
-							db_item_info_temp->time[5]);   //read time
-
-						cy_print("|%s", str_db);
-						sprintf(str_db,"20%02x-%02x-%02x %02x:%02x",
-							db_item_info_temp->time[0],
-							db_item_info_temp->time[1],
-							db_item_info_temp->time[2],
-							db_item_info_temp->time[3],
-							db_item_info_temp->time[4],
-							db_item_info_temp->time[5]);   //read time
-						dgus_chinese(str_addr[num][0],str_db,strlen(str_db));	 // dgus  chinese  time
+						cy_print("|%s", db_item_info_temp->time);
+						dgus_chinese(str_addr[num][0],db_item_info_temp->time,strlen(db_item_info_temp->time));	 // dgus  chinese  time
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						temp = db_item_info_temp->ID;
 						sprintf(str_db,"%04d",temp);
@@ -719,6 +694,59 @@ void yqsql_exec(uint16_t chos)
 			break;
 		}
 	}
+}
 
+void fill_txt_data (s_db_item_info * db_item_info_temp)
+{
+	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print("%5d", db_item_info_temp->index+1);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print("   %s", db_item_info_temp->time);
+	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print("     %6d", db_item_info_temp->m_1yuan);
+	cy_print("     %6d", db_item_info_temp->m_5jiao);
+	cy_print("     %6d", db_item_info_temp->m_1jiao);
+	cy_print("     %6d", db_item_info_temp->m_1jiao_big);
+	cy_print("     %6d", db_item_info_temp->m_10yuan);
+	cy_print("     %6d", db_item_info_temp->m_5yuan);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print("     %6d.%d%d", (db_item_info_temp->total_money/100),((db_item_info_temp->total_money%100)/10),((db_item_info_temp->total_money%100)%10));
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print("     %6d", db_item_info_temp->total_good);
+	cy_print("     %6d", db_item_info_temp->total_ng);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	cy_print ("\r\n");
+	//HTTP_INSERT ("\r\n|-----|-------------------|----|--------------|----------------|-----------|\r\n");
+}
+void export_record (void)
+{	
+	U8 r_code;
+	uint16_t i,j;
+	uint16_t record_num = para_set_value.data.db_total_item_num;
+	uint16_t record_id = 0;
+	s_db_item_info * db_item_info_temp;
+	s_db_item_block * db_item_block_temp;
+	if (record_num > 0){
+		i = 0;
+		cy_print ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
+		cy_print ("                                                         硬币清分机历史清分记录\r\n\r\n");
+		cy_print (" 索引              清分时间      1元(枚)    5角(枚)    1角(枚)  大1角(枚)   10元(枚)    5元(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
+		while (record_id < record_num){
+			r_code = Nand_ReadPage(HISTORY_START_BLOCK_NUM, HISTORY_START_PAGE_NUM + (record_id * ITEM_SIZE / PAGE_BYTE_SIZE), page_buf);
+			if (r_code == 0){
+				j = 0;
+				db_item_block_temp = (s_db_item_block *)page_buf;
+				while ((i < record_num) && (j < 32)){
+					db_item_info_temp = (s_db_item_info *)&(db_item_block_temp->item_info_array[j % PAGE_ITEM_NUM_SIZE]);
+					fill_txt_data (db_item_info_temp);
+					j++;
+					i++;
+				}
+			}else{
+				cy_println ("Nand Error");
+			}
+			record_id += PAGE_ITEM_NUM_SIZE;
+		}
+	}
 }
 
