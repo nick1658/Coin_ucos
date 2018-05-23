@@ -53,6 +53,25 @@ void prepare_coin_cmp_value (void)
 	coin_env.AD_min_index[0] = 0;
 	coin_env.AD_min_index[1] = 0;
 	coin_env.AD_min_index[2] = 0;
+	
+	if( ( coin_value0 > coin_maxvalue0)){     //0
+		coin_maxvalue0 = coin_value0;
+	}
+	if( ( coin_value0 < coin_minvalue0)){
+		coin_minvalue0 = coin_value0;
+	}
+	if( ( coin_value1 > coin_maxvalue1)) {  //  1
+		coin_maxvalue1 = coin_value1;
+	}
+	if( ( coin_value1 < coin_minvalue1)){
+		coin_minvalue1 = coin_value1;
+	}
+	if( ( coin_value2 > coin_maxvalue2)) {  //  2
+		coin_maxvalue2 = coin_value2;
+	}
+	if( ( coin_value2 < coin_minvalue2)){
+		coin_minvalue2 = coin_value2;
+	}
 }
 
 int16_t is_good_coin (void)
@@ -166,25 +185,15 @@ void cy_coinlearn(void)
 		processed_coin_info.coinnumber++;
 		coinlearnnumber++;
 		prepare_coin_cmp_value ();
-		if( ( coin_value0 > coin_maxvalue0)){     //0
-			coin_maxvalue0 = coin_value0;
-		}
-		if( ( coin_value0 < coin_minvalue0)){
-			coin_minvalue0 = coin_value0;
-		}
-		if( ( coin_value1 > coin_maxvalue1)) {  //  1
-			coin_maxvalue1 = coin_value1;
-		}
-		if( ( coin_value1 < coin_minvalue1)){
-			coin_minvalue1 = coin_value1;
-		}
-		if( ( coin_value2 > coin_maxvalue2)) {  //  2
-			coin_maxvalue2 = coin_value2;
-		}
-		if( ( coin_value2 < coin_minvalue2)){
-			coin_minvalue2 = coin_value2;
-		}
 		sys_env.coin_over = 1;
+		GOOD_value_buf[good_value_index].AD0 = coin_value0;
+		GOOD_value_buf[good_value_index].AD1 = coin_value1;
+		GOOD_value_buf[good_value_index].AD2 = coin_value2;
+		GOOD_value_buf[good_value_index].use_index = coin_env.cmp_use_index;
+		GOOD_value_buf[good_value_index].ad_index = coin_env.ad_index;
+		good_value_index++;
+		if (good_value_index >= GOOD_BUF_LENGTH)
+			good_value_index = 0;
 	}
 }
 /*************************

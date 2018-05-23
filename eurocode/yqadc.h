@@ -81,7 +81,8 @@ typedef struct
 
 #define WAVE_DOWN_VALUE 50
 #define WAVE_UP_VALUE 50
-#define WAVE_COIN_TWO_DOWN_VALUE 30
+#define WAVE_COIN_TWO_UP_VALUE 15
+#define WAVE_COIN_TWO_DOWN_VALUE 20
 
 
 //三路 基准值 标准值 设置   此为写入到1元值里去作基本参考的值 所有币的初始范围

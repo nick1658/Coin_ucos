@@ -258,7 +258,7 @@ void cy_ad0_valueget(void)
 				ad0_mintemp = ad0_ad_value;	//交换最小值
 				coin_env.AD_min_index[0] = detect_sample_data_buf_index;
 				wave0up_flagone = 0;
-			}else if((ad0_ad_value > ad0_mintemp )&&((ad0_ad_value - ad0_mintemp ) > WAVE_UP_VALUE)){    //波形    回升
+			}else if((ad0_ad_value > ad0_mintemp )&&((ad0_ad_value - ad0_mintemp ) > WAVE_COIN_TWO_UP_VALUE)){    //波形    回升
 				wave0up_flagone++;
 			}else{
 				wave0up_flagone = 0;

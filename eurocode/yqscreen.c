@@ -179,7 +179,7 @@ struct disp_count_buf disp_buf;
 void disp_allcount(void)     //pre counting ,detail list
 {
 #if OS_CRITICAL_METHOD == 3u                     /* Allocate storage for CPU status register           */
-    OS_CPU_SR  cpu_sr = 0u;
+//    OS_CPU_SR  cpu_sr = 0u;
 #endif
 	if( coinchoose == CN0){
     //OS_ENTER_CRITICAL();
@@ -503,6 +503,13 @@ void counter_clear (void) //
 	processed_coin_info.coinnumber = 0;
 	good_value_index = 0;
 	ng_value_index = 0;
+	coin_maxvalue0 = 0;
+	coin_minvalue0 = 1023;
+	coin_maxvalue1 = 0;
+	coin_minvalue1 = 1023;
+	coin_maxvalue2 = 0;
+	coin_minvalue2 = 1023;
+	coinlearnnumber = 0;
 	disp_allcount();
 	disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//when counting pre ze zs foege data variable
 }
@@ -531,6 +538,8 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	case ADDR_LRUN:  //地址ADDR_LRUN 0X3C  按键返回值判断 特征学习 start
 		if( (value == 0x01)){//A5 5A 06 83 00 3C 01 00 01	特征学习 start
 			if (sys_env.system_delay == 0){
+				good_value_index = 0;
+				ng_value_index = 0;
 				prepic_num = TZJM;
 				coin_maxvalue0 = 0;
 				coin_minvalue0 = 1023;
@@ -654,6 +663,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			if (coinlearnnumber == 0){
 				cy_println ("coin learnnumber = 0, data will be clear");
 				run_command ("set save-f");
+				run_command ("version");
 			}else{
 				prepic_num = TZJM;
 				adstd_offset ();
@@ -661,6 +671,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				if (i == 0){
 					sprintf (str_buf, "特征值保存完毕！本次学习硬币数量:%d枚", coinlearnnumber);
 					run_command ("set save");
+					run_command ("version");
 				}else{
 					switch (i){
 						case 1:
@@ -724,6 +735,9 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 //////////////////////////////
 	case ADDR_CNTB1:  //地址ADDR_CNTB1 0X3B  图标变量
 		sys_env.coin_index = (int)touchnum[8];
+		if (sys_env.coin_index == 6){
+			sys_env.coin_index = 5;
+		}
 		dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//make sure the tubiao is the return one
 		disp_preselflearn(pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1,

@@ -750,3 +750,25 @@ void export_record (void)
 	}
 }
 
+void export_detect_data (void)
+{	
+	uint32_t	i;
+	cy_println ("            广州畅阳电子科技有限公司");
+	cy_println ("	           硬币清分机检测数据");
+	cy_println("---------------------------------------------------------------------");
+	cy_println ("              高频        中频          低频");
+	for (i = 0; i < good_value_index; i++)
+	{
+		cy_println ("第%4d枚      %4d        %4d          %4d", i + 1, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);
+	}
+	cy_println("---------------------------------------------------------------------");
+	for (i = 0; i < ng_value_index; i++)
+	{
+		cy_println ("第%4d枚      %4d        %4d          %4d", i + 1, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);
+	}
+	cy_println("---------------------------------------------------------------------");
+	cy_println ("最大值        %4d        %4d          %4d",coin_maxvalue0, coin_maxvalue1, coin_maxvalue2);
+	cy_println ("最小值        %4d        %4d          %4d",coin_minvalue0, coin_minvalue1, coin_minvalue2);
+}
+
+

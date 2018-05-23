@@ -365,8 +365,8 @@ e)
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=ARM926EJ-S --apcs=inter
 work --depend=.\objects\s3c2416.d -o.\objects\s3c2416.o -IC:\Keil_v5\ARM\RV31\I
-NC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\Samsung --predefine="__U
-VISION_VERSION SETA 525" --list=.\s3c2416.lst ..\System\s3c2416.s
+NC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\Inc\Samsung --predefine="__U
+VISION_VERSION SETA 523" --list=.\s3c2416.lst ..\System\s3c2416.s
 
 
 

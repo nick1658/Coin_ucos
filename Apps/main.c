@@ -60,12 +60,12 @@ void coin_init (void)
 	prepic_prenum = 0;     // 用于记录 报错前的界面
 	db_id = 0;   //历史数据 表格已经显示 数
 
-	coin_maxvalue0 = AD0STDSET;
-	coin_minvalue0 = AD0STDSET;
-	coin_maxvalue1 = AD1STDSET;
-	coin_minvalue1 = AD1STDSET;
-	coin_maxvalue2 = AD2STDSET;
-	coin_minvalue2 = AD2STDSET;
+	coin_maxvalue0 = 0;
+	coin_minvalue0 = 1023;
+	coin_maxvalue1 = 0;
+	coin_minvalue1 = 1023;
+	coin_maxvalue2 = 0;
+	coin_minvalue2 = 1023;
 
 	std_ad0 = AD0STDSET;
 	std_ad1 = AD1STDSET;
