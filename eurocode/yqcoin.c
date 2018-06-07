@@ -118,7 +118,9 @@ void cy_precoincount(void)
 		processed_coin_info.coinnumber++;
 		prepare_coin_cmp_value ();
 		good_coin = is_good_coin ();
-		if (sys_env.stop_flag != 1){//如果不在反转状态
+		if ((sys_env.stop_flag == 1)){
+			sys_env.stop_flag = 4;
+		}else if ((sys_env.stop_flag != 3)){//如果不在反转状态
 			sys_env.stop_flag = 0;
 			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 		}

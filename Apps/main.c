@@ -390,19 +390,35 @@ void TaskStart(void *pdata)
 					disp_allcount ();
 				}
 				if (sys_env.stop_time == 0){
-					sys_env.stop_flag++;
-					if (sys_env.stop_flag == 1){
-						STORAGE_DIR_N();//反转
-						sys_env.stop_time = 50;//反转一秒
-					}else if (sys_env.stop_flag == 2){
-						STORAGE_DIR_P();//正转
-						sys_env.stop_time = STOP_TIME;//无币停机时间10秒
-					}else if (sys_env.stop_flag == 3){
-						STORAGE_MOTOR_STOPRUN();	//  转盘电机
-						sys_env.stop_time = 100;//STOP_TIME;//无币停机时间2秒
-					}else if (sys_env.stop_flag == 4){
-						comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
-						sys_env.workstep =0;
+					switch (sys_env.stop_flag){
+						case 0:
+							STORAGE_DIR_N();//反转
+							sys_env.stop_time = 50;//反转一秒
+							sys_env.stop_flag = 1;
+							break;
+						case 1:
+							STORAGE_DIR_P();//正转
+							sys_env.stop_time = STOP_TIME;//无币停机时间10秒
+							sys_env.stop_flag = 2;
+							break;
+						case 2:
+							STORAGE_MOTOR_STOPRUN();	//  转盘电机
+							sys_env.stop_time = 100;//STOP_TIME;//无币停机时间2秒
+							sys_env.stop_flag = 3;
+							break;
+						case 3:
+							comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
+							sys_env.workstep =0;
+							sys_env.stop_flag = 6;
+							break;
+						case 4:
+							STORAGE_DIR_P();//正转
+							sys_env.stop_time = STOP_TIME;//无币停机时间10秒
+							sys_env.stop_flag = 0;
+							break;
+						case 5:
+							break;
+						default:break;
 					}
 				}
 				if (sys_env.print_wave_to_pc == 1){

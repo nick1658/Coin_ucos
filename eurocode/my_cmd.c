@@ -450,7 +450,8 @@ int get_hex_data (char * buf)
 						poll_data ();
 						break;
 					case 0x0007://导出数据
-						export_detect_data ();
+						//export_detect_data ();
+						export_record();
 						break;
 					case 0x0008://导出数据
 						cy_println("EXPORT OK");
