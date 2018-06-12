@@ -39,11 +39,11 @@ const char http_record_head[] =
 					  <td align=\"center\" width=\"50\">索引值</td> \
 					  <td align=\"center\" width=\"130\">清分时间</td> \
 					  <td align=\"center\" width=\"80\">1元</td> \
-					  <td align=\"center\" width=\"80\">5角</td> \
-					  <td align=\"center\" width=\"80\">1角</td> \
+					  <td align=\"center\" width=\"80\">5角铜</td> \
+					  <td align=\"center\" width=\"80\">5角钢</td> \
 					  <td align=\"center\" width=\"80\">大1角</td> \
-					  <td align=\"center\" width=\"80\">10元</td> \
-					  <td align=\"center\" width=\"80\">5元</td> \
+					  <td align=\"center\" width=\"80\">1角钢</td> \
+					  <td align=\"center\" width=\"80\">1角铝</td> \
 					  <td align=\"center\" width=\"80\">总金额</td> \
 					  <td align=\"center\" width=\"80\">总枚数</td> \
 					  <td align=\"center\" width=\"80\">异币数</td> \
@@ -170,14 +170,18 @@ static err_t http_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
 
 void fill_http_data (s_db_item_info * db_item_info_temp)
 {		
+	int i;
 	HTTP_INSERT ("<tr><td align=\"center\" width=\"50\">%d</td>", db_item_info_temp->index+1);
 	HTTP_INSERT ("<td align=\"center\" width=\"180\">%s</td>", db_item_info_temp->time);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1yuan);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5jiao);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao_big);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_10yuan);
-	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5yuan);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1yuan);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5jiao);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_1jiao_big);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_10yuan);
+//	HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->m_5yuan);	
+	for (i = 0; i < NORMAL_COIN_TYPE_NUM; i++){
+		HTTP_INSERT("<td align=\"center\" width=\"80\">%d (枚)</td>", db_item_info_temp->coin_ctr[i]);
+	}
 	HTTP_INSERT("<td align=\"center\" width=\"80\">%d.%d%d (元)</td>", (db_item_info_temp->total_money/100),
 																((db_item_info_temp->total_money%100)/10),
 																((db_item_info_temp->total_money%100)%10));
@@ -187,17 +191,21 @@ void fill_http_data (s_db_item_info * db_item_info_temp)
 
 void fill_http_txt_data (s_db_item_info * db_item_info_temp)
 {
+	int i;
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HTTP_INSERT("%5d", db_item_info_temp->index+1);
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HTTP_INSERT("   %s", db_item_info_temp->time);
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	HTTP_INSERT("     %6d", db_item_info_temp->m_1yuan);
-	HTTP_INSERT("     %6d", db_item_info_temp->m_5jiao);
-	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao);
-	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao_big);
-	HTTP_INSERT("     %6d", db_item_info_temp->m_10yuan);
-	HTTP_INSERT("     %6d", db_item_info_temp->m_5yuan);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_1yuan);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_5jiao);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_1jiao_big);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_10yuan);
+//	HTTP_INSERT("     %6d", db_item_info_temp->m_5yuan);
+	for (i = 0; i < NORMAL_COIN_TYPE_NUM; i++){
+		HTTP_INSERT("     %6d", db_item_info_temp->coin_ctr[i]);
+	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HTTP_INSERT("     %6d.%d%d", (db_item_info_temp->total_money/100),((db_item_info_temp->total_money%100)/10),((db_item_info_temp->total_money%100)%10));
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,7 +230,8 @@ void gen_http_txt (void)
 		HTTP_INSERT ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
 		HTTP_INSERT ("                                                         硬币清分机历史清分记录\r\n\r\n");
 		//HTTP_INSERT ("|-----|-------------------|------|--------------|----------------|-----------|\r\n");
-		HTTP_INSERT (" 索引              清分时间      1元(枚)    5角(枚)    1角(枚)  大1角(枚)   10元(枚)    5元(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
+		//HTTP_INSERT (" 索引              清分时间      1元(枚)    5角(枚)    1角(枚)  大1角(枚)   10元(枚)    5元(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
+		HTTP_INSERT (" 索引              清分时间      1元(枚)  5角铜(枚)  5角钢(枚)  大1角(枚)  1角钢(枚)  1角铝(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
 		//HTTP_INSERT ("|-----|-------------------|------|--------------|----------------|-----------|\r\n");
 		while (record_id < record_num){
 			cy_print ("---------------------------------------------------------------------------------------\n");

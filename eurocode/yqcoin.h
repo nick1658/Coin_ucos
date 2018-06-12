@@ -16,6 +16,7 @@ typedef struct
 	uint32_t total_coin_old;
 	uint32_t coinnumber;
 	int16_t ad2_averaged_value;
+	int16_t coin_ctr[COIN_TYPE_NUM];
 }s_processed_coin_info;
 
 extern s_processed_coin_info processed_coin_info;

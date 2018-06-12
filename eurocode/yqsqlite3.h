@@ -7,6 +7,16 @@
 #define APP_NAND_ADDR 10*64*2048 //应用程序存放地址 为Block 10 Page 0处
 #define APP_NAND_SIZE 256*1024 //应用程序大小暂定为256K (共占2个BLOCK)
 
+#define COUNTRY0_COIN_PRE_VALUE_START_BLOCK_NUM PUBULIC_DATA_START_BLOCK_NUM
+#define COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM (2 + PUBULIC_DATA_START_PAGE_NUM)
+#define COUNTRY0_COIN_PRE_VALUE_START_ADDR (DATA_START_BLOCK + COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM * 2048)
+#define COIN_TYPE_NUM 11
+#define NORMAL_COIN_TYPE_NUM 6
+#define COUNTRY_NUM 16
+#define COIN_NUM 8
+
+#define MAGIC_NUM 0xA55A
+
 
 #define DBINSERT 1
 #define DBDELETE 2
@@ -68,15 +78,16 @@ typedef struct
 	char  time[20];
 	uint16_t	index;
 	uint16_t ID;
-	uint16_t m_1yuan;
-	uint16_t m_5jiao;
-	uint16_t m_1jiao;
-	uint16_t m_1jiao_big;
-	uint16_t m_5fen;
-	uint16_t m_2fen;
-	uint16_t m_1fen;
-	uint16_t m_10yuan;
-	uint16_t m_5yuan;
+//	uint16_t m_1yuan;
+//	uint16_t m_5jiao;
+//	uint16_t m_1jiao;
+//	uint16_t m_1jiao_big;
+//	uint16_t m_5fen;
+//	uint16_t m_2fen;
+//	uint16_t m_1fen;
+//	uint16_t m_10yuan;
+//	uint16_t m_5yuan;
+	uint16_t coin_ctr[COIN_TYPE_NUM];
 	uint16_t total_good;
 	uint16_t total_ng;
 	uint16_t total_money;
@@ -97,15 +108,6 @@ typedef struct
 	s_db_item_info item_info_array[PAGE_BYTE_SIZE / ITEM_SIZE];
 }s_db_item_block;
 
-
-#define COUNTRY0_COIN_PRE_VALUE_START_BLOCK_NUM PUBULIC_DATA_START_BLOCK_NUM
-#define COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM (2 + PUBULIC_DATA_START_PAGE_NUM)
-#define COUNTRY0_COIN_PRE_VALUE_START_ADDR (DATA_START_BLOCK + COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM * 2048)
-#define COIN_TYPE_NUM 11
-#define COUNTRY_NUM 16
-#define COIN_NUM 8
-
-#define MAGIC_NUM 0xA55A
 
 typedef struct
 {

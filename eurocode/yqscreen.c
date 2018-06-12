@@ -495,6 +495,7 @@ void counter_clear (void) //
 		*pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_cur = 0; //
 		*pre_value.country[COUNTRY_ID].coin[i].data.p_coinval = 0;
 		coin_env.full_stack_num = 0;
+		processed_coin_info.coin_ctr[i] =0;
 	}
 	processed_coin_info.total_money =0;
 	processed_coin_info.total_coin = 0;
@@ -651,11 +652,11 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			sys_env.workstep = 0;	// 等待 触摸
 		}else if( (value == 0x05)){	//back value 04 混计数界面 xiangdan delete
 			// A5 5A 06 83 00 08 01 00 05  混计数界面 计数 清零
-				para_set_value.data.total_money += processed_coin_info.total_money;
-				para_set_value.data.total_good += processed_coin_info.total_good;
-				para_set_value.data.total_ng += processed_coin_info.total_ng;
+			para_set_value.data.total_money += processed_coin_info.total_money;
+			para_set_value.data.total_good += processed_coin_info.total_good;
+			para_set_value.data.total_ng += processed_coin_info.total_ng;
 			//if (processed_coin_info.total_coin > 0)
-				{
+			{
 				yqsql_exec(DBINSERT);
 			}
 			counter_clear ();

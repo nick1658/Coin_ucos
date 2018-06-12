@@ -309,6 +309,7 @@ void ini_picaddr(void) //币种切换时的 初始化地址函数
 		count_coin_temp[pi].pre_count_cur = 0;
 		count_coin_temp[pi].full_flag = 0;
 		count_coin_temp[pi].coinval = 0;
+		processed_coin_info.coin_ctr[pi] = 0;
 	}
 	processed_coin_info.total_good = 0;
 	processed_coin_info.total_money = 0;
@@ -386,19 +387,19 @@ void yqsql_exec(uint16_t chos)
 						db_item_info_temp->time[5]);   //read time
 			
 			db_item_info_temp->ID = para_set_value.data.coin_full_rej_pos;
-			//db_item_info_temp->money = processed_coin_info.total_money;
-			//db_item_info_temp->total_good = processed_coin_info.total_good;
-			//db_item_info_temp->total_ng = processed_coin_info.total_ng;
-			db_item_info_temp->m_10yuan		 = disp_buf.m_10yuan;
-			db_item_info_temp->m_1yuan		 = disp_buf.m_1yuan;
-			db_item_info_temp->m_5jiao		 = disp_buf.m_5jiao;
-			db_item_info_temp->m_1jiao		 = disp_buf.m_1jiao;
-			db_item_info_temp->m_1jiao_big = disp_buf.m_1jiao_big;
-			db_item_info_temp->m_5fen			 = disp_buf.m_5fen;
-			db_item_info_temp->m_2fen			 = disp_buf.m_2fen;
-			db_item_info_temp->m_1fen			 = disp_buf.m_1fen;
-			db_item_info_temp->m_10yuan    = disp_buf.m_10yuan;
-			db_item_info_temp->m_5yuan     = disp_buf.m_5yuan;
+//			db_item_info_temp->m_10yuan		 = disp_buf.m_10yuan;
+//			db_item_info_temp->m_1yuan		 = disp_buf.m_1yuan;
+//			db_item_info_temp->m_5jiao		 = disp_buf.m_5jiao;
+//			db_item_info_temp->m_1jiao		 = disp_buf.m_1jiao;
+//			db_item_info_temp->m_1jiao_big = disp_buf.m_1jiao_big;
+//			db_item_info_temp->m_5fen			 = disp_buf.m_5fen;
+//			db_item_info_temp->m_2fen			 = disp_buf.m_2fen;
+//			db_item_info_temp->m_1fen			 = disp_buf.m_1fen;
+//			db_item_info_temp->m_10yuan    = disp_buf.m_10yuan;
+//			db_item_info_temp->m_5yuan     = disp_buf.m_5yuan;
+			for (i = 0; i < NORMAL_COIN_TYPE_NUM; i++){
+				db_item_info_temp->coin_ctr[i] = processed_coin_info.coin_ctr[i];
+			}
 			db_item_info_temp->total_good  = disp_buf.total_good;
 			db_item_info_temp->total_ng    = disp_buf.total_ng;
 			db_item_info_temp->total_money = disp_buf.total_money;
@@ -698,17 +699,21 @@ void yqsql_exec(uint16_t chos)
 
 void fill_txt_data (s_db_item_info * db_item_info_temp)
 {
+	int i;
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	cy_print("%5d", db_item_info_temp->index+1);
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	cy_print("   %s", db_item_info_temp->time);
 	 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	cy_print("     %6d", db_item_info_temp->m_1yuan);
-	cy_print("     %6d", db_item_info_temp->m_5jiao);
-	cy_print("     %6d", db_item_info_temp->m_1jiao);
-	cy_print("     %6d", db_item_info_temp->m_1jiao_big);
-	cy_print("     %6d", db_item_info_temp->m_10yuan);
-	cy_print("     %6d", db_item_info_temp->m_5yuan);
+//	cy_print("     %6d", db_item_info_temp->m_1yuan);
+//	cy_print("     %6d", db_item_info_temp->m_5jiao);
+//	cy_print("     %6d", db_item_info_temp->m_1jiao);
+//	cy_print("     %6d", db_item_info_temp->m_1jiao_big);
+//	cy_print("     %6d", db_item_info_temp->m_10yuan);
+//	cy_print("     %6d", db_item_info_temp->m_5yuan);
+	for (i = 0; i < NORMAL_COIN_TYPE_NUM; i++){
+		cy_print("     %6d", db_item_info_temp->coin_ctr[i]);
+	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	cy_print("     %6d.%d%d", (db_item_info_temp->total_money/100),((db_item_info_temp->total_money%100)/10),((db_item_info_temp->total_money%100)%10));
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -730,7 +735,7 @@ void export_record (void)
 		i = 0;
 		cy_print ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
 		cy_print ("                                                         硬币清分机历史清分记录\r\n\r\n");
-		cy_print (" 索引              清分时间      1元(枚)    5角(枚)    1角(枚)  大1角(枚)   10元(枚)    5元(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
+		cy_print (" 索引              清分时间      1元(枚)  5角铜(枚)  5角钢(枚)  大1角(枚)  1角钢(枚)  1角铝(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
 		while (record_id < record_num){
 			r_code = Nand_ReadPage(HISTORY_START_BLOCK_NUM, HISTORY_START_PAGE_NUM + (record_id * ITEM_SIZE / PAGE_BYTE_SIZE), page_buf);
 			if (r_code == 0){
@@ -753,8 +758,8 @@ void export_record (void)
 void export_detect_data (void)
 {	
 	uint32_t	i;
-	cy_println ("            广州畅阳电子科技有限公司");
-	cy_println ("	           硬币清分机检测数据");
+	cy_println ("                 广州畅阳电子科技有限公司");
+	cy_println ("	            硬币清分机检测数据");
 	cy_println("---------------------------------------------------------------------");
 	cy_println ("              高频        中频          低频");
 	for (i = 0; i < good_value_index; i++)

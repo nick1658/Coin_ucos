@@ -450,11 +450,10 @@ int get_hex_data (char * buf)
 						poll_data ();
 						break;
 					case 0x0007://导出数据
-						//export_detect_data ();
-						export_record();
+						export_detect_data ();
 						break;
 					case 0x0008://导出数据
-						cy_println("EXPORT OK");
+						export_record();
 						break;
 					case 0xE001://清除报警
 						coin_clear_alarm ();

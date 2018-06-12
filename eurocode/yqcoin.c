@@ -141,6 +141,7 @@ void cy_precoincount(void)
 				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
 				processed_coin_info.total_good++;
+				processed_coin_info.coin_ctr[good_coin]++;
 				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
 			}else if((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 					  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)){//不接受此类硬币或者预置数已到
