@@ -242,6 +242,9 @@ void alertfuc(uint16_t errorflag) //报错
 		case ADSTDEEROR:
 			ALERT_MSG ("提示", "传感器异常，请检查传感器下面是否卡有硬币或者调整基准值，然后重试！");
 			break;
+		case READOUTDATA:
+			ALERT_MSG ("提示", "历史记录存储区满，请先导出历史记录，然后再清除记录！");
+			break;
 		case COUNT_FINISHED:
 			switch (coin_env.full_stack_num){
 				case 1:

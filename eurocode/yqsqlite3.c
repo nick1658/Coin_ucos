@@ -349,6 +349,7 @@ void yqsql_exec(uint16_t chos)
 			if(para_set_value.data.db_total_item_num >= (ITEM_SIZE*BLOCK_PAGE_SIZE))    //±£´æ2048Ìõ
 			{
 				SEND_ERROR(READOUTDATA);
+				break;
 			}
 
 
@@ -446,12 +447,7 @@ void yqsql_exec(uint16_t chos)
 
 			int32_t	db_id_temp = 0;
 
-				cy_println ("\ndb_id = %d", db_id);
-			if (db_id <= 0){
-				cmd ();
-				break;
-			}
-
+			cy_println ("\ndb_id = %d", db_id);
 			memset(str_db,' ',20);
 			for(num = 0; num < 6;  num++){
 				dgus_chinese(str_addr[num][0],str_db, strlen(str_db));	 // dgus  chinese  time
@@ -461,6 +457,11 @@ void yqsql_exec(uint16_t chos)
 				dgus_chinese(str_addr[num][3],str_db,8);	 // dgus  chinese  zs
 				dgus_chinese(str_addr[num][4],str_db,8);	 // dgus  chinese  fg
 			}
+			if (db_id <= 0){
+				cmd ();
+				break;
+			}
+
 
 			if ((db_id - 6) >= 0){
 				db_id -= 6;

@@ -655,7 +655,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			para_set_value.data.total_money += processed_coin_info.total_money;
 			para_set_value.data.total_good += processed_coin_info.total_good;
 			para_set_value.data.total_ng += processed_coin_info.total_ng;
-			//if (processed_coin_info.total_coin > 0)
+			if (processed_coin_info.total_coin > 0)
 			{
 				yqsql_exec(DBINSERT);
 			}
