@@ -540,6 +540,9 @@ int get_hex_data (char * buf)
 					case 57:
 						pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2 = para_value;
 						break;
+					case 64://æ‹ ’…Ë÷√
+						coin_env.inhibit_coin[sys_env.coin_index] = para_value;
+						break;
 					default:
 						break;
 				}
@@ -941,6 +944,7 @@ void refresh_data (void)
 	pc_print("%d,%d;",55, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1);
 	pc_print("%d,%d;",56, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2);
 	pc_print("%d,%d;",57, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
+	pc_print("%d,%d;",64, coin_env.inhibit_coin[sys_env.coin_index]);
 	disp_allcount_to_pc ();
 }
 

@@ -61,6 +61,7 @@ typedef struct
 	uint16_t coin_Q[COIN_Q_LEN];//硬币经过队列
 	uint16_t coin_Q_index;
 	uint16_t coin_Q_remain;
+	uint16_t inhibit_coin[COIN_TYPE_NUM]; //拒收硬币设置位
 }s_coin_env;
 
 //各函数申明    步骤号  参数变量定义

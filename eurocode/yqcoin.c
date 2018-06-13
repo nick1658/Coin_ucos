@@ -124,8 +124,10 @@ void cy_precoincount(void)
 			sys_env.stop_flag = 0;
 			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 		}
-		if ((good_coin < 0) ||  ((para_set_value.data.coin_full_rej_pos == 1) &&
-								 ((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
+		if ((good_coin < 0) || 
+									(coin_env.inhibit_coin[good_coin] == 1) ||  
+									((para_set_value.data.coin_full_rej_pos == 1) &&
+									((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
 			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
 				coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1;
