@@ -411,7 +411,7 @@ void TaskStart(void *pdata)
 							sys_env.workstep =0;
 							sys_env.stop_flag = 6;
 							break;
-						case 4:
+						case 4://等待反转完成
 							STORAGE_DIR_P();//正转
 							sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 							sys_env.stop_flag = 0;

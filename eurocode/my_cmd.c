@@ -47,7 +47,7 @@ void system_env_init (void)
 	sys_env.country_index = coinchoose;
 	sys_env.save_ng_data = 1;
 	sys_env.save_good_data = 1;
-	sys_env.uart0_cmd_flag = 0xA5;//console Î´¼¤»î
+	//sys_env.uart0_cmd_flag = 0xA5;//console Î´¼¤»î
 	sys_env.password = 1573;
 }
 

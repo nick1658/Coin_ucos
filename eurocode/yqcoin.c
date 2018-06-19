@@ -77,7 +77,8 @@ void prepare_coin_cmp_value (void)
 int16_t is_good_coin (void)
 {
 	//鉴伪这里时间上还可以优化一下
-	int16_t i;
+	int16_t i, good_coin;
+	good_coin = -1;
 	for (i = 0; i < COIN_TYPE_NUM; i++){
 		if   ( (( coin_value0 >= coin_cmp_value[i].compare_min0) && ( coin_value0 <= coin_cmp_value[i].compare_max0))
 			&& (( coin_value1 >= coin_cmp_value[i].compare_min1) && ( coin_value1 <= coin_cmp_value[i].compare_max1))
@@ -93,10 +94,15 @@ int16_t is_good_coin (void)
 				if (good_value_index >= GOOD_BUF_LENGTH)
 					good_value_index = 0;
 			}
-			return i;
+			if (good_coin == -1){
+				good_coin = i;
+			}else{
+				good_coin = -2;//特征值重叠
+				break;
+			}
 		}
 	}
-	if (sys_env.save_ng_data){
+	if ((sys_env.save_ng_data) && (good_coin < 0)){//保存假币数据
 		NG_value_buf[ng_value_index].AD0 = coin_value0;
 		NG_value_buf[ng_value_index].AD1 = coin_value1;
 		NG_value_buf[ng_value_index].AD2 = coin_value2;
@@ -106,7 +112,7 @@ int16_t is_good_coin (void)
 		if (ng_value_index >= NG_BUF_LENGTH)
 			ng_value_index = 0;
 	}
-	return -1;
+	return good_coin;
 }
 
 
@@ -120,7 +126,7 @@ void cy_precoincount(void)
 		good_coin = is_good_coin ();
 		if ((sys_env.stop_flag == 1)){
 			sys_env.stop_flag = 4;
-		}else if ((sys_env.stop_flag != 3)){//如果不在反转状态
+		}else if ((sys_env.stop_flag != 3) && (sys_env.stop_flag != 4)){//如果不在反转状态
 			sys_env.stop_flag = 0;
 			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 		}

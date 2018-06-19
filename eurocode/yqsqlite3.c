@@ -732,11 +732,11 @@ void export_record (void)
 	uint16_t record_id = 0;
 	s_db_item_info * db_item_info_temp;
 	s_db_item_block * db_item_block_temp;
+	cy_print ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
+	cy_print ("                                                         硬币清分机历史清分记录\r\n\r\n");
+	cy_print (" 索引              清分时间      1元(枚)  5角铜(枚)  5角钢(枚)  大1角(枚)  1角钢(枚)  1角铝(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
 	if (record_num > 0){
 		i = 0;
-		cy_print ("                                                        广州畅阳电子科技有限公司\r\n\r\n");
-		cy_print ("                                                         硬币清分机历史清分记录\r\n\r\n");
-		cy_print (" 索引              清分时间      1元(枚)  5角铜(枚)  5角钢(枚)  大1角(枚)  1角钢(枚)  1角铝(枚)    总金额(元) 总枚数(枚) 异币数(枚)\r\n");
 		while (record_id < record_num){
 			r_code = Nand_ReadPage(HISTORY_START_BLOCK_NUM, HISTORY_START_PAGE_NUM + (record_id * ITEM_SIZE / PAGE_BYTE_SIZE), page_buf);
 			if (r_code == 0){
