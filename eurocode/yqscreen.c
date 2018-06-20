@@ -827,75 +827,73 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		break;
 //////////////////////////////////////////////////////////////////
 	case ADDR_BJZX:  //地址ADDR_BJZX 部件执行
-		if( (value == 0x01)){	//红外对射开关状态读取
-			detect_read();
-			comscreen(Disp_Indexpic[BJCS],Number_IndexpicB);	 // 进入调试界面
-			sys_env.workstep = 101;	//停止	所有动作  // 等待 触摸
-		}else if( (value == 0x02)){	// 部件调试返回
-			dgus_tf1word(ADDR_KICK1_M,0);
-			dgus_tf1word(ADDR_KICK2_M,0);
-			dgus_tf1word(ADDR_STORAGE_MOTOR,0);
-			dgus_tf1word(ADDR_DEBUG,0);
-			dgus_tf1word(ADDR_ZXLD,0);
+		switch (value)
+		{
+			case 0x01://红外对射开关状态读取
+				detect_read();
+				comscreen(Disp_Indexpic[BJCS],Number_IndexpicB);	 // 进入调试界面
+				sys_env.workstep = 101;	//停止	所有动作  // 等待 触摸
+				break;
+			case 0x02:// 部件调试返回
+				dgus_tf1word(ADDR_KICK1_M,0);
+				dgus_tf1word(ADDR_KICK2_M,0);
+				dgus_tf1word(ADDR_STORAGE_MOTOR,0);
+				dgus_tf1word(ADDR_DEBUG,0);
+				dgus_tf1word(ADDR_ZXLD,0);
 
-			STORAGE_MOTOR_STOPRUN();   //斗送入电机
-
-			comscreen(Disp_Indexpic[YCCS],Number_IndexpicB);	 // back to the  picture before alert
-			sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
-		}else if( (value == 0x03)){	//back value 基准调试 BEGIN
-			sys_env.workstep = 100;
-			dgus_tf1word(ADDR_STDH,980); //	high frequence
-			dgus_tf1word(ADDR_STDM,980); //	middle frequence
-			dgus_tf1word(ADDR_STDL,980); //	low frequence
-			comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);	 // back to the  picture before alert
-		}else if( (value == 0x04)){	//back value 基准调试 over
-			sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
-			prepic_num = BJCS;
-			comscreen(Disp_Indexpic[prepic_num],Number_IndexpicB);	 // back to the  picture before alert
-		}else if( (value == 0x05)){	// bujian zhixing
-			detect_read();    //传回传感器状态
-		}else if (value == 0x06){//波形采样
-			comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);
-			sys_env.workstep =103;
-			if (sys_env.print_wave_to_pc == 1){
-				sys_env.print_wave_to_pc = 0;
-			}else{
-				sys_env.print_wave_to_pc = 1;
-			}
+				STORAGE_MOTOR_STOPRUN();   //斗送入电机
+				comscreen(Disp_Indexpic[YCCS],Number_IndexpicB);	 // back to the  picture before alert
+				sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
+				break;
+			case 0x03://back value 基准调试 BEGIN
+				sys_env.workstep = 100;
+				dgus_tf1word(ADDR_STDH,980); //	high frequence
+				dgus_tf1word(ADDR_STDM,980); //	middle frequence
+				dgus_tf1word(ADDR_STDL,980); //	low frequence
+				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);	 // back to the  picture before alert
+				break;
+			case 0x04://back value 基准调试 over
+				sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
+				prepic_num = BJCS;
+				comscreen(Disp_Indexpic[prepic_num],Number_IndexpicB);	 // back to the  picture before alert
+				break;
+			case 0x05:// bujian zhixing
+				detect_read();    //传回传感器状态
+				break;
+			case 0x06://波形采样
+				comscreen(Disp_Indexpic[JZTS],Number_IndexpicB);
+				sys_env.workstep =103;
+				if (sys_env.print_wave_to_pc == 1){
+					sys_env.print_wave_to_pc = 0;
+				}else{
+					sys_env.print_wave_to_pc = 1;
+				}
+				break;
+			case 0x07:  //地址ADDR_KICK1_M bujian zhixing
+				time = para_set_value.data.kick_start_delay_t1; //kick_start_delay_time*0.1ms
+				dgus_tf1word(ADDR_KICK1_M,1);
+				while(time != 0){;}
+				EMKICK1(STARTRUN);	  // kick out
+				cy_println ("kick1 start");
+				time = para_set_value.data.kick_keep_t1;	  //kick_keep_time*0.1ms
+				while(time != 0){;}
+				EMKICK1(STOPRUN);	  // kick in
+				cy_println ("kick1 stop");
+				dgus_tf1word(ADDR_KICK1_M,0);
+				break;
+			case 0x08:  //地址ADDR_KICK2_M bujian zhixing
+				time = para_set_value.data.kick_start_delay_t2; //kick_start_delay_time*1ms
+				dgus_tf1word(ADDR_KICK2_M,1);
+				while(time != 0){;}
+				EMKICK2(STARTRUN);	  // kick out
+				cy_println ("kick2 start");
+				time = para_set_value.data.kick_keep_t2;	  //kick_keep_time*1ms
+				while(time != 0){;}
+				EMKICK2(STOPRUN);	  // kick in
+				cy_println ("kick2 stop");
+				dgus_tf1word(ADDR_KICK2_M,0);
+				break;
 		}
-		break;
-	case ADDR_KICK1_M:  //地址ADDR_KICK1_M bujian zhixing
-		if( (value == 0x00)){	//0灰 1绿
-			dgus_tf1word(ADDR_KICK1_M,0);
-		}else if( (value == 0x01)){	// 踢币电磁铁1动作
-			time = para_set_value.data.kick_start_delay_t1; //kick_start_delay_time*0.1ms
-			dgus_tf1word(ADDR_KICK1_M,1);
-			while(time != 0){;}
-			EMKICK1(STARTRUN);	  // kick out
-			cy_println ("kick1 start");
-			time = para_set_value.data.kick_keep_t1;	  //kick_keep_time*0.1ms
-			while(time != 0){;}
-			EMKICK1(STOPRUN);	  // kick in
-			cy_println ("kick1 stop");
-			dgus_tf1word(ADDR_KICK1_M,0);
-		}
-		break;
-	case ADDR_KICK2_M:  //地址ADDR_KICK2_M bujian zhixing
-		if( (value == 0x00)){	// 0灰 1绿
-			dgus_tf1word(ADDR_KICK2_M,0);
-		}else if( (value == 0x01)){	 //踢币电磁铁2动作
-			time = para_set_value.data.kick_start_delay_t2; //kick_start_delay_time*1ms
-			dgus_tf1word(ADDR_KICK2_M,1);
-			while(time != 0){;}
-			EMKICK2(STARTRUN);	  // kick out
-			cy_println ("kick2 start");
-			time = para_set_value.data.kick_keep_t2;	  //kick_keep_time*1ms
-			while(time != 0){;}
-			EMKICK2(STOPRUN);	  // kick in
-			cy_println ("kick2 stop");
-			dgus_tf1word(ADDR_KICK2_M,0);
-		}
-		break;
 	case ADDR_STORAGE_MOTOR:  //地址ADDR_ZXCY21 bujian zhixing
 		if( (value == 0x00)){	 // 0灰 1绿   转盘右转
 			STORAGE_MOTOR_STOPRUN();   //斗送入电机
