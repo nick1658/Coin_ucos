@@ -272,7 +272,14 @@ void ini_screen (void)
 	dgus_tf1word(ADDR_KICK_KEEP_T2, para_set_value.data.kick_keep_t2);	//第二个踢币保持时间
 	dgus_tf1word(ADDR_MOTOR_IDLE_T, para_set_value.data.motor_idle_t);	//无币空转等待时间
 	dgus_tf1word(ADDR_PRE_COUNT_STOP_N, para_set_value.data.pre_count_stop_n);	//满币停机数，设置为1则任意一种硬币达到预置数就停机
-	dgus_tf1word(ADDR_LEVEL100,cn0copmaxc0[coinchoose]);	//清分等级，暂时没有设置
+	dgus_tf1word(ADDR_LEVEL100, pre_value.country[coinchoose].coin[0].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL50, pre_value.country[coinchoose].coin[1].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL51, pre_value.country[coinchoose].coin[2].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL10, pre_value.country[coinchoose].coin[3].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL11, pre_value.country[coinchoose].coin[4].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL12, pre_value.country[coinchoose].coin[5].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL1000, pre_value.country[coinchoose].coin[9].data.offsetmax0);	//清分等级
+	dgus_tf1word(ADDR_LEVEL500, pre_value.country[coinchoose].coin[10].data.offsetmax0);	//清分等级
 
 
 	//开机 把每个地址的值给初始化赋一下值
@@ -281,6 +288,7 @@ void ini_screen (void)
 	disp_data(ADDR_CPZE,ADDR_CPZS,ADDR_CPFG);			//initial addr on jishu jiemian  ze zs forge data variable
 
 	dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//initial addr on zixuexi jiemian coin name tubiao
+	DISPLAY_COIN_INDEX ("1元");
 	disp_preselflearn(pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0,pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0,
 					pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1,pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1,
 					pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2,pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);	//initial addr on zixuexi jiemian value
@@ -322,6 +330,14 @@ void ini_picaddr(void) //币种切换时的 初始化地址函数
 
 void yqsql_exec(uint16_t chos)
 {
+	uint16_t str_addr[6][5] = {   //屏上地址
+			{0x0100,0x0110,0x0112,0x0118,0x011E},
+			{0x0120,0x0130,0x0132,0x0138,0x013E},
+			{0x0140,0x0150,0x0152,0x0158,0x015E},
+			{0x0160,0x0170,0x0172,0x0178,0x017E},
+			{0x0180,0x0190,0x0192,0x0198,0x019E},
+			{0x01A0,0x01B0,0x01B2,0x01B8,0x01BE},
+		};
 	switch(chos)
 	{
 		case DBINSERT:
@@ -416,10 +432,21 @@ void yqsql_exec(uint16_t chos)
 		}
 		case DBDELETE:
 		{
+			S8 str_db[20];
+			uint16_t num = 0;     //计时 显示到6次就结束
 			Nand_EraseBlock(HISTORY_START_BLOCK_NUM);
 			para_set_value.data.db_total_item_num = 0;
 			write_para();
 			cy_println("delete block %d over", HISTORY_START_BLOCK_NUM);
+			memset(str_db,' ',20);
+			for(num = 0; num < 6;  num++){
+				dgus_chinese(str_addr[num][0],str_db, strlen(str_db));	 // dgus  chinese  time
+				dgus_chinese(str_addr[num][0],str_db,8);	 // dgus  chinese  time
+				dgus_chinese(str_addr[num][1],str_db,8);	 // dgus  chinese  gh
+				dgus_chinese(str_addr[num][2],str_db,8);	 // dgus  chinese  ze
+				dgus_chinese(str_addr[num][3],str_db,8);	 // dgus  chinese  zs
+				dgus_chinese(str_addr[num][4],str_db,8);	 // dgus  chinese  fg
+			}
 			cmd ();
 			break;
 		}
@@ -433,14 +460,6 @@ void yqsql_exec(uint16_t chos)
 			U8 yqnddata[PAGE_BYTE_SIZE];
 
 
-			uint16_t str_addr[6][5] = {   //屏上地址
-					{0x0100,0x0110,0x0112,0x0118,0x011E},
-					{0x0120,0x0130,0x0132,0x0138,0x013E},
-					{0x0140,0x0150,0x0152,0x0158,0x015E},
-					{0x0160,0x0170,0x0172,0x0178,0x017E},
-					{0x0180,0x0190,0x0192,0x0198,0x019E},
-					{0x01A0,0x01B0,0x01B2,0x01B8,0x01BE},
-					};
 			S8 str_db[20];
 			uint32_t temp = 0;
 			uint16_t num = 0;     //计时 显示到6次就结束
@@ -449,13 +468,15 @@ void yqsql_exec(uint16_t chos)
 
 			cy_println ("\ndb_id = %d", db_id);
 			memset(str_db,' ',20);
-			for(num = 0; num < 6;  num++){
-				dgus_chinese(str_addr[num][0],str_db, strlen(str_db));	 // dgus  chinese  time
-				dgus_chinese(str_addr[num][0],str_db,8);	 // dgus  chinese  time
-				dgus_chinese(str_addr[num][1],str_db,8);	 // dgus  chinese  gh
-				dgus_chinese(str_addr[num][2],str_db,8);	 // dgus  chinese  ze
-				dgus_chinese(str_addr[num][3],str_db,8);	 // dgus  chinese  zs
-				dgus_chinese(str_addr[num][4],str_db,8);	 // dgus  chinese  fg
+		if (para_set_value.data.db_total_item_num == 0){
+				for(num = 0; num < 6;  num++){
+					dgus_chinese(str_addr[num][0],str_db, strlen(str_db));	 // dgus  chinese  time
+					dgus_chinese(str_addr[num][0],str_db,8);	 // dgus  chinese  time
+					dgus_chinese(str_addr[num][1],str_db,8);	 // dgus  chinese  gh
+					dgus_chinese(str_addr[num][2],str_db,8);	 // dgus  chinese  ze
+					dgus_chinese(str_addr[num][3],str_db,8);	 // dgus  chinese  zs
+					dgus_chinese(str_addr[num][4],str_db,8);	 // dgus  chinese  fg
+				}
 			}
 			if (db_id <= 0){
 				cmd ();
@@ -582,7 +603,7 @@ void yqsql_exec(uint16_t chos)
 
 			int32_t	db_id_temp = 0;
 
-
+			cy_println ("\ndb_id = %d", db_id);
 			if ((db_id + 6) < para_set_value.data.db_total_item_num)
 			{
 				db_id += 6;
