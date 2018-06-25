@@ -518,6 +518,20 @@ void counter_clear (void) //
 volatile uint16_t prepic_num =0 ;   // 保存之前的图片
 volatile int32_t db_id = 0;   //历史数据 表格已经显示 数
 /*A5 5A 06 83 地址L,H + 长度字数据 + 数据*/
+
+
+void set_offset_value (uint16_t addr, uint16_t coin_index, int16 offset)
+{
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmax0 = (offset);       //
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmin0 = (offset)*(-1);       //
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmax1 = (offset);       //
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmin1 = (offset)*(-1);       //
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmax2 = (offset);       //
+	pre_value.country[coinchoose].coin[coin_index].data.offsetmin2 = (offset)*(-1);       //
+	dgus_tf1word(addr, pre_value.country[coinchoose].coin[coin_index].data.offsetmax0);
+	write_para ();
+}
+	
 void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 {
 	uint16_t addr, value, i;
@@ -606,17 +620,14 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 			db_id = para_set_value.data.db_total_item_num;
 			yqsql_exec(DBDISPLAY);	  //
 			comscreen(Disp_Indexpic[LSSJ],Number_IndexpicB);	 //  to the  picture 	///////////////////////////////////////////////////////////
-			sys_env.workstep = 0;	// 等待 触摸
 		}else if( (value == 0x07)){	//back value   history data jiemian
 		 // A5 5A 06 83 00 09 01 00 07  按键值返回 查看下页
 			cy_print ("Pre page\n");
 			yqsql_exec(DBDISPLAY);	  /////////////////////////////////////////////////////////////////
-			sys_env.workstep = 0;	// 等待 触摸
 		}else if( (value == 0x08)){	//back value    history data jiemian
 		// A5 5A 06 83 00 09 01 00 08  按键值返回 查看上页
 			cy_print ("Next page\n");
 			yqsql_exec(DBDISPLAYBACK);	  /////////////////////////////////////////////////////////
-			sys_env.workstep = 0;	// 等待 触摸
 		}
 		break;
    ///////////////////////////////////////////////////
@@ -734,12 +745,46 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		}
 		break;
 //////////////////////////////
-	case ADDR_CNTB1:  //地址ADDR_CNTB1 0X3B  图标变量
+	case ADDR_CNTB:  //地址ADDR_CNTB1 0X3B  图标变量
 		sys_env.coin_index = (int)touchnum[8];
-		if (sys_env.coin_index == 6){
-			sys_env.coin_index = 5;
+		//dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//make sure the tubiao is the return one
+		switch (sys_env.coin_index)
+		{
+			case 0:
+				DISPLAY_COIN_INDEX ("一元");
+				break;
+			case 1:
+				DISPLAY_COIN_INDEX ("五角铜");
+				break;
+			case 2:
+				DISPLAY_COIN_INDEX ("五角钢");
+				break;
+			case 3:
+				DISPLAY_COIN_INDEX ("一角大铝");
+				break;
+			case 4:
+				DISPLAY_COIN_INDEX ("一角钢");
+				break;
+			case 5:
+				DISPLAY_COIN_INDEX ("一角小铝");
+				break;
+			case 6:
+				DISPLAY_COIN_INDEX ("五分");
+				break;
+			case 7:
+				DISPLAY_COIN_INDEX ("二分");
+				break;
+			case 8:
+				DISPLAY_COIN_INDEX ("一分");
+				break;
+			case 9:
+				DISPLAY_COIN_INDEX ("纪念币十元");
+				break;
+			case 10:
+				DISPLAY_COIN_INDEX ("纪念币五元");
+				break;
+			default:break;
 		}
-		dgus_tf1word(ADDR_CNTB,sys_env.coin_index);	//make sure the tubiao is the return one
 		disp_preselflearn(pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
@@ -779,16 +824,30 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		para_set_value.data.pre_count_stop_n = (int)(touchnum[7]*256 )+(int)touchnum[8];       //
 		dgus_tf1word(ADDR_PRE_COUNT_STOP_N, para_set_value.data.pre_count_stop_n);	//
 		Writekick_value();
-		sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
 		break;
 	case ADDR_LEVEL100:  //地址1元硬币的清分等级设置
- 		cn0copmaxc0[coinchoose]= ((int)touchnum[8]);	   //
-		cn0copmaxc1[coinchoose] = ((int)touchnum[8]);
-		cn0copmaxc2[coinchoose] = ((int)touchnum[8]);
-		dgus_tf1word(ADDR_LEVEL100,cn0copmaxc0[coinchoose]);	//make sure  the return one
-
-		write_para ();
-		sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
+		set_offset_value (ADDR_LEVEL100, 0, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL50:  //地址五角铜硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL50, 1, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL51:  //地址5角钢硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL51, 2, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL10:  //地址一角大铝硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL10, 3, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL11:  //地址一角钢硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL11, 4, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL12:  //地址一角小铝硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL12, 5, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL1000:  //地址纪念币十元硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL1000, 9, (int)(touchnum[7]*256 )+(int)touchnum[8]);
+		break;
+	case ADDR_LEVEL500:  //地址纪念币五元硬币的清分等级设置
+		set_offset_value (ADDR_LEVEL500, 10, (int)(touchnum[7]*256 )+(int)touchnum[8]);
 		break;
 	case ADDR_YZS0:
 	case ADDR_YZS1:
@@ -940,6 +999,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 	case ADDR_CNCH1:  //地址ADDR_ZXCY21 bujian zhixing
 		dgus_tf1word(ADDR_CNCH,coinchoose);  //确认 图标变量
 		break;
+	default:break;
 	}
 }
 

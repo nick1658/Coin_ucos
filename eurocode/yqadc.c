@@ -478,12 +478,12 @@ uint16_t std_ad3= 0;
 
 ///////////////////////////////////////
 // 清分等级
- U8 cn0copmaxc0[COINCNUM] = {15,33,40,10}; //20 //
- U8 cn0copminc0[COINCNUM] = {30,65,40,20};  //20
- U8 cn0copmaxc1[COINCNUM] = {15,40,40,10};  //60
- U8 cn0copminc1[COINCNUM] = {30,50,40,20}; //30
- U8 cn0copmaxc2[COINCNUM] = {15,40,40,10}; //40
- U8 cn0copminc2[COINCNUM] = {50,40,40,20}; //40
+// U8 cn0copmaxc0[COINCNUM] = {15,33,40,10}; //20 //
+// U8 cn0copminc0[COINCNUM] = {30,65,40,20};  //20
+// U8 cn0copmaxc1[COINCNUM] = {15,40,40,10};  //60
+// U8 cn0copminc1[COINCNUM] = {30,50,40,20}; //30
+// U8 cn0copmaxc2[COINCNUM] = {15,40,40,10}; //40
+// U8 cn0copminc2[COINCNUM] = {50,40,40,20}; //40
 
 
  s_coin_compare_value coin_cmp_value[COIN_TYPE_NUM];
