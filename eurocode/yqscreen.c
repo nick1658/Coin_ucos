@@ -893,7 +893,9 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				cy_println ("kick2 stop");
 				dgus_tf1word(ADDR_KICK2_M,0);
 				break;
+			default:break;
 		}
+		break;
 	case ADDR_STORAGE_MOTOR:  //地址ADDR_ZXCY21 bujian zhixing
 		if( (value == 0x00)){	 // 0灰 1绿   转盘右转
 			STORAGE_MOTOR_STOPRUN();   //斗送入电机

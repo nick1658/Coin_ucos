@@ -385,8 +385,9 @@ void TaskStart(void *pdata)
 				if(blockflag == 0){//¶Â±Ò
 					SEND_ERROR(PRESSMLOCKED);
 				}
-				if (sys_env.coin_over == 1){
+				if ((sys_env.coin_over == 1) || (sys_env.rej_over == 1)){
 					sys_env.coin_over = 0;
+					sys_env.rej_over = 0;
 					disp_allcount ();
 				}
 				if (sys_env.stop_time == 0){
