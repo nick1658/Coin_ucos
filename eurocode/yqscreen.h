@@ -91,14 +91,7 @@ void counter_clear (void); //
 #define ADDR_ZXLD	0x004B   //  图标变量显示  bujian zhixing jiemian, three  motor run together
 
 
-#define ADDR_ZXD1	0x004C   //  数据变量显示 不需要初始化  bujian zhixing jiemian, detector
-#define ADDR_ZXD2	0x004D   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
-#define ADDR_ZXD3	0x004E   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
-#define ADDR_ZXD4	0x004F   //   数据变量显示   不需要初始化  bujian zhixing jiemian, detector
-#define ADDR_ZXD5	0x0050   //   数据变量显示  不需要初始化  bujian zhixing jiemian, detector
-#define ADDR_ZXD6	0x0051   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
-#define ADDR_ZXD7	0x0052   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
-#define ADDR_ZXD8	0x005C   //   数据变量显示  不需要初始化 bujian zhixing jiemian, detector
+#define ADDR_SYS_DELAY	0x0052   //  数据变量显示 不需要初始化  bujian zhixing jiemian, detector
 //0052
 #define	ADDR_STDH 	0x0053  //  数据变量显示   不需要初始化  jizhun tiaoshi jiemian h frequence std display,	data variable
 #define	ADDR_STDM 	0x0054  //  数据变量显示    不需要初始化 jizhun tiaoshi jiemian m frequence std display,	data variable

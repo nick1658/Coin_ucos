@@ -820,6 +820,11 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		Writekick_value();
 		sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
 		break;
+	case ADDR_SYS_DELAY:
+		para_set_value.data.system_boot_delay = (int)(touchnum[7]*256 )+(int)touchnum[8];       //
+		dgus_tf1word(ADDR_SYS_DELAY, para_set_value.data.system_boot_delay);	//
+		Writekick_value();
+		break;
 	case ADDR_PRE_COUNT_STOP_N:
 		para_set_value.data.pre_count_stop_n = (int)(touchnum[7]*256 )+(int)touchnum[8];       //
 		dgus_tf1word(ADDR_PRE_COUNT_STOP_N, para_set_value.data.pre_count_stop_n);	//
