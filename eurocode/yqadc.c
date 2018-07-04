@@ -265,6 +265,7 @@ void cy_ad0_valueget(void)
 			}
 			/*持续性WAVE_GO_UP_N次,波形回升*/
 			if( wave0up_flagone  > WAVE_GO_UP_N){     //确认波形峰值
+				COIN_KICK_OP ();//连币状态币，前一个假币在这里开始剔除
 				//coin_env.ad0_step = 19;
 				wave0up_flagone = 0;
 
@@ -297,6 +298,7 @@ void cy_ad0_valueget(void)
 
 			/*已经恢复参考值,返回初始测量*/
 			if( wave0up_flag > WAVE_UP_TO_STD_N){// WAVE_UP_TO_STD_N 2
+				COIN_KICK_OP ();//硬币出来，开始剔除
 				coin_env.ad0_step = 3; //
 				sys_env.coin_cross_time = coin_cross_time;//硬币出来了，这里统计硬币经过的时间
 				sys_env.AD_data_len = detect_sample_data_buf_index;

@@ -66,6 +66,22 @@ void detect_read(void);
 #define COMPLETE_UPDATE 30
 
 
+#define COIN_KICK_OP() { \
+	if (sys_env.coin_ng_flag == 1){ \
+		sys_env.coin_ng_flag = 0; \
+		if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){ \
+			coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_NG_FLAG;/*假币标志*/ \
+			coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1; \
+			coin_env.kick_Q_index++; \
+			coin_env.kick_Q_index %= KICK_Q_LEN; \
+		}else{/*剔除工位1队列追尾错误*/ \
+			SEND_ERROR(KICK1COINERROR); \
+			dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__); \
+		} \
+	} \
+}
+
+
 
 extern  uint16_t prepic_prenum;      // 用于记录 报错前的界面 
 void alertfuc(uint16_t alertflag); //报错

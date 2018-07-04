@@ -103,8 +103,9 @@ typedef struct
 	uint32_t stop_flag;
 	uint32_t coin_cross_time;
 	uint32_t tty_online_ms;
-	uint32_t coin_over;
+	uint32_t coin_under_sensor;
 	uint32_t rej_over;
+	uint32_t coin_ng_flag;
 	uint32_t coin_leave;
 	uint32_t AD_data_len;
 	uint32_t AD_buf_index;

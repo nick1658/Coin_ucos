@@ -135,15 +135,8 @@ void cy_precoincount(void)
 									((para_set_value.data.coin_full_rej_pos == 1) &&
 									((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
-			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
-				coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1;
-				coin_env.kick_Q_index++;
-				coin_env.kick_Q_index %= KICK_Q_LEN;
-				coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_NG_FLAG;//
-			}else{//剔除工位1队列追尾错误
-				SEND_ERROR(KICK1COINERROR);
-				dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__);
-			}
+			sys_env.coin_ng_flag = 1;//假币标志
+			//COIN_KICK_OP ();
 		}else {//真币
 			if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
 				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
@@ -173,7 +166,7 @@ void cy_precoincount(void)
 			coin_env.coin_Q_remain %= COIN_Q_LEN;
 		}
 		processed_coin_info.total_coin++;
-		sys_env.coin_over = 1;
+		sys_env.coin_under_sensor = 1;
 		if (sys_env.sys_runing_time == 0){
 			sys_env.sys_runing_time_total = 0;
 			sys_env.sys_runing_time = 1;
@@ -196,7 +189,7 @@ void cy_coinlearn(void)
 		processed_coin_info.coinnumber++;
 		coinlearnnumber++;
 		prepare_coin_cmp_value ();
-		sys_env.coin_over = 1;
+		sys_env.coin_under_sensor = 1;
 		GOOD_value_buf[good_value_index].AD0 = coin_value0;
 		GOOD_value_buf[good_value_index].AD1 = coin_value1;
 		GOOD_value_buf[good_value_index].AD2 = coin_value2;

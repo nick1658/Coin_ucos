@@ -385,8 +385,8 @@ void TaskStart(void *pdata)
 				if(blockflag == 0){//堵币
 					SEND_ERROR(PRESSMLOCKED);
 				}
-				if ((sys_env.coin_over == 1) || (sys_env.rej_over == 1)){
-					sys_env.coin_over = 0;
+				if ((sys_env.coin_under_sensor == 1) || (sys_env.rej_over == 1)){
+					sys_env.coin_under_sensor = 0;
 					sys_env.rej_over = 0;
 					disp_allcount ();
 				}
@@ -447,8 +447,8 @@ void TaskStart(void *pdata)
 			}
 			case 22:{
 				runfunction();	 //转盘动作函数
-				if (sys_env.coin_over == 1){
-					sys_env.coin_over = 0;
+				if (sys_env.coin_under_sensor == 1){
+					sys_env.coin_under_sensor = 0;
 					dgus_tf1word(ADDR_A0MA,coin_maxvalue0);	//	 real time ,pre AD0  max
 					dgus_tf1word(ADDR_A0MI,coin_minvalue0);	//	 real time ,pre AD0  min
 					dgus_tf1word(ADDR_A1MA,coin_maxvalue1);	//	 real time ,pre AD1  max
