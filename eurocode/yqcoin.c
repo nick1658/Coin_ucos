@@ -136,8 +136,9 @@ void cy_precoincount(void)
 									((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
 			sys_env.coin_ng_flag = 1;//假币标志
-			//COIN_KICK_OP ();
-		}else {//真币
+			COIN_KICK_OP ();
+		}else {//真币	
+			coin_env.coin_ctr1++;
 			if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
 				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;

@@ -61,6 +61,9 @@ typedef struct
 	uint16_t coin_Q[COIN_Q_LEN];//硬币经过队列
 	uint16_t coin_Q_index;
 	uint16_t coin_Q_remain;
+	uint16_t coin_ctr1;
+	uint16_t coin_ctr2;
+	uint16_t kick2_ctr;
 	uint16_t inhibit_coin[COIN_TYPE_NUM]; //拒收硬币设置位
 }s_coin_env;
 

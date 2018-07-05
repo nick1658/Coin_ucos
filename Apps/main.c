@@ -394,7 +394,7 @@ void TaskStart(void *pdata)
 					switch (sys_env.stop_flag){
 						case 0:
 							STORAGE_DIR_N();//反转
-							sys_env.stop_time = 50;//反转一秒
+							sys_env.stop_time = 25;//反转一秒
 							sys_env.stop_flag = 1;
 							break;
 						case 1:

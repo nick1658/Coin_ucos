@@ -265,7 +265,6 @@ void cy_ad0_valueget(void)
 			}
 			/*持续性WAVE_GO_UP_N次,波形回升*/
 			if( wave0up_flagone  > WAVE_GO_UP_N){     //确认波形峰值
-				COIN_KICK_OP ();//连币状态币，前一个假币在这里开始剔除
 				//coin_env.ad0_step = 19;
 				wave0up_flagone = 0;
 
@@ -298,7 +297,7 @@ void cy_ad0_valueget(void)
 
 			/*已经恢复参考值,返回初始测量*/
 			if( wave0up_flag > WAVE_UP_TO_STD_N){// WAVE_UP_TO_STD_N 2
-				COIN_KICK_OP ();//硬币出来，开始剔除
+				//COIN_KICK_OP ();//硬币出来，开始剔除
 				coin_env.ad0_step = 3; //
 				sys_env.coin_cross_time = coin_cross_time;//硬币出来了，这里统计硬币经过的时间
 				sys_env.AD_data_len = detect_sample_data_buf_index;
@@ -318,6 +317,7 @@ void cy_ad0_valueget(void)
 			}
 			/*连币双波谷,返回状态10*/
 			if( (wave0down_flagtwo > WAVE_DOWN_TWO_N)) {    //表示双峰来临 WAVE_DOWN_TWO_N 8
+				//COIN_KICK_OP ();//连币状态币，前一个假币在这里开始剔除
 				coin_env.ad0_step = 10;
 				blockflag = ADBLOCKT;      //使用鉴伪传感器 报堵币 5
 				wave0up_flag =0;
@@ -590,12 +590,31 @@ uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 	}
 
 
+#define UP_POW (0.3)
+#define DOWN_POW (1.2)
 	/////////////
 	dbg ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
 	for (is = 0; is < COIN_TYPE_NUM; is++){ //补偿值
 		std0_offset = std_ad0 - pre_value.country[coinchoose].coin[is].data.std0;
 		std1_offset = std_ad1 - pre_value.country[coinchoose].coin[is].data.std1;
 		std2_offset = std_ad2 - pre_value.country[coinchoose].coin[is].data.std2;
+/////////////////////////////////////////////////////////////////////////////////
+		if (std0_offset > 0){
+			std0_offset *= UP_POW;
+		}else{
+			std0_offset *= DOWN_POW;
+		}
+		if (std1_offset > 0){
+			std1_offset *= UP_POW;
+		}else{
+			std1_offset *= DOWN_POW;
+		}
+		if (std2_offset > 0){
+			std2_offset *= UP_POW;
+		}else{
+			std2_offset *= DOWN_POW;
+		}
+/////////////////////////////////////////////////////////////////////////////////
 	#ifdef SAMPLE_METHOD_0
 		coin_cmp_value[is].compare_max0 = (pre_value.country[coinchoose].coin[is].data.max0 + pre_value.country[coinchoose].coin[is].data.offsetmax0 +
 										  std0_offset);

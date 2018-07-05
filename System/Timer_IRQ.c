@@ -90,6 +90,7 @@ void Timer4_Init(unsigned short us, void (*Callback)(void), unsigned short enabl
 	coin_env.full_kick_Q[N]--; \
 	if (coin_env.full_kick_Q[N] == 0){ \
 		EMKICK2(STARTRUN);	  \
+		coin_env.kick2_ctr++; \
 		coin_env.full_kick_keep_t2 = para_set_value.data.kick_keep_t2;\
 	}\
 }

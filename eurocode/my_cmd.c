@@ -1537,6 +1537,9 @@ void print_coin_env_info (void)
 	cy_println ("runstep               = %d", runstep);
 	cy_println ("coin_env.kick_Q_index = %d", coin_env.kick_Q_index);
 	cy_println ("ccstep                = %d", ccstep);
+	cy_println ("coin_ctr1             = %d", coin_env.coin_ctr1);
+	cy_println ("coin_ctr2             = %d", coin_env.coin_ctr2);
+	cy_println ("kick2_ctr             = %d", coin_env.kick2_ctr);
 	cy_println("----------------------------------------------------");
 }
 
