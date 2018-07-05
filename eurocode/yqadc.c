@@ -297,7 +297,7 @@ void cy_ad0_valueget(void)
 
 			/*已经恢复参考值,返回初始测量*/
 			if( wave0up_flag > WAVE_UP_TO_STD_N){// WAVE_UP_TO_STD_N 2
-				//COIN_KICK_OP ();//硬币出来，开始剔除
+				//COIN_KICK_OP_0 ();//硬币出来，开始剔除
 				coin_env.ad0_step = 3; //
 				sys_env.coin_cross_time = coin_cross_time;//硬币出来了，这里统计硬币经过的时间
 				sys_env.AD_data_len = detect_sample_data_buf_index;
@@ -317,7 +317,7 @@ void cy_ad0_valueget(void)
 			}
 			/*连币双波谷,返回状态10*/
 			if( (wave0down_flagtwo > WAVE_DOWN_TWO_N)) {    //表示双峰来临 WAVE_DOWN_TWO_N 8
-				//COIN_KICK_OP ();//连币状态币，前一个假币在这里开始剔除
+				//COIN_KICK_OP_0 ();//连币状态币，前一个假币在这里开始剔除
 				coin_env.ad0_step = 10;
 				blockflag = ADBLOCKT;      //使用鉴伪传感器 报堵币 5
 				wave0up_flag =0;

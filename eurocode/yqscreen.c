@@ -902,7 +902,6 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				dgus_tf1word(ADDR_KICK1_M,0);
 				dgus_tf1word(ADDR_KICK2_M,0);
 				dgus_tf1word(ADDR_STORAGE_MOTOR,0);
-				dgus_tf1word(ADDR_DEBUG,0);
 				dgus_tf1word(ADDR_ZXLD,0);
 
 				STORAGE_MOTOR_STOPRUN();   //斗送入电机
@@ -974,18 +973,6 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		if (value == sys_env.password){
 			value = 0;
 			comscreen(Disp_Indexpic[25],Number_IndexpicB);	 // back to the  picture before alert
-		}
-		break;
-	case ADDR_DEBUG:  //后台管理隐藏按键
-		if( (value == 0x02)){
-			sys_env.hmi_debug_flag = 1;
-		}else if((sys_env.hmi_debug_flag == 0x01)){
-			if( (value == 0x01)){
-				prepic_num = JSJM;
-				comscreen(Disp_Indexpic[25],Number_IndexpicB);	 // back to the  picture before alert
-			}
-			dgus_tf1word(ADDR_DEBUG,0);
-			sys_env.hmi_debug_flag = 0;
 		}
 		break;
 	case ADDR_RESET:  //

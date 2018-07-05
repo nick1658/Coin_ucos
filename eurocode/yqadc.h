@@ -7,6 +7,7 @@
 #include "yqsqlite3.h"
 
 #define KICK_Q_LEN 2
+#define FULL_KICK_Q_LEN 2
 #define COIN_Q_LEN 16
 #define SAMPLE_METHOD_1
 
@@ -42,27 +43,31 @@ typedef struct
 	int16_t cmp_use_index;
 	int16_t ad_index;
 	uint16_t AD_min_index[3];
-	uint16_t full_kick;
+	
 	uint16_t full_stack_num;
 	uint16_t full_coin_stack[COIN_TYPE_NUM]; //满币堆栈
+	
 	uint16_t kick_remain;
-	uint16_t kick_total;
-	//int16_t kick_start_t1;
 	uint16_t kick_keep_t1;
 	uint16_t kick_Q[KICK_Q_LEN];//剔除队列
 	uint16_t kick_Q_index;
+	
 	uint16_t full_kick_remain;
-	uint16_t full_kick_total;
-	//int16_t full_kick_start_t2;
 	uint16_t full_kick_keep_t2;
-	uint16_t full_kick_Q[KICK_Q_LEN];//剔除队列
+	uint16_t full_kick_Q[FULL_KICK_Q_LEN];//剔除队列
 	uint16_t full_kick_Q_index;
 
-	uint16_t coin_Q[COIN_Q_LEN];//硬币经过队列
-	uint16_t coin_Q_index;
-	uint16_t coin_Q_remain;
-	uint16_t coin_ctr1;
-	uint16_t coin_ctr2;
+	uint16_t coin_Q1[COIN_Q_LEN];//硬币经过队列
+	uint16_t coin_Q1_index;
+	uint16_t coin_Q1_remain;
+	
+	uint16_t coin_Q2[COIN_Q_LEN];//硬币经过队列
+	uint16_t coin_Q2_index;
+	uint16_t coin_Q2_remain;
+	
+	uint16_t coin_detect_ctr;
+	uint16_t coin_ir_ctr1;
+	uint16_t coin_ir_ctr2;
 	uint16_t kick2_ctr;
 	uint16_t inhibit_coin[COIN_TYPE_NUM]; //拒收硬币设置位
 }s_coin_env;

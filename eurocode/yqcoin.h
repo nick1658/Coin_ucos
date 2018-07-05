@@ -60,17 +60,17 @@ void detect_read(void);
 #define KICK2COINERROR 16
 #define PRESSMLOCKED  17      //压币带堵币
 #define COUNT_FINISHED 18  	// 1 MCU接到 有清分斗满币 停止	
+#define KICKCOINNGERROR 19
 #define ADSTDEEROR    20       //表示传感器下有币
 #define RTCREEROR    21       //表示READ time wrong
 #define READOUTDATA    22       // 读出  数据  内存满
 #define COMPLETE_UPDATE 30
 
 
-#define COIN_KICK_OP() { \
-	if (sys_env.coin_ng_flag == 1){ \
+#define COIN_KICK_OP_0() { \
 		sys_env.coin_ng_flag = 0; \
 		if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){ \
-			coin_env.coin_Q[coin_env.coin_Q_remain] = COIN_NG_FLAG;/*假币标志*/ \
+			coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_NG_FLAG;/*假币标志*/ \
 			coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1; \
 			coin_env.kick_Q_index++; \
 			coin_env.kick_Q_index %= KICK_Q_LEN; \
@@ -78,7 +78,6 @@ void detect_read(void);
 			SEND_ERROR(KICK1COINERROR); \
 			dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__); \
 		} \
-	} \
 }
 
 

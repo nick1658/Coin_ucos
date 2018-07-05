@@ -74,8 +74,8 @@
 
 
 #ifdef _MY_DEBUG_NO_DOOR_CHECK_
-	#define COIN_DETECT      1	//P0^0;  //转盘槽型传感器       EINT12/GPG4
-	#define PANCOIN_OVER  0	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
+	#define COIN_DETECT1  1	//P0^0;  //转盘槽型传感器       EINT12/GPG4
+	#define COIN_DETECT2  1	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
 	#define DC_COINOVER   1	//P0^2;  // 清分 满币 传感器    EINT14/GPG6
 	#define DOOR_MAG      0	//P0^3;  //压币带门 传感器      SD0_DAT3/GPE10
 	#define DOOR_PAN      0	//P0^4;  //转盘门 传感器  	    SD0_DAT2/GPE9
@@ -83,8 +83,8 @@
 	#define DT_METAL      1	//P0^6; //真假币金属传感器   	SD0_DAT0/GPE7
 	#define DT_NOMETAL    1	//P0^7 ;  // 间隙金属传感器  	SD0_CMD/GPE6
 #else
-	#define PANCOIN_OVER      A0IN0	//P0^0;  //转盘槽型传感器       EINT12/GPG4
-	#define COIN_DETECT   A0IN1	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
+	#define COIN_DETECT1  A0IN0	//P0^0;  //转盘槽型传感器       EINT12/GPG4
+	#define COIN_DETECT2  A0IN1	//P0^1;  //转盘满币对射传感器   EINT13/GPG5
 	#define DC_COINOVER   A0IN2	//P0^2;  // 清分 满币 传感器    EINT14/GPG6
 	#define DOOR_MAG      A0IN3	//P0^3;  //压币带门 传感器      SD0_DAT3/GPE10
 	#define DOOR_PAN      A0IN4	//P0^4;  //转盘门 传感器  	    SD0_DAT2/GPE9

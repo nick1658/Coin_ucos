@@ -85,8 +85,8 @@ void counter_clear (void); //
 #define ADDR_KICK1_M	0x0045   //  图标变量显示  bujian zhixing jiemian, cyline 1
 #define ADDR_KICK2_M	0x0046   //  图标变量显示  bujian zhixing jiemian, cyline 2
 #define ADDR_STORAGE_MOTOR	0x0047   //  图标变量显示  bujian zhixing jiemian, pan motor right zheng
-#define ADDR_DETCET1	0x0048   //  图标变量显示  bujian zhixing jiemian, pan motor left fan
-#define ADDR_DEBUG	0x0049   //  图标变量显示  bujian zhixing jiemian, chuangsong motor
+#define ADDR_DETCET2	0x0048   //  图标变量显示  bujian zhixing jiemian, pan motor left fan
+#define ADDR_DETCET1	0x0049   //  图标变量显示  bujian zhixing jiemian, chuangsong motor
 #define ADDR_MODE	0x004A   //  图标变量显示  bujian zhixing jiemian, yabi motor
 #define ADDR_ZXLD	0x004B   //  图标变量显示  bujian zhixing jiemian, three  motor run together
 
