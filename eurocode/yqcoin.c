@@ -130,10 +130,10 @@ void cy_precoincount(void)
 			sys_env.stop_flag = 0;
 			sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 		}
-		if ((para_set_value.data.coin_full_rej_pos == 0) && ((good_coin < 0) || 
-																 (coin_env.inhibit_coin[good_coin] == 1) || 
+		if (((para_set_value.data.coin_full_rej_pos != 1) && (good_coin < 0)) || ((para_set_value.data.coin_full_rej_pos == 0) &&
+																 ((coin_env.inhibit_coin[good_coin] == 1) || 
 									(*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
-								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1))){ //假币 返回值小于0
+								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
 			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){ 
 				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_NG_FLAG;/*假币标志*/ 
 				coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1; 
@@ -149,7 +149,6 @@ void cy_precoincount(void)
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1))){ //假币 返回值小于0
 			if (coin_env.coin_Q1[coin_env.coin_Q1_remain] == FREE_Q_FLAG){ 
 				coin_env.coin_Q1[coin_env.coin_Q1_remain] = COIN_NG_FLAG;/*假币标志*/ 
-				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_NG_FLAG;/*假币标志*/ 
 				coin_env.coin_Q1_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
 				coin_env.coin_Q1_remain %= COIN_Q_LEN;
 			}else{/*剔除工位1队列追尾错误*/ \
@@ -163,15 +162,24 @@ void cy_precoincount(void)
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
 				processed_coin_info.total_good++;
 				processed_coin_info.coin_ctr[good_coin]++;
+				coin_env.coin_Q1[coin_env.coin_Q1_remain] = COIN_GOOD_FLAG;//
 				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
 			}else if((*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 					  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)){//不接受此类硬币或者预置数已到
-				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_FULL_FLAG;//用真币剔除工位剔除
+				if (para_set_value.data.coin_full_rej_pos == 1){
+					coin_env.coin_Q1[coin_env.coin_Q1_remain] = COIN_FULL_FLAG;//
+				}else if (para_set_value.data.coin_full_rej_pos == 2){
+					coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_FULL_FLAG;//用真币剔除工位剔除
+				}
 			}else{//预置计数
 				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
 				processed_coin_info.total_good++;
-				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_GOOD_FLAG;//
+				if (para_set_value.data.coin_full_rej_pos == 1){
+					coin_env.coin_Q1[coin_env.coin_Q1_remain] = COIN_GOOD_FLAG;//
+				}else if (para_set_value.data.coin_full_rej_pos == 2){
+					coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_GOOD_FLAG;//用真币剔除工位剔除
+				}
 				if( *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) >= *(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set)){// 当前的币种  数量 达到其预置值
 					*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag = 1; //此类硬币预置数到，做个标记
 					*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_coinval) += 1;//包装卷数
@@ -182,6 +190,8 @@ void cy_precoincount(void)
 					}
 				}
 			}
+			coin_env.coin_Q1_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
+			coin_env.coin_Q1_remain %= COIN_Q_LEN;
 			coin_env.coin_Q2_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
 			coin_env.coin_Q2_remain %= COIN_Q_LEN;
 		}

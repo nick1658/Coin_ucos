@@ -73,7 +73,7 @@ void IR_detect_func(void)
 ////////////////////////////////////////////////////////////////////////////////////////////
 	if((coin_in_flag1 == 1) && (coin_in_flag1_old == 0)){//∂‘…‰µÁ—€…œ…˝—ÿºÏ≤‚µΩ”≤±“
 		if ((para_set_value.data.coin_full_rej_pos == 1)){//
-			if(coin_env.coin_Q1[coin_env.coin_Q1_index] == COIN_NG_FLAG){ // 
+			if((coin_env.coin_Q1[coin_env.coin_Q1_index] == COIN_NG_FLAG) || (coin_env.coin_Q1[coin_env.coin_Q1_index] == COIN_FULL_FLAG)){ // 
 				if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
 					coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1;
 					coin_env.kick_Q_index++;
