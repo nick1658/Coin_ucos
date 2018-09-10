@@ -64,6 +64,7 @@ void detect_read(void);
 #define ADSTDEEROR    20       //表示传感器下有币
 #define RTCREEROR    21       //表示READ time wrong
 #define READOUTDATA    22       // 读出  数据  内存满
+#define DETECT_COUNT_ERROR 31
 #define COMPLETE_UPDATE 30
 
 

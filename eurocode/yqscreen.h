@@ -210,6 +210,7 @@ extern struct precoin_num count_coin_temp[11];   //用于   预置计数
 extern struct disp_count_buf disp_buf;
 
 struct disp_count_buf{
+	uint32_t total_money;
 	uint16_t m_1yuan;
 	uint16_t m_5jiao;
 	uint16_t m_1jiao;
@@ -221,7 +222,6 @@ struct disp_count_buf{
 	uint16_t m_5yuan;
 	uint16_t total_good;
 	uint16_t total_ng;
-	uint16_t total_money;
 	uint16_t coin_speed;
 };
 

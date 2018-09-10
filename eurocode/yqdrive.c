@@ -4,6 +4,12 @@ volatile uint32_t runtime = 0;   // // 执行件用的计时变量
 unsigned short int runstep = 0;   //  部件动作步骤号
 volatile uint32_t time = 0;   // //部件测试时踢币电磁铁用的计时变量
 
+////////////////////////////////////////////////////////////////////////////////////////////
+static int coin_in_flag1 = 1;
+static int coin_in_flag1_old = 1;
+static int coin_in_flag2 = 1;
+static int coin_in_flag2_old = 1;
+////////////////////////////////////////////////////////////////////////////////////////////
 
 void deviceinit(void)	//开机先把通道上的币挡下去
 {
@@ -27,9 +33,11 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 	coin_env.ad0_step = 0;
 	coin_env.ad1_step = 0;
 	coin_env.ad2_step = 0;
-	coin_env.coin_ir_ctr1 = 0;
-	coin_env.coin_ir_ctr2 = 0;
-	coin_env.kick2_ctr = 0;
+	
+	coin_in_flag1 = 1;
+	coin_in_flag1_old = 1;
+	coin_in_flag2 = 1;
+	coin_in_flag2_old = 1;
 	//sys_env.AD_buf_index = 0;
 	//Detect_AD_Value_buf_p = Detect_AD_Value_buf[sys_env.AD_buf_index];
 	ccstep = 0;
@@ -54,12 +62,6 @@ void deviceinit(void)	//开机先把通道上的币挡下去
 
 void IR_detect_func(void)
 {
-////////////////////////////////////////////////////////////////////////////////////////////
-	static int coin_in_flag1 = 1;
-	static int coin_in_flag1_old = 1;
-	static int coin_in_flag2 = 1;
-	static int coin_in_flag2_old = 1;
-////////////////////////////////////////////////////////////////////////////////////////////
 	if (COIN_DETECT1 == IR_DETECT_ON){
 		coin_in_flag1 = 0;
 	}else{
@@ -70,8 +72,35 @@ void IR_detect_func(void)
 	}else{
 		coin_in_flag2 = 1;
 	}
-////////////////////////////////////////////////////////////////////////////////////////////
-	if((coin_in_flag1 == 1) && (coin_in_flag1_old == 0)){//对射电眼上升沿检测到硬币
+	////////////////////////////////////////////////////////////////////////////
+	if ((coin_in_flag1 == 1) && coin_in_flag1_old == 1){//无硬币状态
+		coin_env.ir_interval_time++;
+	}else if ((coin_in_flag1 == 0) && (coin_in_flag1_old == 1)){//硬币刚进电眼
+		coin_env.ir_in_time = 0;
+		if (coin_env.max_ir_interval_time < coin_env.ir_interval_time){
+			coin_env.max_ir_interval_time = coin_env.ir_interval_time;
+		}
+		if (coin_env.max_ir_interval_time > coin_env.ir_interval_time){
+			coin_env.min_ir_interval_time = coin_env.ir_interval_time;
+		}
+	}else if ((coin_in_flag1 == 0) && (coin_in_flag1_old == 0)){//硬币完全进入电眼
+		coin_env.ir_in_time++;
+	}else if((coin_in_flag1 == 1) && (coin_in_flag1_old == 0)){//硬币刚出电眼
+		if (coin_env.max_ir_in_time < coin_env.ir_in_time){
+			coin_env.max_ir_in_time = coin_env.ir_in_time;
+		}
+		if (coin_env.min_ir_in_time > coin_env.ir_in_time){
+			coin_env.min_ir_in_time = coin_env.ir_in_time;
+		}
+		coin_env.ir_interval_time = 0;
+	}
+	if((coin_in_flag1 == 0) && (coin_in_flag1_old == 1)){//硬币刚进电眼
+		if (coin_env.coin_ir_ctr1 > coin_env.coin_detect_ctr){
+			SEND_ERROR(KICKCOINNGERROR);
+		}
+		coin_env.coin_ir_ctr1++;
+				dbg ("kick1 error alertflag = %d %s, %d", KICKCOINFULL,  __FILE__, __LINE__);
+	}else if((coin_in_flag1 == 1) && (coin_in_flag1_old == 0)){//硬币刚出电眼
 		if ((para_set_value.data.coin_full_rej_pos == 1)){//
 			if((coin_env.coin_Q1[coin_env.coin_Q1_index] == COIN_NG_FLAG) || (coin_env.coin_Q1[coin_env.coin_Q1_index] == COIN_FULL_FLAG)){ // 
 				if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){
@@ -90,7 +119,6 @@ void IR_detect_func(void)
 			coin_env.coin_Q1_index++;
 			coin_env.coin_Q1_index %= COIN_Q_LEN;
 		}
-		coin_env.coin_ir_ctr1++;
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////
 	if((coin_in_flag2 == 1) && (coin_in_flag2_old == 0)){//对射电眼上升沿检测到硬币
@@ -151,6 +179,9 @@ void runfunction(void)   //部件动作函数
 			if (runtime == 0){
 				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);	 // back to the  picture before alert
 				sys_env.workstep = 0;
+				if (coin_env.coin_ir_ctr1 != coin_env.coin_detect_ctr){
+					//SEND_ERROR(DETECT_COUNT_ERROR);
+				}
 			}
 			break;
 		default:break;

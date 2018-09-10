@@ -79,6 +79,7 @@ int16_t is_good_coin (void)
 	//鉴伪这里时间上还可以优化一下
 	int16_t i, good_coin;
 	good_coin = -1;
+	coin_env.process_coin_index++;
 	for (i = 0; i < COIN_TYPE_NUM; i++){
 		if   ( (( coin_value0 >= coin_cmp_value[i].compare_min0) && ( coin_value0 <= coin_cmp_value[i].compare_max0))
 			&& (( coin_value1 >= coin_cmp_value[i].compare_min1) && ( coin_value1 <= coin_cmp_value[i].compare_max1))
@@ -90,6 +91,8 @@ int16_t is_good_coin (void)
 				GOOD_value_buf[good_value_index].AD2 = coin_value2;
 				GOOD_value_buf[good_value_index].use_index = coin_env.cmp_use_index;
 				GOOD_value_buf[good_value_index].ad_index = coin_env.ad_index;
+				GOOD_value_buf[good_value_index].index = coin_env.process_coin_index;
+				GOOD_value_buf[good_value_index].coin_id = i;
 				good_value_index++;
 				if (good_value_index >= GOOD_BUF_LENGTH)
 					good_value_index = 0;
@@ -108,6 +111,8 @@ int16_t is_good_coin (void)
 		NG_value_buf[ng_value_index].AD2 = coin_value2;
 		NG_value_buf[ng_value_index].use_index = coin_env.cmp_use_index;
 		NG_value_buf[ng_value_index].ad_index = coin_env.ad_index;
+		NG_value_buf[ng_value_index].index = coin_env.process_coin_index;
+		NG_value_buf[ng_value_index].coin_id = good_coin;
 		ng_value_index++;
 		if (ng_value_index >= NG_BUF_LENGTH)
 			ng_value_index = 0;
@@ -119,7 +124,13 @@ int16_t is_good_coin (void)
 void cy_precoincount(void)
 {
 	int16_t good_coin = -1;
-	if ( (ch0_pre_count != ch0_count) ){	//mean there is a coin come
+	if ( (ch0_pre_count != ch0_count) )
+		{	//mean there is a coin come
+		if (coin_env.coin_detect_ctr == coin_env.coin_ir_ctr1){
+		}else{
+			//SEND_ERROR(DETECT_COUNT_ERROR); 
+		}
+		coin_env.coin_detect_ctr++;
 		ch0_pre_count = ch0_count;
 		processed_coin_info.coinnumber++;
 		prepare_coin_cmp_value ();
@@ -134,7 +145,8 @@ void cy_precoincount(void)
 																 ((coin_env.inhibit_coin[good_coin] == 1) || 
 									(*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1)))){ //假币 返回值小于0
-			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){ 
+			if (coin_env.kick_Q[coin_env.kick_Q_index] == 0){ 			
+				processed_coin_info.total_ng++;
 				coin_env.coin_Q2[coin_env.coin_Q2_remain] = COIN_NG_FLAG;/*假币标志*/ 
 				coin_env.kick_Q[coin_env.kick_Q_index] = para_set_value.data.kick_start_delay_t1; 
 				coin_env.kick_Q_index++; 
@@ -148,6 +160,7 @@ void cy_precoincount(void)
 									(*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 0) ||
 								  (*pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_full_flag == 1))){ //假币 返回值小于0
 			if (coin_env.coin_Q1[coin_env.coin_Q1_remain] == FREE_Q_FLAG){ 
+				processed_coin_info.total_ng++;
 				coin_env.coin_Q1[coin_env.coin_Q1_remain] = COIN_NG_FLAG;/*假币标志*/ 
 				coin_env.coin_Q1_remain++;//鉴伪传感器和红外传感器之间有个硬币循环队列，深度为16，表示之间最多可以夹16个硬币
 				coin_env.coin_Q1_remain %= COIN_Q_LEN;
@@ -156,7 +169,6 @@ void cy_precoincount(void)
 				dbg ("kick1 error alertflag = %d %s, %d", KICK1COINERROR,  __FILE__, __LINE__); \
 			} \
 		}else {//真币	
-			coin_env.coin_detect_ctr++;
 			if (*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_set) == 9999){//只使用清分功能
 				*(pre_value.country[COUNTRY_ID].coin[good_coin].data.p_pre_count_cur) += 1;
 				processed_coin_info.total_money += pre_value.country[coinchoose].coin[good_coin].data.money;
@@ -271,6 +283,9 @@ void alertfuc(uint16_t errorflag) //报错
 			break;
 		case KICK2COINERROR:
 			ALERT_MSG ("提示", "第二个剔除工位剔除错误！");
+			break;
+		case DETECT_COUNT_ERROR:
+			ALERT_MSG ("提示", "传感器有误触发！");
 			break;
 		case PRESSMLOCKED:
 			ALERT_MSG ("提示", "轨道堵币！请检查轨道或传感器。再次启动前请先清零！");

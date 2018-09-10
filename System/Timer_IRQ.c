@@ -81,7 +81,7 @@ void Timer4_Init(unsigned short us, void (*Callback)(void), unsigned short enabl
 	coin_env.kick_Q[N]--; \
 	if (coin_env.kick_Q[N] == 0){ \
 		EMKICK1(STARTRUN);	  \
-		processed_coin_info.total_ng++; \
+		coin_env.kick1_ctr++; \
 		sys_env.rej_over = 1; \
 		coin_env.kick_keep_t1 = para_set_value.data.kick_keep_t1;\
 	}\

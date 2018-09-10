@@ -1112,6 +1112,10 @@ void set_para_2  (int32_t arg[])
 		cy_println("set coin_h = %d", arg[1]);
 		para_set_value.data.coin_h = arg[1];
 		write_para ();
+	}else if (arg[0] == string_to_dec((uint8 *)("coin-min-trig"))){
+		cy_println("set coin_min_trig_time = %d", arg[1]);
+		para_set_value.data.coin_min_trig_time = arg[1];
+		write_para ();
 	}else if (arg[0] == string_to_dec((uint8 *)("motor-dir"))){
 		cy_println("set motor-dir = %d", arg[1]);
 		if (arg[1] == 1){
@@ -1519,6 +1523,7 @@ void print_system_env_info (void)
 	cy_println ("coin_size              = %d", para_set_value.data.coin_size);
 	cy_println ("coin_push_size         = %d", para_set_value.data.coin_push_size);
 	cy_println ("coin_h                 = %d", para_set_value.data.coin_h);
+	cy_println ("coin_min_trig_time     = %d", para_set_value.data.coin_min_trig_time);
 	cy_println("----------------------------------------------------");
 }
 
@@ -1537,10 +1542,19 @@ void print_coin_env_info (void)
 	cy_println ("runstep               = %d", runstep);
 	cy_println ("coin_env.kick_Q_index = %d", coin_env.kick_Q_index);
 	cy_println ("ccstep                = %d", ccstep);
-	cy_println ("coin_detect_ctr             = %d", coin_env.coin_detect_ctr);
-	cy_println ("coin_ir_ctr1             = %d", coin_env.coin_ir_ctr1);
-	cy_println ("coin_ir_ctr2             = %d", coin_env.coin_ir_ctr2);
+	cy_println ("coin_detect_ctr       = %d", coin_env.coin_detect_ctr);
+	cy_println ("coin_ir_ctr1          = %d", coin_env.coin_ir_ctr1);
+	cy_println ("kick1_ctr             = %d", coin_env.kick1_ctr);
+	cy_println ("coin_ir_ctr2          = %d", coin_env.coin_ir_ctr2);
 	cy_println ("kick2_ctr             = %d", coin_env.kick2_ctr);
+	cy_println("----------------------------------------------------");
+	cy_println ("ir_in_time            = %d", coin_env.ir_in_time);
+	cy_println ("max_ir_in_time        = %d", coin_env.max_ir_in_time);
+	cy_println ("min_ir_in_time        = %d", coin_env.min_ir_in_time);
+	cy_println("----------------------------------------------------");
+	cy_println ("ir_interval_time      = %d", coin_env.ir_interval_time);
+	cy_println ("max_ir_interval_time  = %d", coin_env.max_ir_interval_time);
+	cy_println ("min_ir_interval_time  = %d", coin_env.min_ir_interval_time);
 	cy_println("----------------------------------------------------");
 }
 
@@ -1608,7 +1622,7 @@ void print_ng_data (int16_t index)
 	cy_println ("   index   ad_index         H             M             L");
 	for (i = 0; i < ng_value_index; i++)
 	{
-		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, i + 1, NG_value_buf[i].ad_index, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", NG_value_buf[i].use_index, NG_value_buf[i].index, NG_value_buf[i].coin_id, NG_value_buf[i].AD0, NG_value_buf[i].AD1, NG_value_buf[i].AD2);
 	}
 	cy_println("----------------------------------------------------------------------");
 }
@@ -1623,7 +1637,7 @@ void print_good_data (int16_t index)
 	cy_println ("   index   ad_index         H             M             L");
 	for (i = 0; i < good_value_index; i++)
 	{
-		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, i + 1, GOOD_value_buf[i].ad_index, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);
+		cy_println ("%d   %4d      %4d        %4d          %4d          %4d", GOOD_value_buf[i].use_index, GOOD_value_buf[i].index, GOOD_value_buf[i].coin_id, GOOD_value_buf[i].AD0, GOOD_value_buf[i].AD1, GOOD_value_buf[i].AD2);
 	}
 	cy_println("---------------------------------------------------------------------");
 }

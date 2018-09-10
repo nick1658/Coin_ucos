@@ -90,7 +90,7 @@ typedef struct
 	uint16_t coin_ctr[COIN_TYPE_NUM];
 	uint16_t total_good;
 	uint16_t total_ng;
-	uint16_t total_money;
+	uint32_t total_money;
 	//uint16_t coin_speed;
 }s_db_item_info;
 
@@ -132,6 +132,7 @@ typedef struct
 	uint16_t adj_offset_position;
 	uint16_t system_mode;
 	uint16_t system_boot_delay;
+	uint16_t coin_min_trig_time;
 	uint32_t coin_size;
 	uint32_t coin_push_size;
 	uint32_t coin_h;

@@ -154,6 +154,29 @@ void initial_nandflash(void)    //nandflash
 						(COUNTRY0_COIN_PRE_VALUE_START_PAGE_NUM + i));
 		}
 	}else{
+		for (i = 0; i < COUNTRY_NUM; i++){
+			for (j = 0; j < COIN_TYPE_NUM; j++){
+				if ((pre_value.country[i].coin[j].data.offsetmax0 > 50) || (pre_value.country[i].coin[j].data.offsetmax0 < 0)){
+					pre_value.country[i].coin[j].data.offsetmax0 = 20;
+				}
+				if ((pre_value.country[i].coin[j].data.offsetmax1 > 50) || (pre_value.country[i].coin[j].data.offsetmax1 < 0)){
+					pre_value.country[i].coin[j].data.offsetmax1 = 20;
+				}
+				if ((pre_value.country[i].coin[j].data.offsetmax2 > 50) || (pre_value.country[i].coin[j].data.offsetmax2 < 0)){
+					pre_value.country[i].coin[j].data.offsetmax2 = 20;
+				}
+				
+				if ((pre_value.country[i].coin[j].data.offsetmin0 > 0) || (pre_value.country[i].coin[j].data.offsetmin0 < -50)){
+					pre_value.country[i].coin[j].data.offsetmin0 = -20;
+				}
+				if ((pre_value.country[i].coin[j].data.offsetmin1 > 0) || (pre_value.country[i].coin[j].data.offsetmin1 < -50)){
+					pre_value.country[i].coin[j].data.offsetmin1 = -20;
+				}
+				if ((pre_value.country[i].coin[j].data.offsetmin2 > 0) || (pre_value.country[i].coin[j].data.offsetmin2 < -50)){
+					pre_value.country[i].coin[j].data.offsetmin2 = -20;
+				}
+			}
+		}
 		cy_println ("Check Data Completed!");
 	}
 

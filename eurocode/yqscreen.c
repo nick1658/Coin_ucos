@@ -497,6 +497,21 @@ void counter_clear (void) //
 		coin_env.full_stack_num = 0;
 		processed_coin_info.coin_ctr[i] =0;
 	}
+	
+	coin_env.coin_ir_ctr1 = 0;
+	coin_env.coin_ir_ctr2 = 0;
+	coin_env.coin_detect_ctr = 0;
+	coin_env.kick1_ctr = 0;
+	coin_env.kick2_ctr = 0;
+	coin_env.ir_in_time = 0;
+	coin_env.max_ir_in_time = 0;
+	coin_env.min_ir_in_time = 0xffff;
+	coin_env.ir_interval_time = 0;
+	coin_env.max_ir_interval_time = 0;
+	coin_env.min_ir_interval_time = 0xffff;
+	coin_env.ir_filter_time = 0;
+	coin_env.process_coin_index = 0;
+	
 	processed_coin_info.total_money =0;
 	processed_coin_info.total_coin = 0;
 	processed_coin_info.total_good = 0;

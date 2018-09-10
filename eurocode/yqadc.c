@@ -591,7 +591,7 @@ uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 
 
 #define UP_POW (0.3)
-#define DOWN_POW (1.2)
+#define DOWN_POW (0.8)
 	/////////////
 	dbg ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
 	for (is = 0; is < COIN_TYPE_NUM; is++){ //补偿值

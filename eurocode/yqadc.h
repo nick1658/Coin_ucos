@@ -13,6 +13,8 @@
 
 typedef struct _AD_Value_S
 {
+	int16_t index;
+	int16_t coin_id;
 	int16_t use_index;
 	int16_t AD0;
 	int16_t AD1;
@@ -40,6 +42,7 @@ typedef struct
 	int16_t ad0_step;
 	int16_t ad1_step;
 	int16_t ad2_step;
+	int16_t process_coin_index;
 	int16_t cmp_use_index;
 	int16_t ad_index;
 	uint16_t AD_min_index[3];
@@ -67,9 +70,19 @@ typedef struct
 	
 	uint16_t coin_detect_ctr;
 	uint16_t coin_ir_ctr1;
+	uint16_t kick1_ctr;
 	uint16_t coin_ir_ctr2;
 	uint16_t kick2_ctr;
 	uint16_t inhibit_coin[COIN_TYPE_NUM]; //拒收硬币设置位
+	
+	
+	uint16_t ir_filter_time;
+	uint16_t ir_in_time;
+	uint16_t min_ir_in_time;
+	uint16_t max_ir_in_time;
+	uint16_t ir_interval_time;
+	uint16_t min_ir_interval_time;
+	uint16_t max_ir_interval_time;
 }s_coin_env;
 
 //各函数申明    步骤号  参数变量定义
