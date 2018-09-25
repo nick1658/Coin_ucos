@@ -10,7 +10,7 @@ S8 alertflag = 0; 		 //报错标志位
 uint32_t time_20ms_old;
 
 
-#define CODE_FLAG		(*(volatile unsigned *)0x33F80000)  		//MPLL lock time conut
+//#define CODE_FLAG		(*(volatile unsigned *)0x33F80000)  		//MPLL lock time conut
 __align(4) uint32_t code_flag __attribute__((at(0x32104000), zero_init));
 
 
@@ -393,11 +393,23 @@ void TaskStart(void *pdata)
 				if (sys_env.stop_time == 0){
 					switch (sys_env.stop_flag){
 						case 0:
+							STORAGE_MOTOR_STOPRUN();	//  停转盘电机
+							sys_env.stop_time = 100;//停转2秒
+							sys_env.stop_flag = 10;
+							break;
+						case 10:
 							STORAGE_DIR_N();//反转
-							sys_env.stop_time = 25;//反转一秒
+							STORAGE_MOTOR_STARTRUN();	//  开转盘电机
+							sys_env.stop_time = 100;//反转2秒
+							sys_env.stop_flag = 11;
+							break;
+						case 11:
+							STORAGE_MOTOR_STOPRUN();	//  停转盘电机
+							sys_env.stop_time = 100;//停转2秒
 							sys_env.stop_flag = 1;
 							break;
 						case 1:
+							STORAGE_MOTOR_STARTRUN();	//  开转盘电机
 							STORAGE_DIR_P();//正转
 							sys_env.stop_time = STOP_TIME;//无币停机时间10秒
 							sys_env.stop_flag = 2;
