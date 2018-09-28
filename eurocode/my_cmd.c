@@ -776,7 +776,7 @@ void do_go(int32_t argc, void *cmd_arg)
 			{
 				cy_println("goto JSJM menu");
 				comscreen(Disp_Indexpic[JSJM],Number_IndexpicB);
-				sys_env.workstep =60;
+				sys_env.workstep =0;
 				sys_env.sim_count_flag = 1;
 			}
 			else if (arg[argc - 1] == string_to_dec((uint8 *)("tzxx"))) // 进入特征学习
