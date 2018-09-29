@@ -1036,7 +1036,7 @@ void change_coin_inhibit (uint16_t value)
 {
 	if (value == 0){
 		coin_env.inhibit_coin[sys_env.coin_index] = 1;
-	}else if(value == 0){
+	}else if(value == 1){
 		coin_env.inhibit_coin[sys_env.coin_index] = 0;
 	}
 	dgus_tf1word(ADDR_COIN_INHIBIT, coin_env.inhibit_coin[sys_env.coin_index]);
