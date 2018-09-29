@@ -803,6 +803,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		disp_preselflearn(pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
+		dgus_tf1word(ADDR_COIN_INHIBIT, coin_env.inhibit_coin[sys_env.coin_index]);
 		sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
 		break;
 	case ADDR_KICK_DELAY_T1:  //地址ADDR_KICK_DELAY_T1 0X56 踢币延时
@@ -1001,6 +1002,9 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		change_coin_mode (value);
 		write_para (); //写入预置值
 		break;
+	case ADDR_COIN_INHIBIT:
+		change_coin_inhibit (value);
+		break;
 	/////////////////////////////////////////////
 	//如果是1 共公参数置0 自学习值 重新赋值  鉴别范围 重新赋值
 	case ADDR_CNCH1:  //地址ADDR_ZXCY21 bujian zhixing
@@ -1027,4 +1031,13 @@ void change_coin_mode (uint16_t value)
 		dgus_tf1word(pre_value.country[COUNTRY_ID].coin[i].data.hmi_pre_count_set_addr, *pre_value.country[COUNTRY_ID].coin[i].data.p_pre_count_set);
 	}
 	counter_clear ();
+}
+void change_coin_inhibit (uint16_t value)
+{
+	if (value == 0){
+		coin_env.inhibit_coin[sys_env.coin_index] = 1;
+	}else if(value == 0){
+		coin_env.inhibit_coin[sys_env.coin_index] = 0;
+	}
+	dgus_tf1word(ADDR_COIN_INHIBIT, coin_env.inhibit_coin[sys_env.coin_index]);
 }

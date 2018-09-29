@@ -125,6 +125,9 @@ void counter_clear (void); //
 #define ADDR_LEVEL1000 	0x206   // 10元硬币的清分等级设置
 #define ADDR_LEVEL500 	0x207   // 5元硬币的清分等级设置
 
+
+#define ADDR_COIN_INHIBIT 	0x210
+
 #define ADDR_CPU_USAGE 0x300
 #define ADDR_PASSWORD 0x302 //password
 #define ADDR_RESET 0x304 //reset
@@ -229,6 +232,7 @@ struct disp_count_buf{
 void disp_precount(long ze,long zs,long fg);      //   预置计数 界面   实时 显示  币种 金额  数量   预置值  币数  异币
 
 void change_coin_mode (uint16_t value);
+void change_coin_inhibit (uint16_t value);
 
 
 #define PRESETMAX 999999   // 6  表示  只能设到7位   9999999   7位表示能设到8位
