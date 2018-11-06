@@ -579,6 +579,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 				coin_minvalue2 = 1023;
 				coinlearnnumber = 0;
 				disp_preselflearn(coin_maxvalue0,coin_minvalue0,coin_maxvalue1,coin_minvalue1,coin_maxvalue2,coin_minvalue2) ;				   //显示当前  通道   各个值
+				dgus_tf1word(ADDR_COIN_INHIBIT, !coin_env.inhibit_coin[sys_env.coin_index]);
 				comscreen(Disp_Indexpic[TZYX],Number_IndexpicB);  // back to the  picture before alert
 
 				sys_env.workstep =13;
@@ -803,7 +804,7 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		disp_preselflearn(pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1,
 						  pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
-		dgus_tf1word(ADDR_COIN_INHIBIT, coin_env.inhibit_coin[sys_env.coin_index]);
+		dgus_tf1word(ADDR_COIN_INHIBIT, !coin_env.inhibit_coin[sys_env.coin_index]);
 		sys_env.workstep = 0;	//停止	所有动作  // 等待 触摸
 		break;
 	case ADDR_KICK_DELAY_T1:  //地址ADDR_KICK_DELAY_T1 0X56 踢币延时
@@ -999,11 +1000,13 @@ void touchresult(void)      //根据接收到的  数 来决定 执行的任务
 		}
 		break;
 	case ADDR_MODE:
+		cy_println ("%d ", value);
 		change_coin_mode (value);
 		write_para (); //写入预置值
 		break;
 	case ADDR_COIN_INHIBIT:
 		change_coin_inhibit (value);
+		cy_println ("%d : %d ", sys_env.coin_index, value);
 		break;
 	/////////////////////////////////////////////
 	//如果是1 共公参数置0 自学习值 重新赋值  鉴别范围 重新赋值
@@ -1039,5 +1042,5 @@ void change_coin_inhibit (uint16_t value)
 	}else if(value == 1){
 		coin_env.inhibit_coin[sys_env.coin_index] = 0;
 	}
-	dgus_tf1word(ADDR_COIN_INHIBIT, coin_env.inhibit_coin[sys_env.coin_index]);
+	dgus_tf1word(ADDR_COIN_INHIBIT, !coin_env.inhibit_coin[sys_env.coin_index]);
 }
