@@ -112,13 +112,13 @@ void initial_nandflash(void)    //nandflash
 		para_set_value.data.rej_level = 0;
 		para_set_value.data.kick_start_delay_t1 = 1;
 		para_set_value.data.kick_start_delay_t2 = 1;
-		para_set_value.data.kick_keep_t1 = 80;
-		para_set_value.data.kick_keep_t2 = 80;
+		para_set_value.data.kick_keep_t1 = 74;
+		para_set_value.data.kick_keep_t2 = 74;
 		para_set_value.data.coin_full_rej_pos = 1;
-		para_set_value.data.motor_idle_t = 400;
+		para_set_value.data.motor_idle_t = 150;
 		para_set_value.data.adj_offset_position = 4096;
 		para_set_value.data.pre_count_stop_n = 1;
-		para_set_value.data.system_boot_delay = 0;
+		para_set_value.data.system_boot_delay = 1;
 		para_set_value.data.system_mode = 1;
 
 		for (i = 0; i < COIN_TYPE_NUM; i++){
