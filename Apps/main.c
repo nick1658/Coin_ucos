@@ -307,6 +307,7 @@ OS_STK  Task3Stk[TASK3_STK_SIZE];
 
 void TaskStart(void *pdata)
 {
+	uint16_t test_v = 0;
 	int i = 0;
 #if OS_CRITICAL_METHOD == 3u                     /* Allocate storage for CPU status register           */
     OS_CPU_SR  cpu_sr = 0u;
@@ -321,8 +322,21 @@ void TaskStart(void *pdata)
 	httpd_init();
 	//IAP_httpd_init ();
 	tftp_init ();
-
 	cy_println ("[Please press ENTER to activate this console]");
+
+	test_v = calc_fb_func (900, 900, 200);
+	cy_println ("%d", test_v);
+	test_v = calc_fb_func (900, 900, 150);
+	cy_println ("%d", test_v);
+	test_v = calc_fb_func (900, 1000, 200);
+	cy_println ("%d", test_v);
+	test_v = calc_fb_func (900, 1000, 150);
+	cy_println ("%d", test_v);
+	test_v = calc_fb_func (900, 850, 200);
+	cy_println ("%d", test_v);
+	test_v = calc_fb_func (900, 850, 150);
+	cy_println ("%d", test_v);
+
 
 	//创建NET消息队列
 	//net_msg=OSQCreate(&netMsgGrp[0], NET_MSG_SIZE);	//创建消息队列

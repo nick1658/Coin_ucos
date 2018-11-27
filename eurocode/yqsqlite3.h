@@ -136,6 +136,8 @@ typedef struct
 	uint32_t coin_size;
 	uint32_t coin_push_size;
 	uint32_t coin_h;
+	uint16_t coin_Vpp_A;
+	uint16_t coin_Sub_value;
 }s_coin_parameter_value;
 
 typedef union

@@ -543,6 +543,12 @@ int get_hex_data (char * buf)
 					case 64://拒收设置
 						coin_env.inhibit_coin[sys_env.coin_index] = para_value;
 						break;
+					case 65://平均值
+						para_set_value.data.coin_Vpp_A = para_value;
+						break;
+					case 66://减法系数
+						para_set_value.data.coin_Sub_value = para_value;
+						break;
 					default:
 						break;
 				}
@@ -919,32 +925,32 @@ void coin_print (void)
 
 void refresh_data (void)
 {
-	pc_print("%d,%d;",1, para_set_value.data.kick_start_delay_t1);
-	pc_print("%d,%d;",2, para_set_value.data.kick_keep_t1);
-	pc_print("%d,%d;",3, para_set_value.data.kick_start_delay_t2);
-	pc_print("%d,%d;",4, para_set_value.data.kick_keep_t1);
-	pc_print("%d,%d;",5, *pre_value.country[COUNTRY_ID].coin[0].data.p_pre_count_set);
-	pc_print("%d,%d;",6, *pre_value.country[COUNTRY_ID].coin[1].data.p_pre_count_set);
-	pc_print("%d,%d;",7, *pre_value.country[COUNTRY_ID].coin[4].data.p_pre_count_set);
-	pc_print("%d,%d;",8, *pre_value.country[COUNTRY_ID].coin[6].data.p_pre_count_set);
-	pc_print("%d,%d;",9, *pre_value.country[COUNTRY_ID].coin[7].data.p_pre_count_set);
-	pc_print("%d,%d;",10, *pre_value.country[COUNTRY_ID].coin[8].data.p_pre_count_set);
-	pc_print("%d,%d;",11, *pre_value.country[COUNTRY_ID].coin[9].data.p_pre_count_set);
-	pc_print("%d,%d;",12, *pre_value.country[COUNTRY_ID].coin[10].data.p_pre_count_set);
-	pc_print("%d,%d;",22, para_set_value.data.motor_idle_t);
-	pc_print("%d,%d;",23, para_set_value.data.pre_count_stop_n);
-	pc_print("%d,%d;",24, para_set_value.data.coin_full_rej_pos);
-	pc_print("%d,%d;",25, para_set_value.data.system_boot_delay);
-	pc_print("%d,%d;",26, para_set_value.data.system_mode);
-	pc_print("%d,%d;",27, *pre_value.country[COUNTRY_ID].coin[3].data.p_pre_count_set);
-	pc_print("%d,%d;",51, sys_env.coin_index);
-	pc_print("%d,%d;",52, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0);
-	pc_print("%d,%d;",53, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0);
-	pc_print("%d,%d;",54, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1);
-	pc_print("%d,%d;",55, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1);
-	pc_print("%d,%d;",56, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2);
-	pc_print("%d,%d;",57, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
-	pc_print("%d,%d;",64, coin_env.inhibit_coin[sys_env.coin_index]);
+	pc_print("%d$%d;",1, para_set_value.data.kick_start_delay_t1);
+	pc_print("%d$%d;",2, para_set_value.data.kick_keep_t1);
+	pc_print("%d$%d;",3, para_set_value.data.kick_start_delay_t2);
+	pc_print("%d$%d;",4, para_set_value.data.kick_keep_t1);
+	pc_print("%d$%d;",5, *pre_value.country[COUNTRY_ID].coin[0].data.p_pre_count_set);
+	pc_print("%d$%d;",6, *pre_value.country[COUNTRY_ID].coin[1].data.p_pre_count_set);
+	pc_print("%d$%d;",7, *pre_value.country[COUNTRY_ID].coin[4].data.p_pre_count_set);
+	pc_print("%d$%d;",8, *pre_value.country[COUNTRY_ID].coin[6].data.p_pre_count_set);
+	pc_print("%d$%d;",9, *pre_value.country[COUNTRY_ID].coin[7].data.p_pre_count_set);
+	pc_print("%d$%d;",10, *pre_value.country[COUNTRY_ID].coin[8].data.p_pre_count_set);
+	pc_print("%d$%d;",11, *pre_value.country[COUNTRY_ID].coin[9].data.p_pre_count_set);
+	pc_print("%d$%d;",12, *pre_value.country[COUNTRY_ID].coin[10].data.p_pre_count_set);
+	pc_print("%d$%d;",22, para_set_value.data.motor_idle_t);
+	pc_print("%d$%d;",23, para_set_value.data.pre_count_stop_n);
+	pc_print("%d$%d;",24, para_set_value.data.coin_full_rej_pos);
+	pc_print("%d$%d;",25, para_set_value.data.system_boot_delay);
+	pc_print("%d$%d;",26, para_set_value.data.system_mode);
+	pc_print("%d$%d;",27, *pre_value.country[COUNTRY_ID].coin[3].data.p_pre_count_set);
+	pc_print("%d$%d;",51, sys_env.coin_index);
+	pc_print("%d$%d;",52, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max0);
+	pc_print("%d$%d;",53, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min0);
+	pc_print("%d$%d;",54, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max1);
+	pc_print("%d$%d;",55, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min1);
+	pc_print("%d$%d;",56, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2);
+	pc_print("%d$%d;",57, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
+	pc_print("%d$%d;",64, coin_env.inhibit_coin[sys_env.coin_index]);
 	disp_allcount_to_pc ();
 }
 
@@ -1571,6 +1577,11 @@ void print_cmp_data (int16_t _coin_index)
 //		return;
 //	}
 	cy_println ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
+	cy_println ("----------------------------------------------------------------------");
+	cy_println ("Av       std0 = %4d          std1 = %4d     std2 = %4d",
+													(pre_value.country[coinchoose].coin[_coin_index].data.std0 * 3230) / (para_set_value.data.coin_Vpp_A - para_set_value.data.coin_Sub_value),
+													(pre_value.country[coinchoose].coin[_coin_index].data.std1 * 3230) / (para_set_value.data.coin_Vpp_A - para_set_value.data.coin_Sub_value),
+													(pre_value.country[coinchoose].coin[_coin_index].data.std2 * 3230) / (para_set_value.data.coin_Vpp_A - para_set_value.data.coin_Sub_value));
 	cy_println ("----------------------------------------------------------------------");
 	cy_println ("save     std0 = %4d          std1 = %4d     std2 = %4d",
 			pre_value.country[coinchoose].coin[_coin_index].data.std0,
