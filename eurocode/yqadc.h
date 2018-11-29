@@ -150,7 +150,7 @@ void coin_env_init (void);
 
 
 uint16_t adstd_offset(void);
-uint16_t calc_fb_func (uint16_t save_base_v, uint16_t new_base_v, uint16_t save_coin_v);
+uint16_t calc_fb_func (uint16_t ch, uint16_t save_base_v, uint16_t new_base_v, uint16_t save_coin_v);
 #define OFFSETMAX 200
 #define OFFSETMIN 200   //990
 

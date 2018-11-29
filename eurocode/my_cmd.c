@@ -543,11 +543,23 @@ int get_hex_data (char * buf)
 					case 64://拒收设置
 						coin_env.inhibit_coin[sys_env.coin_index] = para_value;
 						break;
-					case 65://平均值
-						para_set_value.data.coin_Vpp_A = para_value;
+					case 80://平均值
+						para_set_value.data.coin_Vpp_A[0] = para_value;
 						break;
-					case 66://减法系数
-						para_set_value.data.coin_Sub_value = para_value;
+					case 81://减法系数
+						para_set_value.data.coin_Sub_value[0] = para_value;
+						break;
+					case 82://平均值
+						para_set_value.data.coin_Vpp_A[1] = para_value;
+						break;
+					case 83://减法系数
+						para_set_value.data.coin_Sub_value[1] = para_value;
+						break;
+					case 84://平均值
+						para_set_value.data.coin_Vpp_A[2] = para_value;
+						break;
+					case 85://减法系数
+						para_set_value.data.coin_Sub_value[2] = para_value;
 						break;
 					default:
 						break;
@@ -951,6 +963,12 @@ void refresh_data (void)
 	pc_print("%d$%d;",56, pre_value.country[coinchoose].coin[sys_env.coin_index].data.max2);
 	pc_print("%d$%d;",57, pre_value.country[coinchoose].coin[sys_env.coin_index].data.min2);
 	pc_print("%d$%d;",64, coin_env.inhibit_coin[sys_env.coin_index]);
+	pc_print("%d$%d;",80, para_set_value.data.coin_Vpp_A[0]);
+	pc_print("%d$%d;",81, para_set_value.data.coin_Sub_value[0]);
+	pc_print("%d$%d;",82, para_set_value.data.coin_Vpp_A[1]);
+	pc_print("%d$%d;",83, para_set_value.data.coin_Sub_value[1]);
+	pc_print("%d$%d;",84, para_set_value.data.coin_Vpp_A[2]);
+	pc_print("%d$%d;",85, para_set_value.data.coin_Sub_value[2]);
 	disp_allcount_to_pc ();
 }
 
