@@ -546,7 +546,7 @@ void get_ad_value (void)
 	std_ad0 /= ADSAMPNUM;
 	std_ad1 /= ADSAMPNUM;
 	std_ad2 /= ADSAMPNUM;
-	cy_print("A0 :%d   A1 :%d  A2 :%d  \r\n",std_ad0,std_ad1,std_ad2);
+//	cy_print("A0 :%d   A1 :%d  A2 :%d  \r\n",std_ad0,std_ad1,std_ad2);
 }
 
 uint16_t calc_fb_func (uint16_t ch, uint16_t save_base_v, uint16_t new_base_v, uint16_t save_coin_v)
@@ -575,7 +575,7 @@ uint16_t calc_fb_func (uint16_t ch, uint16_t save_base_v, uint16_t new_base_v, u
 
 	HA *= VALUE_2;
 	Av = HA / (A-VALUE_1);
-	cy_println ("ch0 gain is %d", (save_base_v*3230) / (para_set_value.data.coin_Vpp_A[ch] - para_set_value.data.coin_Sub_value[ch]));
+	//cy_println ("ch%d gain is %d",ch, (save_base_v*3230) / (para_set_value.data.coin_Vpp_A[ch] - para_set_value.data.coin_Sub_value[ch]));
 	
 	B = ((HB * VALUE_2) / Av) + VALUE_1;
 
@@ -629,14 +629,14 @@ uint16_t adstd_offset()    //  检测 基准值   有不大偏差进行补偿
 #define UP_POW (0.3)
 #define DOWN_POW (0.8)
 	/////////////
-	dbg ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
+//	dbg ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
 	for (is = 0; is < COIN_TYPE_NUM; is++){ //补偿值
-		coin_cmp_value[is].compare_max0 = calc_fb_func (0, pre_value.country[coinchoose].coin[is].data.std0, std_ad0, pre_value.country[coinchoose].coin[is].data.max0)+pre_value.country[coinchoose].coin[is].data.offsetmax0;
-		coin_cmp_value[is].compare_max1 = calc_fb_func (0, pre_value.country[coinchoose].coin[is].data.std1, std_ad1, pre_value.country[coinchoose].coin[is].data.max1)+pre_value.country[coinchoose].coin[is].data.offsetmax1;
-		coin_cmp_value[is].compare_max2 = calc_fb_func (1, pre_value.country[coinchoose].coin[is].data.std2, std_ad2, pre_value.country[coinchoose].coin[is].data.max2)+pre_value.country[coinchoose].coin[is].data.offsetmax2;
-		coin_cmp_value[is].compare_min0 = calc_fb_func (1, pre_value.country[coinchoose].coin[is].data.std0, std_ad0, pre_value.country[coinchoose].coin[is].data.min0)+pre_value.country[coinchoose].coin[is].data.offsetmin0;
-		coin_cmp_value[is].compare_min1 = calc_fb_func (2, pre_value.country[coinchoose].coin[is].data.std1, std_ad1, pre_value.country[coinchoose].coin[is].data.min1)+pre_value.country[coinchoose].coin[is].data.offsetmin1;
-		coin_cmp_value[is].compare_min2 = calc_fb_func (2, pre_value.country[coinchoose].coin[is].data.std2, std_ad2, pre_value.country[coinchoose].coin[is].data.min2)+pre_value.country[coinchoose].coin[is].data.offsetmin2;
+		coin_cmp_value[is].compare_max0 = calc_fb_func (0, para_set_value.data.base_std0, std_ad0, pre_value.country[coinchoose].coin[is].data.max0)+pre_value.country[coinchoose].coin[is].data.offsetmax0;
+		coin_cmp_value[is].compare_max1 = calc_fb_func (0, para_set_value.data.base_std1, std_ad1, pre_value.country[coinchoose].coin[is].data.max1)+pre_value.country[coinchoose].coin[is].data.offsetmax1;
+		coin_cmp_value[is].compare_max2 = calc_fb_func (1, para_set_value.data.base_std2, std_ad2, pre_value.country[coinchoose].coin[is].data.max2)+pre_value.country[coinchoose].coin[is].data.offsetmax2;
+		coin_cmp_value[is].compare_min0 = calc_fb_func (1, para_set_value.data.base_std0, std_ad0, pre_value.country[coinchoose].coin[is].data.min0)+pre_value.country[coinchoose].coin[is].data.offsetmin0;
+		coin_cmp_value[is].compare_min1 = calc_fb_func (2, para_set_value.data.base_std1, std_ad1, pre_value.country[coinchoose].coin[is].data.min1)+pre_value.country[coinchoose].coin[is].data.offsetmin1;
+		coin_cmp_value[is].compare_min2 = calc_fb_func (2, para_set_value.data.base_std2, std_ad2, pre_value.country[coinchoose].coin[is].data.min2)+pre_value.country[coinchoose].coin[is].data.offsetmin2;
 //		std0_offset = std_ad0 - pre_value.country[coinchoose].coin[is].data.std0;
 //		std1_offset = std_ad1 - pre_value.country[coinchoose].coin[is].data.std1;
 //		std2_offset = std_ad2 - pre_value.country[coinchoose].coin[is].data.std2;

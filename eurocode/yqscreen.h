@@ -140,6 +140,9 @@ void counter_clear (void); //
 	dgus_chinese(0x416, MSG, strlen(MSG)); \
 	comscreen(Disp_Indexpic[BJJM],Number_IndexpicB); \
 }
+#define PC_ALERT_MSG(MSG) { \
+	pc_println("%d$%s;", 65, MSG); \
+}
 #define DISPLAY_COIN_INDEX(COIN_INDEX) { \
 		dgus_chinese(0x500, COIN_INDEX, strlen(COIN_INDEX)); \
 }

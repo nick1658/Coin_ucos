@@ -138,6 +138,9 @@ typedef struct
 	uint32_t coin_h;
 	uint16_t coin_Vpp_A[3];
 	uint16_t coin_Sub_value[3];
+	int16_t base_std0;
+	int16_t base_std1;
+	int16_t base_std2;
 }s_coin_parameter_value;
 
 typedef union

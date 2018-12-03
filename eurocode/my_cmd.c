@@ -396,8 +396,49 @@ int get_hex_struct (s_hex_file *p_hex, char *_data_buf)
 	return AnalyseHEX(_data_buf, p_hex->len * 2 + 11);
 }
 //static uint32_t section_addr = 0, app_size = 0;
+
+void save_base_value (uint16_t addr)
+{	
+	adstd_offset ();
+	switch (addr)
+	{
+		case 80:
+		case 81:
+			para_set_value.data.base_std0 = std_ad0;
+			break;
+		case 82:
+		case 83:
+			para_set_value.data.base_std1 = std_ad1;
+			break;
+		case 84:
+		case 85:
+			para_set_value.data.base_std2 = std_ad2;
+			break;
+		default:break;
+	}
+}
+void save_offset_value (uint16_t ch, uint16_t coin_index, int16 offset)
+{
+	switch (ch)
+	{
+		case 0:
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmax0 = (offset);       //
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmin0 = (offset)*(-1);       //
+		break;
+		case 1:
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmax1 = (offset);       //
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmin1 = (offset)*(-1);       //
+			break;
+		case 2:
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmax2 = (offset);       //
+			pre_value.country[coinchoose].coin[coin_index].data.offsetmin2 = (offset)*(-1);       //
+			break;
+		default:break;
+	}
+}
 int get_hex_data (char * buf)
 {
+	char str_buf[256];
 //	int i = 0;
 	s_hex_file p_hex;
 	uint16_t func_code = 0;
@@ -561,9 +602,21 @@ int get_hex_data (char * buf)
 					case 85://减法系数
 						para_set_value.data.coin_Sub_value[2] = para_value;
 						break;
+					case 92:
+						save_offset_value (0, sys_env.coin_index, para_value);
+						break;
+					case 93:
+						save_offset_value (1, sys_env.coin_index, para_value);
+						break;
+					case 94:
+						save_offset_value (2, sys_env.coin_index, para_value);
+						break;
 					default:
 						break;
 				}
+				save_base_value (p_hex.addr);
+				sprintf (str_buf, "Set %d to Addr %d complete", para_value, p_hex.addr);
+				PC_ALERT_MSG (str_buf);
 				write_para (); //保存参数
 				ini_screen ();
 				refresh_data ();
@@ -969,6 +1022,15 @@ void refresh_data (void)
 	pc_print("%d$%d;",83, para_set_value.data.coin_Sub_value[1]);
 	pc_print("%d$%d;",84, para_set_value.data.coin_Vpp_A[2]);
 	pc_print("%d$%d;",85, para_set_value.data.coin_Sub_value[2]);
+	pc_print("%d$%d;",86, para_set_value.data.base_std0);
+	pc_print("%d$%d;",87, para_set_value.data.base_std1);
+	pc_print("%d$%d;",88, para_set_value.data.base_std2);
+	pc_print("%d$%d;",89, pre_value.country[coinchoose].coin[sys_env.coin_index].data.std0);
+	pc_print("%d$%d;",90, pre_value.country[coinchoose].coin[sys_env.coin_index].data.std1);
+	pc_print("%d$%d;",91, pre_value.country[coinchoose].coin[sys_env.coin_index].data.std2);
+	pc_print("%d$%d;",92, pre_value.country[coinchoose].coin[sys_env.coin_index].data.offsetmax0);
+	pc_print("%d$%d;",93, pre_value.country[coinchoose].coin[sys_env.coin_index].data.offsetmax1);
+	pc_print("%d$%d;",94, pre_value.country[coinchoose].coin[sys_env.coin_index].data.offsetmax2);
 	disp_allcount_to_pc ();
 }
 
