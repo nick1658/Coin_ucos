@@ -120,6 +120,34 @@ void Timer3_IRQ(void)
 	coin_cross_time++;
 	if(time > 0){time--;}
 	
+	if (coin_env.motor_test_flag == 1){
+		switch (coin_env.motor_test_status)
+		{
+			case 0:
+				if (coin_env.motor_test_ctr < para_set_value.data.motor_idle_t){
+					coin_env.motor_test_ctr++;
+				}else{
+					coin_env.motor_test_status = 1;
+					coin_env.motor_test_ctr = 0;
+					STORAGE_MOTOR_STARTRUN ();
+				}
+				break;
+			case 1:
+				if (coin_env.motor_test_ctr < para_set_value.data.motor_idle_t){
+					coin_env.motor_test_ctr++;
+				}else{
+					coin_env.motor_test_status = 0;
+					coin_env.motor_test_ctr = 0;
+					STORAGE_MOTOR_STOPRUN ();
+				}
+				break;
+			default:break;
+		}
+	}else{
+		coin_env.motor_test_status = 0;
+		coin_env.motor_test_ctr = 0;
+	}
+	
 //	if ((A0IN0 == 0) && (coin_in == 0)){
 //		sys_env.coin_count++;
 //		coin_in = 1;
