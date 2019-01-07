@@ -1651,18 +1651,18 @@ uint16_t calc_AV_func (uint16_t ch, uint16_t save_base_v)
 	float VALUE_4 = 1.0;
 	float VALUE_1 = 1.0;
 	float VALUE_2 = 1.0;
-	float A = 0.0;
-	float HA = 0.0;
+	float C = 0.0;
+	float HC = 0.0;
 	float Av = 0.0;
 
 	VALUE_3 = para_set_value.data.coin_Sub_value[ch] / 1000.0;
-	A = para_set_value.data.coin_Vpp_A[ch] / 1000.;
+	C = para_set_value.data.coin_Vpp_A[ch] / 1000.;
 	VALUE_1 = VALUE_3 / VALUE_4;
 	VALUE_2 = VALUE_0 / VALUE_4;
-	HA = save_base_v;
+	HC = save_base_v;
 
-	HA *= VALUE_2;
-	Av = HA / (A-VALUE_1);
+	HC *= VALUE_2;
+	Av = HC / (C-VALUE_1);
 	return (uint16_t) (Av * 1000.0);
 }
 

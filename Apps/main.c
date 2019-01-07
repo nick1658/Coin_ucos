@@ -324,17 +324,17 @@ void TaskStart(void *pdata)
 	tftp_init ();
 	cy_println ("[Please press ENTER to activate this console]");
 
-	test_v = calc_fb_func (0, 900, 900, 200);
+	test_v = calc_fb_func (0, 900, 900, 900, 200);
 	cy_println ("%d", test_v);
-	test_v = calc_fb_func (0, 900, 900, 150);
+	test_v = calc_fb_func (0, 900, 900, 900, 150);
 	cy_println ("%d", test_v);
-	test_v = calc_fb_func (0, 900, 1000, 200);
+	test_v = calc_fb_func (0, 900, 900, 1000, 200);
 	cy_println ("%d", test_v);
-	test_v = calc_fb_func (0, 900, 1000, 150);
+	test_v = calc_fb_func (0, 900, 900, 1000, 150);
 	cy_println ("%d", test_v);
-	test_v = calc_fb_func (0, 900, 850, 200);
+	test_v = calc_fb_func (0, 900, 900, 850, 200);
 	cy_println ("%d", test_v);
-	test_v = calc_fb_func (0, 900, 850, 150);
+	test_v = calc_fb_func (0, 900, 900, 850, 150);
 	cy_println ("%d", test_v);
 
 
