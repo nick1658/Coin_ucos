@@ -1644,7 +1644,27 @@ void print_coin_env_info (void)
 	cy_println("----------------------------------------------------");
 }
 
+uint16_t calc_AV_func (uint16_t ch, uint16_t save_base_v)
+{
+	float VALUE_0 = 0.00323;
+	float VALUE_3 = 1.0;
+	float VALUE_4 = 1.0;
+	float VALUE_1 = 1.0;
+	float VALUE_2 = 1.0;
+	float A = 0.0;
+	float HA = 0.0;
+	float Av = 0.0;
 
+	VALUE_3 = para_set_value.data.coin_Sub_value[ch] / 1000.0;
+	A = para_set_value.data.coin_Vpp_A[ch] / 1000.;
+	VALUE_1 = VALUE_3 / VALUE_4;
+	VALUE_2 = VALUE_0 / VALUE_4;
+	HA = save_base_v;
+
+	HA *= VALUE_2;
+	Av = HA / (A-VALUE_1);
+	return (uint16_t) (Av * 1000.0);
+}
 
 void print_cmp_data (int16_t _coin_index)
 {
@@ -1659,9 +1679,9 @@ void print_cmp_data (int16_t _coin_index)
 	cy_println ("real     std0 = %4d          std1 = %4d     std2 = %4d", std_ad0, std_ad1, std_ad2);
 	cy_println ("----------------------------------------------------------------------");
 	cy_println ("Av       std0 = %4d          std1 = %4d     std2 = %4d",
-													(pre_value.country[coinchoose].coin[_coin_index].data.std0 * 3230) / (para_set_value.data.coin_Vpp_A[0] - para_set_value.data.coin_Sub_value[0]),
-													(pre_value.country[coinchoose].coin[_coin_index].data.std1 * 3230) / (para_set_value.data.coin_Vpp_A[1] - para_set_value.data.coin_Sub_value[1]),
-													(pre_value.country[coinchoose].coin[_coin_index].data.std2 * 3230) / (para_set_value.data.coin_Vpp_A[2] - para_set_value.data.coin_Sub_value[2]));
+													calc_AV_func (0, para_set_value.data.base_std0),
+													calc_AV_func (1, para_set_value.data.base_std1),
+													calc_AV_func (2, para_set_value.data.base_std2));
 	cy_println ("----------------------------------------------------------------------");
 	cy_println ("save     std0 = %4d          std1 = %4d     std2 = %4d",
 			pre_value.country[coinchoose].coin[_coin_index].data.std0,
